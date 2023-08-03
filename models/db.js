@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 
 // Set up MongoDB connection
-mongoose.connect('mongodb+srv://jashmistry4444:wQywBbgKlwb8H1Pk@cluster0.fran9pm.mongodb.net/hospital_management_system', {
+mongoose.connect('mongodb+srv://jashmistry4444:SVjlOloq4CX6aNVE@cluster0.fran9pm.mongodb.net/hospital_management_system', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const db = require('./db');
 
+
 // Define the Patient schema
 const patientSchema = new mongoose.Schema({
   hospital_id: {
@@ -53,6 +54,7 @@ const patientSchema = new mongoose.Schema({
 }, {
   timestamps: true, // Adds createdAt and updatedAt fields
 });
+
 
 // Create the Patient model based on the schema
 const Patient = mongoose.model('Patient', patientSchema);

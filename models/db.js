@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 // Set up MongoDB connection
 mongoose.connect('mongodb+srv://jashmistry4444:wQywBbgKlwb8H1Pk@cluster0.fran9pm.mongodb.net/hospital_management_system', {
   useNewUrlParser: true,
@@ -18,6 +19,8 @@ db.once('open', () => {
 db.on('error', (error) => {
   console.error('Error connecting to MongoDB:', error);
 });
+
+
 
 // Export the Mongoose connection object
 module.exports = db;

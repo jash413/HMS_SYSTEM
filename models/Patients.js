@@ -101,7 +101,7 @@ const patientSchema = new mongoose.Schema({
     type: String,
   },
   insuranceInformation: {
-    type: Boolean,
+    type: String,
   },
   insuranceNumber: {
     type: String,

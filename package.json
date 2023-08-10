@@ -9,8 +9,6 @@
     "start-database": "cd models && node db.js",
     "start-backend": "node index.js",
     "start-frontend": "cd client && npm start"
-
-
   },
   "author": "",
   "license": "ISC",
@@ -27,4 +25,3 @@
     "concurrently": "^8.2.0"
   }
 }
-

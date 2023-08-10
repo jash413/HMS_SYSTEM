@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS
 
 const PatientForm = () => {
-
   const [patientData, setPatientData] = useState({
     // Initialize state for patient data fields
     firstName: "",
@@ -16,13 +15,23 @@ const PatientForm = () => {
     gender: "Male",
     addNote: "",
     paymentOption: "",
-    insuranceInformation: true,
+    insuranceInformation: "false",
     insuranceNumber: "",
     wardNumber: "",
     selectedDoctor: "",
     advanceAmount: "",
     filesDocumentUpload: [],
   });
+
+  const [insurance, setInsurance] = useState(true);
+
+  const handleInsurance = (event) => {
+    if(event.target.value === "true") {
+      setInsurance(false);
+    } else {
+      setInsurance(true);
+    }
+  };
 
   const handleInputChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -44,13 +53,10 @@ const PatientForm = () => {
     event.preventDefault();
 
     try {
-
-
       const formData = new FormData();
       for (const key in patientData) {
         formData.append(key, patientData[key]);
       }
-
 
       const response = await axios.post(
         "http://localhost:3100/api/patients",
@@ -61,10 +67,9 @@ const PatientForm = () => {
           },
         }
       );
-      if(response.status === 201) {
-        toast.success('Patient created successfully');
+      if (response.status === 201) {
+        toast.success("Patient created successfully");
       }
-      
 
       console.log("Patient created:", response.data);
       // Reset the form after successful submission
@@ -79,7 +84,7 @@ const PatientForm = () => {
         gender: "",
         addNote: "",
         paymentOption: "",
-        insuranceInformation: true,
+        insuranceInformation: "false",
         insuranceNumber: "",
         wardNumber: "",
         selectedDoctor: "",
@@ -87,13 +92,11 @@ const PatientForm = () => {
         filesDocumentUpload: [],
       });
     } catch (error) {
-        toast.error(error.response.data.message);
+      toast.error(error.response.data.message);
       console.error("Error creating patient:", error.response.data);
       console.log(patientData);
     }
   };
-
-
 
   return (
     <div id="ihealth-layout" className="theme-tradewind">
@@ -818,8 +821,8 @@ const PatientForm = () => {
                             <div className="col-md-6">
                               <div className="form-check">
                                 <input
+                                  onClick={handleInsurance}
                                   className="form-check-input"
-                                  defaultChecked
                                   type="radio"
                                   name="insuranceInformation"
                                   value="true"
@@ -841,6 +844,7 @@ const PatientForm = () => {
                             <div className="col-md-6">
                               <div className="form-check">
                                 <input
+                                  onClick={handleInsurance}
                                   className="form-check-input"
                                   type="radio"
                                   name="insuranceInformation"
@@ -856,7 +860,7 @@ const PatientForm = () => {
                                   className="form-check-label"
                                   htmlFor="exampleRadios2"
                                 >
-                                  No I haven't Insurance
+                                  No I don't have Insurance
                                 </label>
                               </div>
                             </div>
@@ -867,6 +871,7 @@ const PatientForm = () => {
                             Insurance Number
                           </label>
                           <input
+                            disabled={insurance}
                             type="text"
                             name="insuranceNumber"
                             value={patientData.insuranceNumber}
@@ -945,7 +950,7 @@ const PatientForm = () => {
                         Submit
                       </button>
                     </form>
-                    <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+                    <ToastContainer position="top-right" autoClose={3000} />
                   </div>
                 </div>
               </div>

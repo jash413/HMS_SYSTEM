@@ -26,7 +26,7 @@ const PatientForm = () => {
   const [insurance, setInsurance] = useState(true);
 
   const handleInsurance = (event) => {
-    if(event.target.value === "true") {
+    if (event.target.value === "true") {
       setInsurance(false);
     } else {
       setInsurance(true);
@@ -655,6 +655,7 @@ const PatientForm = () => {
                             First Name
                           </label>
                           <input
+                            required
                             type="text"
                             name="firstName"
                             value={patientData.firstName}
@@ -668,6 +669,7 @@ const PatientForm = () => {
                             Last Name
                           </label>
                           <input
+                            required
                             type="text"
                             name="lastName"
                             value={patientData.lastName}
@@ -681,6 +683,7 @@ const PatientForm = () => {
                             Phone Number
                           </label>
                           <input
+                            required
                             type="text"
                             name="phoneNumber"
                             value={patientData.phoneNumber}
@@ -694,6 +697,7 @@ const PatientForm = () => {
                             Email Address
                           </label>
                           <input
+                            required
                             type="email"
                             name="emailAddress"
                             value={patientData.emailAddress}
@@ -707,6 +711,7 @@ const PatientForm = () => {
                             Admit Date
                           </label>
                           <input
+                            required
                             type="date"
                             name="admitDate"
                             value={patientData.admitDate}
@@ -720,6 +725,7 @@ const PatientForm = () => {
                             Admit Time
                           </label>
                           <input
+                            required
                             type="time"
                             name="admitTime"
                             value={patientData.admitTime}
@@ -750,6 +756,7 @@ const PatientForm = () => {
                             <div className="col-md-6">
                               <div className="form-check">
                                 <input
+                                  required
                                   className="form-check-input"
                                   type="radio"
                                   name="gender"
@@ -770,6 +777,7 @@ const PatientForm = () => {
                             <div className="col-md-6">
                               <div className="form-check">
                                 <input
+                                  required
                                   className="form-check-input"
                                   type="radio"
                                   name="gender"
@@ -797,6 +805,7 @@ const PatientForm = () => {
                             Select Payment Option
                           </label>
                           <select
+                            required    
                             className="form-select"
                             aria-label="Default select example"
                             name="paymentOption"
@@ -808,7 +817,7 @@ const PatientForm = () => {
                             <option value="Debit Card">Debit Card</option>
                             <option value="Upi">Upi</option>
                             <option value="Cash">Cash</option>
-                            <option value="Cashless">
+                            <option disabled={insurance} value="Cashless">
                               Cashless(Insurance)
                             </option>
                           </select>
@@ -821,6 +830,7 @@ const PatientForm = () => {
                             <div className="col-md-6">
                               <div className="form-check">
                                 <input
+                                  required    
                                   onClick={handleInsurance}
                                   className="form-check-input"
                                   type="radio"
@@ -885,6 +895,7 @@ const PatientForm = () => {
                             Ward Number
                           </label>
                           <input
+                            required
                             type="text"
                             name="wardNumber"
                             value={patientData.wardNumber}
@@ -896,6 +907,7 @@ const PatientForm = () => {
                         <div className="col-md-6">
                           <label className="form-label">Select Doctor</label>
                           <select
+                            required
                             type="text"
                             name="selectedDoctor"
                             value={patientData.selectedDoctor}
@@ -923,6 +935,7 @@ const PatientForm = () => {
                             Advance Amount
                           </label>
                           <input
+                            required
                             type="text"
                             name="advanceAmount"
                             value={patientData.advanceAmount}
@@ -938,6 +951,7 @@ const PatientForm = () => {
                           Add Note
                         </label>
                         <textarea
+                          required
                           className="form-control"
                           name="addNote"
                           value={patientData.addNote}

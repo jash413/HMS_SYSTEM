@@ -1,12 +1,22 @@
 const multer = require('multer');
 const Patient = require('../models/Patients');
 
-let lastPatientId = 0; // Initialize the last used patient ID
 
-// Function to generate the next patient ID
-function generatePatientId() {
-  lastPatientId++; // Increment the last used patient ID
-  return `P${lastPatientId.toString().padStart(4, '0')}`; // Generate patient ID with padding
+// Function to generate the next patient ID based on the last patient ID in the database
+async function generatePatientId() {
+  try {
+    const lastPatient = await Patient.findOne().sort({ patient_id: -1 });
+    if (lastPatient) {
+      const lastPatientIdNumber = parseInt(lastPatient.patient_id.substring(1));
+      const newPatientIdNumber = lastPatientIdNumber + 1;
+      return `P${newPatientIdNumber.toString().padStart(4, '0')}`;
+    } else {
+      return 'P0001'; // Initial patient ID
+    }
+  } catch (error) {
+    console.error('Error generating patient ID:', error);
+    throw error; // Throw the error to be handled in the caller function
+  }
 }
 
 // Configure multer for file uploads
@@ -50,14 +60,25 @@ exports.getPatientById = async (req, res) => {
 
 // Controller for creating a new patient with file upload
 exports.createPatient =async (req, res) => {
-  const {  email } = req.body.emailAddress;
   try {
-    // const existingPatient = await Patient.findOne( email );
-    // if (existingPatient) {
-    //   console.log(existingPatient)
-    //   return res.status(400).json({ message: 'Patient already exists' });
-    // }
-    const patientId = generatePatientId(); // Generate a new patient ID
+    const { phoneNumber } = req.body;
+console.log('Received phoneNumber:', phoneNumber);
+
+// Check if a patient with the same phone number already exists
+const existingPatient = await Patient.findOne({ phoneNumber });
+
+console.log('Existing Patient:', existingPatient);
+
+if (existingPatient) {
+  console.log('Patient with the same phone number already exists');
+  return res.status(409).json({ message: 'Patient with the same phone number already exists' });
+}
+    
+
+    const patientId = await generatePatientId(); // Generate a new patient ID
+    if (!patientId) {
+      throw new Error('Error generating patient ID');
+    }
     const newPatient = await Patient.create({
       ...req.body,
       // filesDocumentUpload: req.file.path, // Store the path to the uploaded file

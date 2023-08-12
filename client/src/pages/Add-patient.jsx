@@ -19,8 +19,7 @@ const PatientForm = () => {
     insuranceNumber: "",
     wardNumber: "",
     selectedDoctor: "",
-    advanceAmount: "",
-    filesDocumentUpload: [],
+    advanceAmount: ""
   });
 
   const [insurance, setInsurance] = useState(true);
@@ -41,13 +40,6 @@ const PatientForm = () => {
     }));
   };
 
-  const handleFileChange = (event) => {
-    const files = event.target.files;
-    setPatientData((prevData) => ({
-      ...prevData,
-      filesDocumentUpload: files,
-    }));
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -88,8 +80,7 @@ const PatientForm = () => {
         insuranceNumber: "",
         wardNumber: "",
         selectedDoctor: "",
-        advanceAmount: "",
-        filesDocumentUpload: [],
+        advanceAmount: ""
       });
     } catch (error) {
       toast.error(error.response.data.message);
@@ -648,7 +639,7 @@ const PatientForm = () => {
                     </h6>
                   </div>
                   <div className="card-body">
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} encType="multipart/form-data">
                       <div className="row g-3 align-items-center">
                         <div className="col-md-6">
                           <label htmlFor="firstname" className="form-label">

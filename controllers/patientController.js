@@ -1,4 +1,3 @@
-const multer = require('multer');
 const Patient = require('../models/Patients');
 
 
@@ -18,19 +17,6 @@ async function generatePatientId() {
     throw error; // Throw the error to be handled in the caller function
   }
 }
-
-// Configure multer for file uploads
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, 'uploads/'); // Destination folder for uploaded files
-//   },
-//   filename: function (req, file, cb) {
-//     // Generate a unique filename (you can use a library like uuid)
-//     const uniqueFileName = `${Date.now()}-${file.originalname}`;
-//     cb(null, uniqueFileName);
-//   },
-// });
-// const upload = multer({ storage: storage });
 
 // Controller for getting a list of all patients
 exports.getAllPatients = async (req, res) => {
@@ -79,12 +65,22 @@ if (existingPatient) {
     if (!patientId) {
       throw new Error('Error generating patient ID');
     }
-    const newPatient = await Patient.create({
-      ...req.body,
-      // filesDocumentUpload: req.file.path, // Store the path to the uploaded file
-      patient_id: patientId  
+    upload.single('filesDocumentUpload')(req, res, async function (err) {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error uploading file', error: err.message });
+      }
+      console.log('req.file:', req.file);
+
+      const newPatient = await Patient.create({
+        ...req.body,
+        filesDocumentUpload: req.file ? req.file.path : '', // Store the path to the uploaded file
+        patient_id: patientId,
+      });
+  
+      res.status(201).json(newPatient);
     });
-    res.status(201).json(newPatient);
+  
   } catch (error) {
     res.status(400).json({ message: 'Error creating patient', error: error.message });
     console.error(error)
@@ -118,3 +114,5 @@ exports.deletePatient = async (req, res) => {
 };
 
 
+
+ 

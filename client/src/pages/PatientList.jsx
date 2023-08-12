@@ -575,8 +575,7 @@ function Patientlist() {
                         <th>Date</th>
                         <th>Time</th>
                         <th>Doctor</th>
-                        <th>Progress</th>
-                        <th>Status</th>
+                        <th>Ward-Num</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -587,6 +586,13 @@ function Patientlist() {
                             {patient.firstName} {patient.lastName}
                           </td>
                           <td>{patient.phoneNumber}</td>
+                          <td>{patient.emailAddress}</td>
+                          <td>{patient.admitDate}</td>
+                          <td>{patient.admitTime}</td>
+                          <td>{patient.selectedDoctor}</td>
+                          <td>{patient.wardNumber}</td>
+                          
+                          
                         </tr>
                       ))}
                     </tbody>

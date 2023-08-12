@@ -32,7 +32,7 @@ const patientsRouter = require('./routes/patients');
 // const notificationsRouter = require('./routes/notifications');
 // const reportsRouter = require('./routes/reports');
 // const settingsRouter = require('./routes/settings');
-// const uploadsRouter = require('./routes/uploads');
+const uploadsRouter = require('./routes/uploads');
 // const hospitalRouter = require('./routes/hospital'); // Add hospital route
 
 // app.use(usersRouter);
@@ -45,7 +45,7 @@ app.use(patientsRouter);
 // app.use(notificationsRouter);
 // app.use(reportsRouter);
 // app.use(settingsRouter);
-// app.use(uploadsRouter);
+app.use(uploadsRouter);
 // app.use(hospitalRouter); // Use hospital route
 
 // Error handling middleware

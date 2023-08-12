@@ -87,9 +87,6 @@ const patientSchema = new mongoose.Schema({
   admitTime: {
     type: String,
   },
-  filesDocumentUpload: {
-    type: String, // Store the path to the uploaded file
-  },
   gender: {
     type: String,
     enum: ['Male', 'Female', 'Other'],

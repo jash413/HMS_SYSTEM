@@ -598,7 +598,7 @@ const PatientForm = () => {
                 <span className="fa fa-bars" />
               </button>
               {/* main menu Search*/}
-              <div className="order-0 col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mb-md-0 ">
+              {/* <div className="order-0 col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mb-md-0 ">
                 <div className="input-group flex-nowrap input-group-lg">
                   <input
                     type="search"
@@ -615,7 +615,7 @@ const PatientForm = () => {
                     <i className="fa fa-search" />
                   </button>
                 </div>
-              </div>
+              </div> */}
             </div>
           </nav>
         </div>
@@ -725,7 +725,7 @@ const PatientForm = () => {
                             id="admittime"
                           />
                         </div>
-                        <div className="col-md-6">
+                        {/* <div className="col-md-6">
                           <label
                             htmlFor="formFileMultiple"
                             className="form-label"
@@ -740,7 +740,7 @@ const PatientForm = () => {
                             onChange={handleFileChange}
                             id="formFileMultiple"
                           />
-                        </div>
+                        </div> */}
                         <div className="col-md-6">
                           <label className="form-label">Gender</label>
                           <div className="row">

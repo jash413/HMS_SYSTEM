@@ -591,8 +591,6 @@ function Patientlist() {
                           <td>{patient.admitTime}</td>
                           <td>{patient.selectedDoctor}</td>
                           <td>{patient.wardNumber}</td>
-                          
-                          
                         </tr>
                       ))}
                     </tbody>

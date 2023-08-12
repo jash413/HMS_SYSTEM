@@ -16,7 +16,6 @@ function Patientlist() {
       console.error(error);
     }
   };
-
   return (
     <div id="ihealth-layout" className="theme-tradewind">
       {/* sidebar */}

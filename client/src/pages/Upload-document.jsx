@@ -52,10 +52,10 @@ function UploadDocument() {
           },
         }
       );
-      console.log(response.data);
-      if (response.status === 201) {
+            if (response.status === 201) {
         toast.success("File uploaded successfully");
       }
+      console.log(response.data);
     } catch (error) {
       console.error(error);
     }

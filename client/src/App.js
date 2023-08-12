@@ -1,9 +1,11 @@
 // import Dashboard from "./pages/Dashboard";
-import PatientForm from "./pages/Add-patient";
+// import PatientForm from "./pages/Add-patient";
+import Patientlist from "./pages/PatientList";
 function App() {
   return (
     <div>
-      <PatientForm/>
+      {/* <PatientForm/> */}
+      <Patientlist/>
     </div>
   );
 }

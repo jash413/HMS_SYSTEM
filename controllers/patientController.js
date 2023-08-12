@@ -65,21 +65,13 @@ if (existingPatient) {
     if (!patientId) {
       throw new Error('Error generating patient ID');
     }
-    upload.single('filesDocumentUpload')(req, res, async function (err) {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ message: 'Error uploading file', error: err.message });
-      }
-      console.log('req.file:', req.file);
 
       const newPatient = await Patient.create({
         ...req.body,
-        filesDocumentUpload: req.file ? req.file.path : '', // Store the path to the uploaded file
         patient_id: patientId,
       });
   
       res.status(201).json(newPatient);
-    });
   
   } catch (error) {
     res.status(400).json({ message: 'Error creating patient', error: error.message });

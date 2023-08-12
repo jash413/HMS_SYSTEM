@@ -4,8 +4,7 @@ import Patientlist from "./pages/PatientList";
 function App() {
   return (
     <div>
-
-      <Patientlist/>
+       <Patientlist/>
     </div>
   );
 }

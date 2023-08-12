@@ -639,7 +639,7 @@ const PatientForm = () => {
                     </h6>
                   </div>
                   <div className="card-body">
-                    <form onSubmit={handleSubmit} encType="multipart/form-data">
+                    <form onSubmit={handleSubmit}>
                       <div className="row g-3 align-items-center">
                         <div className="col-md-6">
                           <label htmlFor="firstname" className="form-label">

@@ -3,6 +3,7 @@
 // import Patientlist from "./pages/PatientList";
 // import Labs from "./pages/Labs";
 // import Patientlist from "./pages/PatientList";
+import Labs from "./pages/Labs";
 // import UploadDocument from "./pages/Upload-document";
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       {/* <Labs/> */}
       {/* <PatientForm /> */}
       {/* <Patientlist /> */}
+      <Labs/>
     </div>
   );
 }

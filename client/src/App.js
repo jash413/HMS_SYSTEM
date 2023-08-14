@@ -10,7 +10,6 @@ function App() {
       {/* <Labs/> */}
       {/* <PatientForm /> */}
       {/* <Patientlist /> */}
-      <Labs/>
     </div>
   );
 }

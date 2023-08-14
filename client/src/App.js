@@ -1,16 +1,16 @@
 // import Dashboard from "./pages/Dashboard";
 // import PatientForm from "./pages/Add-patient";
 // import Patientlist from "./pages/PatientList";
-import Labs from "./pages/Labs";
-import Patientlist from "./pages/PatientList";
+// import Labs from "./pages/Labs";
+// import Patientlist from "./pages/PatientList";
 // import UploadDocument from "./pages/Upload-document";
 function App() {
   return (
     <div>
       {/* <UploadDocument /> */}
-      <Labs/>
+      {/* <Labs/> */}
       {/* <PatientForm /> */}
-      <Patientlist />
+      {/* <Patientlist /> */}
     </div>
   );
 }

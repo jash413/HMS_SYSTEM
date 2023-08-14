@@ -1,11 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import $ from "jquery";
+import "datatables.net";
 function Patientlist() {
+  const tableRef = useRef(null);
   const [patients, setPatients] = useState([]);
 
   useEffect(() => {
     // Fetch the list of patients from the backend
     fetchPatients();
+    setTimeout(() => {
+      $(tableRef.current).DataTable();
+    }, 500);
   }, []);
 
   const fetchPatients = async () => {
@@ -564,6 +570,7 @@ function Patientlist() {
                     id="patient-table"
                     className="table table-hover align-middle mb-0"
                     style={{ width: "100%" }}
+                    ref={tableRef}
                   >
                     <thead>
                       <tr>
@@ -590,8 +597,6 @@ function Patientlist() {
                           <td>{patient.admitTime}</td>
                           <td>{patient.selectedDoctor}</td>
                           <td>{patient.wardNumber}</td>
-                          
-                          
                         </tr>
                       ))}
                     </tbody>
@@ -883,6 +888,7 @@ function Patientlist() {
         </div>
       </div>
     </div>
+    
   );
 }
 

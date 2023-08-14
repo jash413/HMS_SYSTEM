@@ -33,7 +33,8 @@ const patientsRouter = require('./routes/patients');
 // const reportsRouter = require('./routes/reports');
 // const settingsRouter = require('./routes/settings');
 const uploadsRouter = require('./routes/uploads');
-// const hospitalRouter = require('./routes/hospital'); // Add hospital route
+const pdfRouter = require('./routes/pdf');
+const hospitalRouter = require('./routes/hospital'); // Add hospital route
 
 // app.use(usersRouter);
 app.use(patientsRouter);
@@ -46,7 +47,8 @@ app.use(patientsRouter);
 // app.use(reportsRouter);
 // app.use(settingsRouter);
 app.use(uploadsRouter);
-// app.use(hospitalRouter); // Use hospital route
+app.use(pdfRouter);
+app.use(hospitalRouter); // Use hospital route
 
 // Error handling middleware
 app.use((err, req, res, next) => {

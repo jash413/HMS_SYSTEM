@@ -6,7 +6,7 @@
 function App() {
   return (
     <div>
-      {/* <UploadDocument /> */}
+      {/* <UploadDocument />1 */}
       {/* <Labs/> */}
       {/* <PatientForm /> */}
       {/* <Patientlist /> */}

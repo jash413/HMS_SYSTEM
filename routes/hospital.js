@@ -7,7 +7,7 @@ require('dotenv').config();
 const checkApiKey = (req, res, next) => {
   const providedApiKey = req.query.api_key;
   const expectedApiKey = process.env.API_KEY; // Replace with your actual API key
-
+  
   if (providedApiKey === expectedApiKey) {
     next(); // API key is valid, proceed to the next middleware/route handler
   } else {

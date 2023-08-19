@@ -302,13 +302,12 @@ function DoctorAdd() {
                           </div>
                         </div>
                       </div>
-                      <div className="col-md-12">
-                        <label htmlFor="addnote" className="form-label">Add Note</label>
-                        <textarea className="form-control" id="addnote" rows={3} defaultValue={""} /> 
-                      </div>
+                      <div>
+                        <h6 className="mb-0 fw-bold">Payment Information</h6></div>
                       <div className="row g-3 align-items-center">
                       <div className="col-md-6">
-                      <h6 className="mb-0 fw-bold ">Personal Information</h6> <br />
+                        
+                     <div>
                         <label className="form-label">Doctor Payment Option</label>
                         <select className="form-select" aria-label="Default select example">
                           <option selected>Payment Option</option>
@@ -316,6 +315,7 @@ function DoctorAdd() {
                           <option value={2}>Debit Card</option>
                           <option value={3}>Case Money</option>
                         </select>
+                        </div>
                       </div>
                       <div className="col-md-6">
                         <label htmlFor="roominfo" className="form-label">Cabin Number</label>
@@ -326,37 +326,29 @@ function DoctorAdd() {
                         <input type="text" className="form-control" id="speciality" required />
                       </div>
                       <div className="col-md-6">
-                        <label className="form-label">I-Health Virtual call  Attend?</label>
+                       
                         <div className="row">
                           <div className="col-md-6">
                             <div className="form-check">
-                              <input className="form-check-input" type="radio" name="exampleRadios" id="exampleRadios111" defaultValue="option1" defaultChecked />
-                              <label className="form-check-label" htmlFor="exampleRadios111">
-                                Yes
-                              </label>
+                              
+                              
                             </div>
                           </div>
                           <div className="col-md-6">
                             <div className="form-check">
-                              <input className="form-check-input" type="radio" name="exampleRadios" id="exampleRadios222" defaultValue="option2" />
-                              <label className="form-check-label" htmlFor="exampleRadios222">
-                                No
-                              </label>
+                             
+                             
                             </div>
                           </div>
                         </div>
                       </div>
-                      <div className="col-md-12">
-                        <label htmlFor="speciality" className="form-label">Social link</label>
-                        <div className="row g-3 row-cols-1 row-cols-lg-3">
-                          <div className="col"><input type="text" className="form-control" id="speciality" required placeholder="Facebook Link" /></div>
-                          <div className="col"><input type="text" className="form-control" id="speciality" required placeholder="Instagram Link" /></div>
-                          <div className="col"><input type="text" className="form-control" id="speciality" required placeholder="linkedin Link" /></div>
+                      <div>
+                        <h6 className="mb-0 fw-bold ">Authentication Information</h6>
                         </div>
-                      </div>
                       <div className="row g-3 align-items-center">
                       <div className="col-md-6">
-                      <h6 className="mb-0 fw-bold ">Authentication Information</h6> <br/>
+                       
+                       
                         <label htmlFor="user" className="form-label">User Name</label>
                         <input type="text" className="form-control" id="user" required />
                       </div>

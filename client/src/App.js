@@ -3,7 +3,8 @@
 // import Patientlist from "./pages/PatientList";
 // import Labs from "./pages/Labs";
 // import UploadDocument from "./pages/Upload-document";
-import AdmissionComponent from "./pages/Admission";
+// import AdmissionComponent from "./pages/Admission";
+import Ward from "./pages/Ward";
 function App() {
   return (
     <div>
@@ -11,7 +12,8 @@ function App() {
       {/* <Labs/> */}
       {/* <PatientForm /> */}
       {/* <Patientlist /> */}
-      <AdmissionComponent />
+      {/* <AdmissionComponent /> */}
+      <Ward />
     </div>
   );
 }

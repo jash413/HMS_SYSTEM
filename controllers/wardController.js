@@ -75,11 +75,18 @@ exports.updateWard = async (req, res) => {
 // Controller for deleting a ward by wardNumber
 exports.deleteWard = async (req, res) => {
   try {
-    const deletedWard = await Ward.findOneAndDelete({ wardNumber: req.params.wardNumber });
+    const ward = await Ward.find({ wardNumber: req.query.wardNumber });
+    console.log(ward);
+    if (ward[0].status === 'Occupied') {
+      return res.status(404).json({ message: 'Ward is occupied' });
+    }else{
+    const deletedWard = await Ward.findOneAndDelete(ward.wardNumber);
+    console.log(req.query.wardNumber);
     if (!deletedWard) {
       return res.status(404).json({ message: 'Ward not found' });
     }
     res.status(200).json({ message: 'Ward deleted successfully' });
+  }
   } catch (error) {
     res.status(400).json({ message: 'Error deleting ward', error: error.message });
   }

@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
-require('dotenv').config();
 
-
-// Set up MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect("mongodb+srv://jashmistry4444:SVjlOloq4CX6aNVE@cluster0.fran9pm.mongodb.net/hospital_management_system", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

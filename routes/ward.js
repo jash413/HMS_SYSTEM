@@ -9,6 +9,6 @@ router.patch('/api/ward/:wardNumber', wardController.updateWardStatus);
 router.get('/:wardNumber', wardController.getWardByNumber);
 router.post('/api/ward', wardController.createWard);
 router.put('/:wardNumber', wardController.updateWard);
-router.delete('/:wardNumber', wardController.deleteWard);
+router.delete('/api/ward', wardController.deleteWard);
 
 module.exports = router;

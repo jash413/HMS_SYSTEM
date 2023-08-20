@@ -3,7 +3,7 @@ import React from 'react'
 function DoctorList() {
   return (
     <div id="ihealth-layout" className="theme-tradewind">
-    {/* sidebar */}
+   
     
     {/* main body area */}
     <div className="main px-lg-4 px-md-4">

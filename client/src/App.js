@@ -5,6 +5,7 @@
 // import OTScheduleForm from "./pages/OTScheduleForm";
 // import BookingForm from "./pages/BookingForm";
 import DoctorAdd from "./pages/DoctorAdd";
+// import DoctorList from "./pages/DoctorList";
 // import UploadDocument from "./pages/Upload-document";
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       {/* <OTScheduleForm /> */}
       {/* <BookingForm/> */}
       <DoctorAdd/>
+      {/* <DoctorList/> */}
       {/* <PatientForm /> */}
       {/* <Patientlist /> */}
     </div>

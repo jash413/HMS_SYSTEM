@@ -5,9 +5,9 @@
 // import OTScheduleForm from "./pages/OTScheduleForm";
 // import BookingForm from "./pages/BookingForm";
 // import DoctorAdd from "./pages/DoctorAdd";
-import DoctorList from "./pages/DoctorList";
+// import DoctorList from "./pages/DoctorList";
 // import UploadDocument from "./pages/Upload-document";
-// import AdmissionComponent from "./pages/Admission";
+// import AdmissionComponent from "./pages/Admission";/
 import Ward from "./pages/Ward";
 function App() {
   return (
@@ -18,7 +18,7 @@ function App() {
       {/* <OTScheduleForm /> */}
       {/* <BookingForm/> */}
       {/* <DoctorAdd/> */}
-      <DoctorList/>
+      {/* <DoctorList/> */}
       {/* <PatientForm /> */}
       {/* <Patientlist /> */}
       {/* <AdmissionComponent /> */}

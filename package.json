@@ -21,7 +21,8 @@
     "jsonwebtoken": "^9.0.1",
     "mongoose": "^7.4.0",
     "multer": "^1.4.5-lts.1",
-    "pdfjs-dist": "^3.9.179"
+    "pdfjs-dist": "^3.9.179",
+    "react-select": "^5.7.4"
   },
   "devDependencies": {
     "concurrently": "^8.2.0"

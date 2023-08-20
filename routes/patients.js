@@ -5,6 +5,10 @@ const patientController = require('../controllers/patientController');
 // Route to get all patients
 router.get('/api/patients', patientController.getAllPatients);
 
+// GET /api/patients/search endpoint for searching patients
+router.get('/api/patients/search', patientController.searchPatients);
+
+
 // Route to create a new patient
 router.post('/api/patients', patientController.createPatient);
 
@@ -16,5 +20,6 @@ router.patch('/api/patients/:id', patientController.updatePatient);
 
 // Route to delete a patient by id
 router.delete('/api/patients/:id', patientController.deletePatient);
+
 
 module.exports = router;

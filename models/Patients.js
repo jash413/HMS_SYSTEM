@@ -62,11 +62,6 @@ const db = require('./db');
 // module.exports = Patient;
 
 const patientSchema = new mongoose.Schema({
-    hospital_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Hospital',
-    required: true,
-  },
   patient_id: {
     type: String,
     unique: true,
@@ -117,6 +112,10 @@ const patientSchema = new mongoose.Schema({
   advanceAmount: {
     type: Number,
   },
+  admitted: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 const Patient = mongoose.model('Patient', patientSchema);

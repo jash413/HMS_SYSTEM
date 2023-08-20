@@ -28,6 +28,25 @@ exports.getAllPatients = async (req, res) => {
   }
 };
 
+
+// Controller for searching patients based on search query
+exports.searchPatients = async (req, res) => {
+  try {
+    const name = req.query.name; // Get the name from the query parameter
+    const patients = await Patient.find({
+      $or: [
+        { firstName: { $regex: name, $options: 'i' } }, // Case-insensitive search for first name
+        { lastName: { $regex: name, $options: 'i' } }   // Case-insensitive search for last name
+      ]
+    });
+    res.status(200).json(patients);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching patients', error: error.message });
+  }
+  };
+
+
+
 // Controller for getting a specific patient by ID
 exports.getPatientById = async (req, res) => {
   try {
@@ -40,7 +59,7 @@ exports.getPatientById = async (req, res) => {
     res.status(500).json({ message: 'Error fetching patient', error: error.message });
   }
 };
-
+ 
 
 
 
@@ -48,12 +67,10 @@ exports.getPatientById = async (req, res) => {
 exports.createPatient =async (req, res) => {
   try {
     const { phoneNumber } = req.body;
-console.log('Received phoneNumber:', phoneNumber);
 
 // Check if a patient with the same phone number already exists
 const existingPatient = await Patient.findOne({ phoneNumber });
 
-console.log('Existing Patient:', existingPatient);
 
 if (existingPatient) {
   console.log('Patient with the same phone number already exists');

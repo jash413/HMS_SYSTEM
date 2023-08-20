@@ -35,10 +35,12 @@ const doctorsRouter = require('./routes/doctors');
 const uploadsRouter = require('./routes/uploads');
 const pdfRouter = require('./routes/pdf');
 // const hospitalRouter = require('./routes/hospital'); // Add hospital route
+const wardRouter = require('./routes/ward');
 
 // app.use(usersRouter);
 app.use(patientsRouter);
 app.use(doctorsRouter);
+app.use(wardRouter);
 // app.use(appointmentsRouter);
 // app.use(billingRouter);
 // app.use(departmentsRouter);

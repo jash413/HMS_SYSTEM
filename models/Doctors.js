@@ -3,28 +3,36 @@ const db = require('./db');
 
 // Define the Doctor schema
 const doctorSchema = new mongoose.Schema({
-  hospital_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Hospital',
-    required: true,
-  },
+  // hospital_id: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'Hospital',
+  //   required: true,
+  // },
   doctor_id: {
-    type: Number,
+    type: String,
     unique: true,
+    required: false,
+  },
+  // department_id: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'Department',
+  
+  // },
+  last_name: {
+    type: String,
     required: true,
   },
-  department_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Department',
+  first_name: {
+    type: String,
     required: true,
   },
-  doctor_name: {
+  gender: {
     type: String,
     required: true,
   },
   specialization: {
     type: String,
-    required: true,
+    required: false,
   },
   email: {
     type: String,
@@ -35,6 +43,31 @@ const doctorSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  join_date: {
+    type: String,
+    required: true,
+  },
+  pass: {
+    type: String,
+    required: true,
+  },
+  confirmpass: {
+    type: String,
+    required: true,
+  },
+  cabin: {
+    type: String,
+    required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+  },
+  access: {
+    type: String,
+    required: true,
+  }
+ 
 }, {
   timestamps: true, // Adds createdAt and updatedAt fields
 });
@@ -43,3 +76,4 @@ const doctorSchema = new mongoose.Schema({
 const Doctor = mongoose.model('Doctor', doctorSchema);
 
 module.exports = Doctor;
+   

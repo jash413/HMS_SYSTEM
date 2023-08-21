@@ -8,7 +8,7 @@ const wardSchema = new mongoose.Schema({
   },
   type: { 
     type: String,
-    enum: ['General', 'Semi-delux', 'Delux'],
+    enum: ['General', 'Semi-deluxe', 'Deluxe'],
     required: true,
   },
   status: {

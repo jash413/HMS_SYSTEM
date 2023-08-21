@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const wardSchema = new mongoose.Schema({
+  patient: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Patient',
+    default: null,
+  },
   wardNumber: {
     type: String,
     required: true,
@@ -8,14 +13,14 @@ const wardSchema = new mongoose.Schema({
   },
   type: { 
     type: String,
-    enum: ['General', 'Semi-delux', 'Delux'],
+    enum: ['General', 'Semi-deluxe', 'Deluxe'],
     required: true,
   },
   status: {
     type: String,
     enum: ['Vacant', 'Occupied', 'Blocked'],
     default: 'Vacant',
-  },
+  }
 });
 
 const Ward = mongoose.model('Ward', wardSchema);

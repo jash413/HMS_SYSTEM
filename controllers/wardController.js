@@ -1,4 +1,5 @@
-const Ward = require('../models/Ward');
+const { json } = require("body-parser");
+const Ward = require("../models/Ward");
 
 // Controller for getting a list of all wards
 exports.getAllWards = async (req, res) => {
@@ -6,7 +7,9 @@ exports.getAllWards = async (req, res) => {
     const wards = await Ward.find();
     res.status(200).json(wards);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching wards', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching wards", error: error.message });
   }
 };
 
@@ -15,33 +18,34 @@ exports.getWardByNumber = async (req, res) => {
   try {
     const ward = await Ward.findOne({ wardNumber: req.params.wardNumber });
     if (!ward) {
-      return res.status(404).json({ message: 'Ward not found' });
+      return res.status(404).json({ message: "Ward not found" });
     }
     res.status(200).json(ward);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching ward', error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching ward", error: error.message });
   }
 };
 
 // Controller for updating the status of a ward by wardNumber
 exports.updateWardStatus = async (req, res) => {
-  const { wardNumber } = req.params;
-  const { status } = req.body;
-
   try {
     const updatedWard = await Ward.findOneAndUpdate(
-      { wardNumber },
-      { status },
+      { wardNumber: req.params.wardNumber },
+      { status: req.body.status, patient: req.body.patient },
       { new: true }
     );
 
     if (!updatedWard) {
-      return res.status(404).json({ message: 'Ward not found' });
+      return res.status(404).json({ message: "Ward not found" });
     }
 
     res.status(200).json(updatedWard);
   } catch (error) {
-    res.status(400).json({ message: 'Error updating ward status', error: error.message });
+    res
+      .status(400)
+      .json({ message: "Error updating ward", error: error.message });
   }
 };
 
@@ -51,7 +55,9 @@ exports.createWard = async (req, res) => {
     const newWard = await Ward.create(req.body);
     res.status(201).json(newWard);
   } catch (error) {
-    res.status(400).json({ message: 'Error creating ward', error: error.message });
+    res
+      .status(400)
+      .json({ message: "Error creating ward", error: error.message });
   }
 };
 
@@ -64,31 +70,30 @@ exports.updateWard = async (req, res) => {
       { new: true }
     );
     if (!updatedWard) {
-      return res.status(404).json({ message: 'Ward not found' });
+      return res.status(404).json({ message: "Ward not found" });
     }
     res.status(200).json(updatedWard);
   } catch (error) {
-    res.status(400).json({ message: 'Error updating ward', error: error.message });
+    res
+      .status(400)
+      .json({ message: "Error updating ward", error: error.message });
   }
 };
 
 // Controller for deleting a ward by wardNumber
 exports.deleteWard = async (req, res) => {
   try {
-    const ward = await Ward.find({ wardNumber: req.query.wardNumber });
-    console.log(ward);
-    if (ward[0].status === 'Occupied') {
-      return res.status(404).json({ message: 'Ward is occupied' });
-    }else{
-    const deletedWard = await Ward.findOneAndDelete(ward.wardNumber);
+    const deletedWard = await Ward.findOneAndDelete({
+      wardNumber: req.query.wardNumber,
+    });
     console.log(req.query.wardNumber);
     if (!deletedWard) {
-      return res.status(404).json({ message: 'Ward not found' });
+      return res.status(404).json({ message: "Ward not found" });
     }
-    res.status(200).json({ message: 'Ward deleted successfully' });
-  }
+    res.status(200).json({ message: "Ward deleted successfully" });
   } catch (error) {
-    res.status(400).json({ message: 'Error deleting ward', error: error.message });
+    res
+      .status(400)
+      .json({ message: "Error deleting ward", error: error.message });
   }
 };
-

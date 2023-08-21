@@ -7,8 +7,9 @@
 // import DoctorAdd from "./pages/DoctorAdd";
 // import DoctorList from "./pages/DoctorList";
 // import UploadDocument from "./pages/Upload-document";
-// import AdmissionComponent from "./pages/Admission";/
-import Ward from "./pages/Ward";
+// import AdmissionComponent from "./pages/Admission";
+// import Ward from "./pages/Ward";
+import DischargeForm from "./pages/Discharge";
 function App() {
   return (
     <div>
@@ -22,7 +23,8 @@ function App() {
       {/* <PatientForm /> */}
       {/* <Patientlist /> */}
       {/* <AdmissionComponent /> */}
-      <Ward />
+      {/* <Ward /> */}
+      <DischargeForm />
     </div>
   );
 }

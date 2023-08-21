@@ -25,12 +25,13 @@ const AdmissionForm = () => {
     });
   }, []);
 
-  const wards=()=>{
+  const wards = () => {
     axios.get("http://localhost:3100/api/ward").then((response) => {
       const allWards = response.data;
       const vacantWards = allWards.filter((wards) => wards.status === "Vacant");
       setVacantWards(vacantWards);
-  })};
+    });
+  };
 
   const loadOptions = (inputValue) => {
     return axios
@@ -80,15 +81,15 @@ const AdmissionForm = () => {
         "http://localhost:3100/api/admission",
         formData
       );
-      // Update the patient's admission status
+      // Update the patient's admission status & ward number
       await axios.patch(
         `http://localhost:3100/api/patients/${formData.patient}`,
-        { admitted: true }
+        { admitted: true, ward: `${formData.wardNumber}` }
       );
-      // Update the selected ward's status to "Occupied"
+      // Update the selected ward's status to "Occupied" and associate the patient
       await axios.patch(
         `http://localhost:3100/api/ward/${formData.wardNumber}`,
-        { status: "Occupied" }
+        { status: "Occupied", patient: formData.patient }
       );
       console.log(response.data);
       if (response.status === 201) {
@@ -110,68 +111,9 @@ const AdmissionForm = () => {
       console.error(error);
     }
   };
+  
 
   return (
-    // <div>
-    //   <h2>Admission Form</h2>
-    //   {/* Display selected patient details */}
-    //   {selectedPatientDetails && (
-    //       <div>
-    //         <p>Name: {selectedPatientDetails.firstName} {selectedPatientDetails.lastName}</p>
-    //         {/* <p>Age: {selectedPatientDetails.age}</p> */}
-    //         {/* Display other patient details */}
-    //       </div>
-    //     )}
-    //   <form onSubmit={handleFormSubmit}>
-    //     <div>
-    //       <label>Select Patient:</label>
-    //       <AsyncSelect
-    //         value={formData.patient.value}
-    //         onChange={handleSelectChange}
-    //         loadOptions={loadOptions}
-    //         isSearchable
-    //         placeholder="Search for a patient..."
-    //         noOptionsMessage={() => null}
-    //       />
-    //     </div>
-    //     <div>
-    //       <label>Admission Date:</label>
-    //       <input
-    //         type="date"
-    //         name="admissionDate"
-    //         value={formData.admissionDate}
-    //         onChange={handleInputChange}
-    //       />
-    //     </div>
-    //     <div>
-    //       <label>Ward Number:</label>
-    //       <input
-    //         type="text"
-    //         name="wardNumber"
-    //         value={formData.wardNumber}
-    //         onChange={handleInputChange}
-    //       />
-    //     </div>
-    //     <div>
-    //       <label>Doctor:</label>
-    //       <input
-    //         type="text"
-    //         name="doctor"
-    //         value={formData.doctor}
-    //         onChange={handleInputChange}
-    //       />
-    //     </div>
-    //     <div>
-    //       <label>Notes:</label>
-    //       <textarea
-    //         name="notes"
-    //         value={formData.notes}
-    //         onChange={handleInputChange}
-    //       />
-    //     </div>
-    //     <button type="submit">Create Admission</button>
-    //   </form>
-    // </div>
     <div id="ihealth-layout" className="theme-tradewind">
       {/* main body area */}
       <div className="main px-lg-4 px-md-4">

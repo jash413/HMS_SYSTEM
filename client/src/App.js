@@ -8,8 +8,8 @@
 // import DoctorList from "./pages/DoctorList";
 // import UploadDocument from "./pages/Upload-document";
 // import AdmissionComponent from "./pages/Admission";
-// import Ward from "./pages/Ward";
-import DischargeForm from "./pages/Discharge";
+import Ward from "./pages/Ward";
+// import DischargeForm from "./pages/Discharge";
 function App() {
   return (
     <div>
@@ -23,8 +23,8 @@ function App() {
       {/* <PatientForm /> */}
       {/* <Patientlist /> */}
       {/* <AdmissionComponent /> */}
-      {/* <Ward /> */}
-      <DischargeForm />
+      <Ward />
+      {/* <DischargeForm /> */}
     </div>
   );
 }

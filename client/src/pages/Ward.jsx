@@ -6,6 +6,8 @@ import "react-toastify/dist/ReactToastify.css"; // Import the CSS
 
 const Ward = () => {
   const [wards, setWards] = useState([]);
+  const [patientDetails, setPatientDetails] = useState({});
+  const [patient, setPatient] = useState([]);
   const [formData, setFormData] = useState({
     newWard: {
       wardNumber: "",
@@ -22,6 +24,50 @@ const Ward = () => {
       setWards(response.data);
     });
   }, []);
+
+  const PatientDetailsComponent = ({ ward }) => {
+    const [patientDetails, setPatientDetails] = useState({});
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+      if (ward.patient) {
+        fetchPatientDetails(ward.patient);
+      }
+    }, [ward.patient]);
+
+    const fetchPatientDetails = async (patientId) => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `http://localhost:3100/api/patients/${patientId}`
+        );
+        setPatientDetails(response.data);
+      } catch (error) {
+        console.error("Error fetching patient details:", error);
+      }finally {
+        setLoading(false);
+      }
+    };
+
+    if (!ward.patient) {
+      return null;
+    }
+
+    if (loading) {
+      return <p>Loading patient details...</p>;
+    }
+
+    return (
+      <div>
+        <p><b>Patient Name:</b> {patientDetails.firstName} {patientDetails.lastName}</p>
+        <p><b>Patient Gender:</b> {patientDetails.gender}</p>
+        <p><b>Patient Doctor:</b> {patientDetails.selectedDoctor}</p>
+        <p><b>Patient Phone Number:</b> {patientDetails.phoneNumber}</p>
+        {/* <p><b>Admission Date:</b> {patientDetails.admitDate}</p> */}
+        {/* Add more patient details here */}
+      </div>
+    );
+  };
 
   const handleAddWard = async (e) => {
     e.preventDefault();
@@ -49,13 +95,16 @@ const Ward = () => {
     });
   };
 
+
   const fetchWards = async () => {
-    const response = await axios.get("http://localhost:3100/api/ward");
-  const sortedWards = response.data.sort((a, b) =>
-    a.wardNumber.localeCompare(b.wardNumber)
-  );
-  setWards(sortedWards);
+    try {
+      const response = await axios.get("http://localhost:3100/api/ward");
+      setWards(response.data);
+    } catch (error) {
+      console.error("Error fetching ward data:", error);
+    }
   };
+
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -79,7 +128,7 @@ const Ward = () => {
   const handleAddWardRemove = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.delete(`http://localhost:3100/api/ward?wardNumber=${wardData.wardNumber}`);
+      await axios.delete(`http://localhost:3100/api/ward?wardNumber=${wardData.wardNumber}`);
       fetchWards();
       toast.success("Room removed successfully");
     } catch (error) {
@@ -101,7 +150,7 @@ const Ward = () => {
             <div className="card-body">
               <div className="room_book">
                 <div className="row row-cols-2 row-cols-sm-4 row-cols-md-6 row-cols-lg-6 g-3">
-                  {wards.map((ward) => (
+                {wards.map((ward) => (
                     <div className="room col" key={ward.wardNumber}>
                       <label htmlFor={ward.wardNumber}>
                         <PopoverComponent
@@ -115,15 +164,10 @@ const Ward = () => {
                           }
                           content={
                             <>
-                              <p>
-                                <b>Room No:</b> {ward.wardNumber}
-                              </p>
-                              <p>
-                                <b>Room Type:</b> {ward.type}
-                              </p>
-                              <p>
-                                <b>Room Status:</b> {ward.status}
-                              </p>
+                              <p><b>Room No:</b> {ward.wardNumber}</p>
+                              <p><b>Room Type:</b> {ward.type}</p>
+                              <p><b>Room Status:</b> {ward.status}</p>
+                              <PatientDetailsComponent ward={ward} />
                             </>
                           }
                         />
@@ -205,11 +249,11 @@ const Ward = () => {
                             className="form-select"
                           >
                             <option value="">Select a ward number</option>
-                            {wards.map((ward) => (
+                            {wards.map((ward) => (ward.status==="Vacant")?(
                               <option key={ward._id} value={ward.wardNumber}>
                                 {ward.wardNumber}-{ward.type}
                               </option>
-                            ))}
+                            ):null)}
                           </select>
                         </div>
                 </div>

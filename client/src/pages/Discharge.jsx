@@ -1,37 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import AsyncSelect from "react-select/async";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS
 
-const AdmissionForm = () => {
+const DischargeForm = () => {
   const [formData, setFormData] = useState({
     patient: "",
-    admissionDate: new Date().toISOString().split("T")[0],
-    wardNumber: "",
+    dischargeDate: new Date().toISOString().split("T")[0],
+    ward: "",
     notes: "",
-    admissionTime: "",
+    dischargeTime: "",
   });
 
   const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
-  const [vacantWards, setVacantWards] = useState([]);
-
-  useEffect(() => {
-    // Fetch the list of vacant wards from the API
-    axios.get("http://localhost:3100/api/ward").then((response) => {
-      const allWards = response.data;
-      const vacantWards = allWards.filter((wards) => wards.status === "Vacant");
-      setVacantWards(vacantWards);
-    });
-  }, []);
-
-  const wards = () => {
-    axios.get("http://localhost:3100/api/ward").then((response) => {
-      const allWards = response.data;
-      const vacantWards = allWards.filter((wards) => wards.status === "Vacant");
-      setVacantWards(vacantWards);
-    });
-  };
 
   const loadOptions = (inputValue) => {
     return axios
@@ -39,7 +21,7 @@ const AdmissionForm = () => {
       .then((response) => {
         const allPatients = response.data;
         const admittedPatients = allPatients.filter(
-          (patient) => patient.admitted === false
+          (patient) => patient.admitted === true
         );
         console.log(admittedPatients);
         return admittedPatients.map((patient) => ({
@@ -71,39 +53,40 @@ const AdmissionForm = () => {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+      ward: selectedPatientDetails.ward,
     }));
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3100/api/admission",
-        formData
-      );
       // Update the patient's admission status & ward number
-      await axios.patch(
+      const response = await axios.patch(
         `http://localhost:3100/api/patients/${formData.patient}`,
-        { admitted: true, ward: `${formData.wardNumber}` }
+        {
+          admitted: false,
+          ward: null,
+          dischargeDate: formData.dischargeDate,
+          dischargeTime: formData.dischargeTime,
+        }
       );
       // Update the selected ward's status to "Occupied" and associate the patient
       await axios.patch(
-        `http://localhost:3100/api/ward/${formData.wardNumber}`,
-        { status: "Occupied", patient: formData.patient }
+        `http://localhost:3100/api/ward/${selectedPatientDetails.ward}`,
+        { status: "Vacant", patient: null }
       );
-      console.log(response.data);
+      console.log(selectedPatientDetails.ward);
       if (response.status === 201) {
-        toast.success("Patient admitted successfully");
+        toast.success("Patient discharged successfully");
       }
       // Clear form fields
       setFormData({
         patient: "",
-        admissionDate: new Date().toISOString().split("T")[0],
-        wardNumber: "",
+        dischargeDate: new Date().toISOString().split("T")[0],
+        ward: "",
         notes: "",
-        admissionTime: "",
+        dischargeTime: "",
       });
-      wards();
       setSelectedPatientDetails(null);
     } catch (error) {
       toast.error(error.response.data.message);
@@ -111,7 +94,6 @@ const AdmissionForm = () => {
       console.error(error);
     }
   };
-  
 
   return (
     <div id="ihealth-layout" className="theme-tradewind">
@@ -123,7 +105,7 @@ const AdmissionForm = () => {
             <div className="row align-items-center">
               <div className="border-0 mb-4">
                 <div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                  <h3 className="fw-bold mb-0">Admission</h3>
+                  <h3 className="fw-bold mb-0">Discharge</h3>
                 </div>
               </div>
             </div>{" "}
@@ -176,7 +158,7 @@ const AdmissionForm = () => {
                 <div className="card mb-3">
                   <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
                     <h5 className="mb-0 fw-bold ">
-                      Fill in the form below to admit a patient
+                      Fill in the form below to discharge a patient
                     </h5>
                   </div>
                   <div className="card-body">
@@ -193,7 +175,7 @@ const AdmissionForm = () => {
                             noOptionsMessage={() => null}
                           />
                         </div>
-                        <div className="col-md-6">
+                        {/* <div className="col-md-6">
                           <label htmlFor="admittime" className="form-label">
                             Ward Number
                           </label>
@@ -211,16 +193,16 @@ const AdmissionForm = () => {
                               </option>
                             ))}
                           </select>
-                        </div>
+                        </div> */}
                         <div className="col-md-6">
                           <label htmlFor="admitdate" className="form-label">
-                            Admit Date
+                            Discharge Date
                           </label>
                           <br />
                           <input
                             required
                             type="date"
-                            name="admissionDate"
+                            name="dischargeDate"
                             value={formData.admissionDate}
                             onChange={handleInputChange}
                             className="form-control"
@@ -229,13 +211,13 @@ const AdmissionForm = () => {
 
                         <div className="col-md-6">
                           <label htmlFor="admittime" className="form-label">
-                            Admit Time
+                            Discharge Time
                           </label>
                           <input
                             required
                             type="time"
-                            name="admissionTime"
-                            value={formData.admissionTime}
+                            name="dischargeTime"
+                            value={formData.dischargeTime}
                             onChange={handleInputChange}
                             className="form-control"
                             id="admittime"
@@ -273,4 +255,4 @@ const AdmissionForm = () => {
   );
 };
 
-export default AdmissionForm;
+export default DischargeForm;

@@ -87,6 +87,12 @@ const patientSchema = new mongoose.Schema({
   admitTime: {
     type: String,
   },
+  dischargeDate: {
+    type: Date,
+  },
+  dischargeTime: {
+    type: String,
+  },
   gender: {
     type: String,
     enum: ['Male', 'Female', 'Other'],
@@ -103,9 +109,6 @@ const patientSchema = new mongoose.Schema({
   insuranceNumber: {
     type: String,
   },
-  wardNumber: {
-    type: String,
-  },
   selectedDoctor: {
     type: String,
   },
@@ -115,6 +118,9 @@ const patientSchema = new mongoose.Schema({
   admitted: {
     type: Boolean,
     default: false,
+  },
+  ward: {
+    type: String,
   }
 });
 

@@ -15,7 +15,6 @@
   "dependencies": {
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
-    "bootstrap": "^5.3.1",
     "cors": "^2.8.5",
     "datatables.net": "^1.13.6",
     "dotenv": "^16.3.1",
@@ -26,7 +25,6 @@
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.1",
     "pdfjs-dist": "^3.9.179",
-    "react-bootstrap": "^2.8.0",
     "react-select": "^5.7.4"
   },
   "devDependencies": {

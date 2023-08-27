@@ -13,6 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fullcalendar/core": "^6.1.8",
+    "@fullcalendar/daygrid": "^6.1.8",
+    "@fullcalendar/react": "^6.1.8",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -26,6 +29,7 @@
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.1",
     "pdfjs-dist": "^3.9.179",
+    "react-modal": "^3.16.1",
     "react-select": "^5.7.4"
   },
   "devDependencies": {

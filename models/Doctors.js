@@ -34,6 +34,10 @@ const doctorSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  // Qualification: {
+  //   type: String,
+  //   required: false,
+  // },
   email: {
     type: String,
     required: true,
@@ -54,6 +58,8 @@ const doctorSchema = new mongoose.Schema({
   workingHours: {
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
+    startTime: { type: String, required: true },
+    endTime: { type: String, required: true },
   },
   bookedSlots: [
     {

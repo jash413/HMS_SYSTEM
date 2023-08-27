@@ -24,7 +24,7 @@ app.use(express.json());
 // Routes
 // const usersRouter = require('./routes/user');
 const patientsRouter = require('./routes/patients');
-const doctorsRouter = require('./routes/doctors');
+// const doctorsRouter = require('./routes/doctors');
 // const appointmentsRouter = require('./routes/appointments');
 // const billingRouter = require('./routes/billing');
 // const departmentsRouter = require('./routes/departments');
@@ -37,11 +37,13 @@ const pdfRouter = require('./routes/pdf');
 // const hospitalRouter = require('./routes/hospital'); // Add hospital route
 const wardRouter = require('./routes/ward');
 const admissionRouter = require('./routes/admission');
+const medicinesRouter = require('./routes/medicines');
+const otRouter = require('./routes/ot');
 
+// Use routes
 // app.use(usersRouter);
+app.use(otRouter);
 app.use(patientsRouter);
-app.use(doctorsRouter);
-// app.use(wardRouter);
 // app.use(appointmentsRouter);
 // app.use(billingRouter);
 // app.use(departmentsRouter);
@@ -54,6 +56,7 @@ app.use(pdfRouter);
 app.use(medicinesRouter)
 // app.use(hospitalRouter); // Use hospital route
 app.use(admissionRouter);
+app.use(wardRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

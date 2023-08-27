@@ -3,6 +3,92 @@ const Anaesthetist = require('../models/Anaesthetist');
 const OTEquipment = require('../models/OTEquipment');
 const ConsentForm = require('../models/ConsentForm');
 const SurgeryRecord = require('../models/SurgeryRecord');
+const Doctor = require('../models/Doctors');
+const moment = require('moment');
+
+
+
+// Get all available resources
+exports.getAvailableResources = async (req, res) => {
+  try {
+    const { startTime, endTime } = req.query;
+
+    // Convert 12-hour format times to 24-hour format using moment.js
+    const convertedStartTime = moment(startTime, 'hh:mm A').format('HH:mm');
+    const convertedEndTime = moment(endTime, 'hh:mm A').format('HH:mm');
+
+    const anaesthetists = await Anaesthetist.find();
+    const surgeons = await Doctor.find();
+    const operationTheatres = await OperationTheatre.find();
+
+    const availableAnaesthetists = anaesthetists.filter(anaesthetist => {
+      const bookedSlots = anaesthetist.bookedSlots;
+
+      // Check if any booked slot overlaps with the specified time range
+      const hasOverlap = bookedSlots.some(slot => {
+        return (
+          slot.startTime < convertedEndTime &&
+          slot.endTime > convertedStartTime
+        );
+      });
+
+      return (
+        !hasOverlap &&
+        anaesthetist.workingHours.startTime <= convertedStartTime &&
+        anaesthetist.workingHours.endTime >= convertedEndTime
+      );
+    });
+
+    const availableSurgeons = surgeons.filter(surgeon => {
+      const bookedSlots = surgeon.bookedSlots;
+
+      // Check if any booked slot overlaps with the specified time range
+      const hasOverlap = bookedSlots.some(slot => {
+        return (
+          slot.startTime < convertedEndTime &&
+          slot.endTime > convertedStartTime
+        );
+      });
+
+      return (
+        !hasOverlap &&
+        surgeon.workingHours.startTime <= convertedStartTime &&
+        surgeon.workingHours.endTime >= convertedEndTime
+      );
+    });
+
+    const availableOperationTheatres = operationTheatres.filter(theatre => {
+      const bookedSlots = theatre.bookedSlots;
+
+      // Check if any booked slot overlaps with the specified time range
+      const hasOverlap = bookedSlots.some(slot => {
+        return (
+          slot.startTime < convertedEndTime &&
+          slot.endTime > convertedStartTime
+        );
+      });
+
+      return (
+        !hasOverlap &&
+        theatre.operatingHours.startTime <= convertedStartTime &&
+        theatre.operatingHours.endTime >= convertedEndTime
+      );
+    });
+
+    res.status(200).json({
+      availableAnaesthetists,
+      availableSurgeons,
+      availableOperationTheatres,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching available resources' });
+  }
+};
+
+
+
+
+
 
 // Create a new operation theatre
 exports.createOperationTheatre = async (req, res) => {
@@ -183,5 +269,6 @@ exports.updateSurgeryRecord = async (req, res) => {
     res.status(500).json({ error: 'Error updating surgery record' });
   }
 };
+
 
 

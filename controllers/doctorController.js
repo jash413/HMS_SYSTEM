@@ -1,4 +1,5 @@
 const Doctor = require('../models/Doctors');
+const moment = require("moment");
 
 // Function to generate the next doctor ID based on the last doctor ID in the database
 async function generateDoctorId() {
@@ -30,8 +31,11 @@ exports.getAllDoctors = async (req, res) => {
 exports.createDoctor = async (req, res) => {
   try {
     const { email, phone } = req.body;
-    console.log('Received email:', email);
-    console.log('Received phone:', phone);
+    const { workingHours } = req.body;
+
+    // Convert 12-hour format times to 24-hour format using moment.js
+    const convertedStartTime = moment(workingHours.startTime, "hh:mm A").format("HH:mm");
+    const convertedEndTime = moment(workingHours.EndTime, "hh:mm A").format("HH:mm");
 
     // Check if a doctor with the same email or phone number already exists
     const existingDoctor = await Doctor.findOne({ $or: [{ email }, { phone }] });
@@ -51,6 +55,10 @@ exports.createDoctor = async (req, res) => {
       const newDoctor = await Doctor.create({
         ...req.body,
         doctor_id: DoctorId,
+        workingHours: {
+          startTime: convertedStartTime,
+          EndTime: convertedEndTime,
+        },
       });
   
       res.status(201).json(newDoctor);

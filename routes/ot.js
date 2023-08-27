@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const operationTheatreController = require('../controllers/operationTheatreController');
 
+// Get all available resources
+router.get('/available-resources', operationTheatreController.getAvailableResources);
+
 // Create, read, and update routes for Operation Theatres
 router.post('/operation-theatres', operationTheatreController.createOperationTheatre);
 router.get('/operation-theatres', operationTheatreController.getOperationTheatres);

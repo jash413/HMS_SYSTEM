@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
 function DoctorAdd() {
   const [doctorData, setDoctorData] = useState({
     first_name: "",
@@ -248,7 +249,7 @@ function DoctorAdd() {
                         <div className="row g-3 align-items-center">
                           <div className="col-md-6">
                             <label htmlFor="speciality" className="form-label">
-                            specialization
+                            Specialization
                             </label>
                             <select
                               name="specialization"
@@ -259,7 +260,7 @@ function DoctorAdd() {
                               id="speciality"
                               required
                             >
-                              <option value="">Select specialist</option>
+                              <option value="">Select specialization</option>
                               <option value="Cardiologist">Cardiologist</option>
                               <option value="ENT Specialist">
                                 ENT Specialist
@@ -325,8 +326,6 @@ function DoctorAdd() {
         </div>
       </div>
 
-      {/* Jquery Core Js */}
-      {/* Jquery Page Js */}
     </div>
   );
 }

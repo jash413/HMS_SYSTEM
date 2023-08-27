@@ -9,17 +9,6 @@ app.use(cors());
 // Middleware to parse incoming JSON data
 app.use(express.json());
 
-// Import the database connection from db.js
-// const { connectToDB } = require('./models/db');
-
-// Connect to the database
-// connectToDB()
-//   .then(() => {
-//     console.log('Connected to MongoDB');
-//   })
-//   .catch((err) => {
-//     console.error('Error connecting to MongoDB:', err);
-//   });
 
 // Routes
 // const usersRouter = require('./routes/user');
@@ -37,6 +26,10 @@ const pdfRouter = require('./routes/pdf');
 // const hospitalRouter = require('./routes/hospital'); // Add hospital route
 const wardRouter = require('./routes/ward');
 const admissionRouter = require('./routes/admission');
+const otRouter = require('./routes/ot');
+const medicinesRouter = require('./routes/medicines');
+
+
 
 // Use routes
 // app.use(usersRouter);

@@ -63,6 +63,21 @@ const MedicinesController = {
       res.status(400).json({ message: 'Error deleting medicine', error: error.message });
     }
   },
+  // Partially update a medicine by ID
+partialUpdateMedicineById: async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body; // The fields to update
+
+  try {
+    const updatedMedicine = await Medicine.findByIdAndUpdate(id, updateData, { new: true });
+    if (!updatedMedicine) {
+      return res.status(404).json({ message: 'Medicine not found' });
+    }
+    res.status(200).json(updatedMedicine);
+  } catch (error) {
+    res.status(400).json({ message: 'Error updating medicine', error: error.message });
+  }
+},
 };
 
 module.exports = MedicinesController;

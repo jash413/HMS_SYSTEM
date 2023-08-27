@@ -34,24 +34,20 @@ const doctorSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  // Qualification: {
+  //   type: String,
+  //   required: false,
+  // },
   email: {
     type: String,
     required: true,
     unique: true,
   },
   phone: {
-    type: String,
+    type: Number,
     required: true,
   },
   join_date: {
-    type: String,
-    required: true,
-  },
-  pass: {
-    type: String,
-    required: true,
-  },
-  confirmpass: {
     type: String,
     required: true,
   },
@@ -59,14 +55,16 @@ const doctorSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  username: {
-    type: String,
-    required: true,
+  workingHours: {
+    startTime: { type: String, required: true },
+    endTime: { type: String, required: true },
   },
-  access: {
-    type: String,
-    required: true,
-  }
+  bookedSlots: [
+    {
+      startTime: { type: Date },
+      endTime: { type: Date },
+    }
+  ], // Array of booked time slots
  
 }, {
   timestamps: true, // Adds createdAt and updatedAt fields

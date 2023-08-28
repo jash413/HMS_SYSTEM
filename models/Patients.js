@@ -109,8 +109,10 @@ const patientSchema = new mongoose.Schema({
   insuranceNumber: {
     type: String,
   },
-  selectedDoctor: {
-    type: String,
+  doctor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Patient',
+    required: true,
   },
   advanceAmount: {
     type: Number,

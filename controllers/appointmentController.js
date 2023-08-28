@@ -2,24 +2,24 @@ const DoctorAppointment = require('../models/Appointments');
 
 const appointmentsController = {
     createAppointment: async (req, res) => {
-      const { patientName, doctorName, date } = req.body;
+      const { patient, doctor, date } = req.body;
         try {
           
     
           // Check if there's an existing appointment at the same date and time
-          const existingAppointment = await DoctorAppointment.findOne({ doctorName, date });
+          const existingAppointment = await DoctorAppointment.findOne({ doctor, date });
     
           if (existingAppointment) {
             return res.status(409).json({ message: 'Appointment slot already taken' });
           }
     
           const newAppointment = await DoctorAppointment.create({
-            patientName,
-            doctorName,
+            patient,
+            doctor,
             date,
             status: 'Scheduled',
           });
-          console.log(patientName)
+          console.log(patient)
     
           res.status(201).json(newAppointment);
         } catch (error) {

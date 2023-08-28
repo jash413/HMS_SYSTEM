@@ -13,11 +13,7 @@
 // import OperationTheatreForm from "./pages/OperationTheatreForm";
 // import DoctorAppointment from "./pages/DoctorAppointment";
 // import DischargeForm from "./pages/Discharge";
-// import EquipmentForm from "./pages/Add-equipment";
-// import KitForm from "./pages/Create-kit";
-import SurgerySchedulingForm from "./pages/ScheduleSurgery";
-
-
+import Calendar from "./pages/Calendar";
 function App() {
   return (
     <div>
@@ -35,9 +31,7 @@ function App() {
       {/* <DischargeForm /> */}
       {/* <OperationTheatreForm /> */}
       {/* <DoctorAppointment/> */}
-      {/* <EquipmentForm /> */}
-      {/* <KitForm /> */}
-      <SurgerySchedulingForm />
+      <Calendar/>
     </div>
   );
 }

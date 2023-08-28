@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+// import { error } from "jquery";
 
 const AdmissionForm = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const AdmissionForm = () => {
   const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
   const [doctors, setDoctors] = useState([]);
   const [patients, setPatients] = useState([]);
+  const [doctorData, setDoctorData] = useState({})
 
   useEffect(() => {
     axios.get("http://localhost:3100/doctors").then((response) => {
@@ -27,7 +29,7 @@ const AdmissionForm = () => {
       axios.get(`http://localhost:3100/api/patients`).then((response) => {
         const allPatients = response.data;
         const doctorPatients = allPatients.filter(
-          (patient) => patient.selectedDoctor === formData.doctor
+          (patient) => patient.selectedDoctor === formData.doctor._id
         );
         setPatients(doctorPatients);
       });
@@ -38,12 +40,21 @@ const AdmissionForm = () => {
 
   const handleDoctorChange = (e) => {
     const selectedDoctor = e.target.value;
+
     setFormData((prevData) => ({
       ...prevData,
       doctor: selectedDoctor,
       patient: "", // Clear the selected patient when doctor changes
     }));
     setSelectedPatientDetails(null); // Clear patient details
+    axios
+    .get(`http://localhost:3100/doctors/${selectedDoctor}`)
+    .then((response) => {
+      setDoctorData(response.data);
+    })
+    .catch((error) => {
+      console.error("Error fetching doctor details:", error);
+    });
   };
 
   const handleSelectChange = (e) => {
@@ -71,40 +82,39 @@ const AdmissionForm = () => {
     }));
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
     try {
       const response = await axios.post(
-        "http://localhost:3100/docapc",
-        formData
+        "http://localhost:3100/api/ap",
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      // // Update the patient's admission status & ward number
-      // await axios.patch(
-      //   `http://localhost:3100//:id/status${formData.patient}`,
-      //   { admitted: true, ward: `${formData.wardNumber}` }
-      // );
-      // // Update the selected ward's status to "Occupied" and associate the patient
-      // await axios.patch(
-      //   `http://localhost:3100/api/ward/${formData.wardNumber}`,
-      //   { status: "Occupied", patient: formData.patient }
-      // );
-      console.log(response.data);
+
       if (response.status === 201) {
-        toast.success("Apointment created successfully");
+        toast.success("Appointment Scheduled successfully");
       }
-      // Clear form fields
+
+      
+      console.log("Doctor created:", response.data);
+      // Reset the form after successful submission
       setFormData({
         patient: "",
+        doctor:"",
         admissionDate: new Date().toISOString().split("T")[0],
         wardNumber: "",
         notes: "",
         admissionTime: "",
       });
-      setSelectedPatientDetails(null);
     } catch (error) {
       toast.error(error.response.data.message);
-      // console.log(formData);
-      console.error(error);
+      console.error("Error scheduling appointment:", error.response.data);
+      console.log(formData);
     }
   };
 
@@ -134,7 +144,7 @@ const AdmissionForm = () => {
                         <option
                           style={{ backgroundColor: "white", color: "black" }}
                           key={doctor._id}
-                          value={doctor.doctor_name}
+                          value={doctor._id}
                         >
                           {doctor.first_name} {doctor.last_name}
                         </option>
@@ -175,7 +185,7 @@ const AdmissionForm = () => {
                         {selectedPatientDetails && (
                           <h6 className="mb-0">
                             <b>Doctor:</b>{" "}
-                            {selectedPatientDetails.selectedDoctor}
+                            {doctorData.first_name} {doctorData.last_name}
                           </h6>
                         )}
                       </div>
@@ -202,7 +212,7 @@ const AdmissionForm = () => {
                     </h5>
                   </div>
                   <div className="card-body">
-                    <form onSubmit={handleFormSubmit}>
+                    <form onSubmit={handleSubmit}>
                       <div className="row g-3 align-items-center">
                         <div className="col-md-6">
                           <label className="form-label">Select Patient</label>

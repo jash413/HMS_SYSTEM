@@ -1,10 +1,10 @@
 // import Dashboard from "./pages/Dashboard";
 // import PatientForm from "./pages/Add-patient";
 // import Patientlist from "./pages/PatientList";
-// // import Labs from "./pages/Labs";
+// import Labs from "./pages/Labs";
 // import OTScheduleForm from "./pages/OTScheduleForm";
 // import BookingForm from "./pages/BookingForm";
-import DoctorAdd from "./pages/DoctorAdd";
+// import DoctorAdd from "./pages/DoctorAdd";
 // import DoctorList from "./pages/DoctorList";
 // import UploadDocument from "./pages/Upload-document";
 // import AdmissionComponent from "./pages/Admission";
@@ -13,15 +13,20 @@ import DoctorAdd from "./pages/DoctorAdd";
 // import OperationTheatreForm from "./pages/OperationTheatreForm";
 // import DoctorAppointment from "./pages/DoctorAppointment";
 // import DischargeForm from "./pages/Discharge";
+// import EquipmentForm from "./pages/Add-equipment";
+// import KitForm from "./pages/Create-kit";
+import SurgerySchedulingForm from "./pages/ScheduleSurgery";
+
+
 function App() {
   return (
     <div>
-      {/* <UploadDocument />1 */}
+      {/* <UploadDocument /> */}
       {/* <Labs/> */}
       {/* <Dashboard /> */}
       {/* <OTScheduleForm /> */}
       {/* <BookingForm/> */}
-      <DoctorAdd/>
+      {/* <DoctorAdd/> */}
       {/* <DoctorList/> */}
       {/* <PatientForm /> */}
       {/* <Patientlist /> */}
@@ -30,6 +35,9 @@ function App() {
       {/* <DischargeForm /> */}
       {/* <OperationTheatreForm /> */}
       {/* <DoctorAppointment/> */}
+      {/* <EquipmentForm /> */}
+      {/* <KitForm /> */}
+      <SurgerySchedulingForm />
     </div>
   );
 }

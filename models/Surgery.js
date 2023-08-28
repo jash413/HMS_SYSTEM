@@ -2,13 +2,14 @@ const mongoose = require('mongoose');
 const db = require('./db');
 
 const surgerySchema = new mongoose.Schema({
-  patient_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient', required: true },
-  doctor_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor', required: true },
-  anaesthetist_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Anaesthetist', required: true },
-  theatre_id: { type: mongoose.Schema.Types.ObjectId, ref: 'OperationTheatre', required: true },
-  start_time: { type: Date, required: true },
-  end_time: { type: Date, required: true },
-  notes: { type: String },
+  patient_id: { type: mongoose.Schema.Types.ObjectId, ref: 'patients', required: true },
+  doctor_id: { type: mongoose.Schema.Types.ObjectId, ref: 'doctors', required: true },
+  anaesthetist_id: { type: mongoose.Schema.Types.ObjectId, ref: 'anaesthetists', required: true },
+  theatre_id: { type: mongoose.Schema.Types.ObjectId, ref: 'operationtheatres', required: true },
+  start_time: { type: String, required: true },
+  end_time: { type: String, required: true },
+  kit_id: { type: mongoose.Schema.Types.ObjectId, ref: 'kits', required: true },
+  surgeryType: { type: String, required: true },
 });
 
 const Surgery = mongoose.model('Surgery', surgerySchema);

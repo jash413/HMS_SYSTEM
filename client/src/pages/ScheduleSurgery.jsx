@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast,ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 
 function SurgerySchedulingForm() {
   const [formData, setFormData] = useState({
@@ -120,7 +119,37 @@ function SurgerySchedulingForm() {
       selectedAnaesthetist: "",
       selectedTheatre: "",
       selectedKit: "",
+      // selectedPatient: "",
     }));
+  };
+
+  const handleConsentForm = async () => {
+    try {
+      // Perform submission logic here
+      const response= await axios.post(
+        "http://localhost:3100/generate-consent-form",
+        {
+          surgeryType: selectedSurgeryType,
+          start_time: formData.selectedStartTime,
+          end_time: formData.selectedEndTime,
+          doctor_id: formData.selectedSurgeon,
+          anaesthetist_id: formData.selectedAnaesthetist,
+          patient_id: formData.selectedPatient,
+        },
+        { responseType: "blob" } );
+           // Create a Blob object from the response data
+      const pdfBlob = new Blob([response.data], { type: "application/pdf" });
+
+      // Create a URL for the Blob and trigger a download
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      const link = document.createElement("a");
+      link.href = pdfUrl;
+      link.download = "consent_form.pdf";
+      link.click();
+    } catch (error) {
+      toast.error(error.response.data.message);
+      console.error("Error generating consent form:", error);
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -202,28 +231,9 @@ function SurgerySchedulingForm() {
         selectedAnaesthetist: "",
         selectedTheatre: "",
         selectedKit: "",
+        selectedPatient: "",
       });
       setSelectedSurgeryType("");
-    } catch (error) {
-      // console.log(formData);
-      toast.error(error.response.data.message);
-      console.error("Error submitting form:", error);
-    }
-  };
-
-  const handleConsentForm = async (event) => {
-    event.preventDefault();
-    try {
-      // Perform submission logic here
-      await axios.post("http://localhost:3100/generate-consent-form", {
-        surgeryType: selectedSurgeryType,
-        start_time: formData.selectedStartTime,
-        end_time: formData.selectedEndTime,
-        doctor_id: formData.selectedSurgeon,
-        anaesthetist_id: formData.selectedAnaesthetist,
-        patient_id: formData.selectedPatient,
-      });
-
     } catch (error) {
       // console.log(formData);
       toast.error(error.response.data.message);
@@ -263,10 +273,10 @@ function SurgerySchedulingForm() {
                             name="selectedPatient"
                             value={formData.selectedPatient}
                             onChange={handleInputChange}
+                            required
                             className="form-control"
                           >
                             <option value="">Select Patient</option>
-                            {/* Map and render patient options */}
                             {patients.map((patient) => (
                               <option key={patient._id} value={patient._id}>
                                 {patient.firstName} {patient.lastName}
@@ -410,18 +420,27 @@ function SurgerySchedulingForm() {
                       <br />
                       <div className="row g-3 align-items-center">
                         <div className="col-md-1">
-                        <button type="submit" className="btn btn-primary mt-4">
-                        Submit
-                      </button>
+                          <button
+                            type="submit"
+                            className="btn btn-primary mt-4"
+                          >
+                            Submit
+                          </button>
                         </div>
                         <div className="col-md-6">
-                        <button onClick={handleConsentForm} className="btn btn-primary mt-4">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleConsentForm();
+                        }}
+                        className="btn btn-primary mt-4"
+                      >
                         Generate Consent Form
                       </button>
-                        </div>
+                    </div>
                       </div>
-                    
                     </form>
+               
                     <ToastContainer position="top-right" autoClose={3000} />
                   </div>
                 </div>

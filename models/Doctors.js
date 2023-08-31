@@ -8,6 +8,7 @@ const doctorSchema = new mongoose.Schema({
   //   ref: 'Hospital',
   //   required: true,
   // },
+  
   doctor_id: {
     type: String,
     unique: true,

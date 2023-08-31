@@ -259,7 +259,7 @@ const PatientForm = () => {
                                   className="form-check-input"
                                   type="radio"
                                   name="gender"
-                                  value="Male"
+                                  value="female"
                                   checked={patientData.gender === "Female"}
                                   onChange={handleInputChange}
                                   id="exampleRadios22"

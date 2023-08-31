@@ -11,9 +11,10 @@
 // import Ward from "./pages/Ward";
 // import DischargeForm from "./pages/Discharge";
 // import OperationTheatreForm from "./pages/OperationTheatreForm";
-// import DoctorAppointment from "./pages/DoctorAppointment";
+import DoctorAppointment from "./pages/DoctorAppointment";
 // import DischargeForm from "./pages/Discharge";
-import Calendar from "./pages/Calendar";
+// import Calendar from "./pages/Calendar";
+
 function App() {
   return (
     <div>
@@ -30,8 +31,8 @@ function App() {
       {/* <Ward /> */}
       {/* <DischargeForm /> */}
       {/* <OperationTheatreForm /> */}
-      {/* <DoctorAppointment/> */}
-      <Calendar/>
+      <DoctorAppointment/>
+      {/* <Calendar/> */}
     </div>
   );
 }

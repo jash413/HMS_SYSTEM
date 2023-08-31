@@ -1,38 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import Modal from 'react-modal';
+import moment from 'moment';
+import axios from 'axios';
+
+const renderEventContent = (eventInfo) => {
+  const isSurgery = eventInfo.event.classNames.includes('surgery-event');
+  const eventStyle = {
+    padding: '5px',
+    borderRadius: '5px',
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: 'bold',
+  };
+
+  if (isSurgery) {
+    eventStyle.backgroundColor = 'red';
+  } else {
+    eventStyle.backgroundColor = 'blue';
+  }
+
+  return (
+    <div style={eventStyle}>
+      {eventInfo.timeText}
+      <br />
+      {eventInfo.event.title}
+    </div>
+  );
+};
 
 function Calendar() {
-  const [events, setEvents] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [appointments, setAppointments] = useState([]);
+  const [appointmentsFromSurgerySection, setAppointmentsFromSurgerySection] = useState([]);
+  useEffect(() => {
+    // Fetch appointments data from the "Appointment" form API
+    axios.get('http://localhost:3100/api/ap') // Replace with the actual endpoint
+      .then(response => {
+        setAppointments(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching appointments from "Appointment" form:', error);
+      });
 
-  const [eventTitle, setEventTitle] = useState('');
-  const [eventDate, setEventDate] = useState('');
-  const [eventTime, setEventTime] = useState('');
+    // Fetch surgery data from the "Surgery" API
+    axios.get('http://localhost:3100/surgeries') // Replace with the actual endpoint
+    .then(response => {
+      // Map surgery appointments
+      const surgeryAppointments = response.data.map(surgery => ({
+        ...surgery,
+        title: 'Surgery',
+        admissionDate: surgery.start_time, // Use start_time as admissionDate
+        admissionTime: moment(surgery.start_time).format('HH:mm'), // Extract time from start_time
+        to: moment(surgery.end_time).format('HH:mm'), // Extract time from end_time
+      }));
+      setAppointmentsFromSurgerySection(surgeryAppointments);
+    })
+      .catch(error => {
+        console.error('Error fetching surgeries from "Surgery" API:', error);
+      });
+  }, []);
 
-  const handleDateClick = (arg) => {
-    setEventDate(arg.dateStr);
-    setIsModalOpen(true);
-  };
-
-  const handleAddEvent = () => {
-    if (eventTitle && eventDate && eventTime) {
-      const newEvent = { title: eventTitle, start: eventDate + 'T' + eventTime, end: eventDate + 'T' + eventTime };
-      setEvents([...events, newEvent]);
-      setIsModalOpen(false);
-      setEventTitle('');
-      setEventDate('');
-      setEventTime('');
-    }
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setEventTitle('');
-    setEventDate('');
-    setEventTime('');
-  };
+  const allAppointments = [...appointments, ...appointmentsFromSurgerySection];
+  console.log(allAppointments)
 
   return (
     <div className="body d-flex py-lg-3 py-md-2">
@@ -41,92 +70,23 @@ function Calendar() {
           <div className="col-lg-12 col-md-12">
             <div className="card">
               <div className="card-body">
-                <button
-                  className="btn btn-primary"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  <i className="icofont-plus-circle me-2 fs-6"></i>Add Event
-                </button>
                 <FullCalendar
                   plugins={[dayGridPlugin]}
                   initialView="dayGridMonth"
-                  weekends={false}
-                  events={events}
-                  dateClick={handleDateClick}
+                  weekends={true}
+                  events={allAppointments.map(appointment => ({
+                    title: `${appointment.title} (${appointment.admissionTime} - ${appointment.to})`,
+                    start: moment(appointment.admissionDate + ' ' + appointment.admissionTime, 'YYYY-MM-DD hh:mm ').toDate(),
+                    end: moment(appointment.admissionDate + ' ' + appointment.endTime, 'YYYY-MM-DD hh:mm ').toDate(),
+                    classNames: [appointment.title === 'Surgery' ? 'surgery-event' : 'normal-event'],
+                  }))}
+                  eventContent={renderEventContent}
                 />
               </div>
             </div>
           </div>
         </div>
       </div>
-      {/* React Modal */}
-      <Modal
-  isOpen={isModalOpen}
-  onRequestClose={closeModal}
-  contentLabel="Add Event"
->
-  {/* <h2>Add Event</h2>
-  <input
-    type="text"
-    placeholder="Event Title"
-    value={eventTitle}
-    onChange={(e) => setEventTitle(e.target.value)}
-  />
-  <input
-    type="date"
-    value={eventDate}
-    onChange={(e) => setEventDate(e.target.value)}
-  />
-  <input
-    type="time"
-    value={eventTime}
-    onChange={(e) => setEventTime(e.target.value)}
-  />
-  <button onClick={handleAddEvent}>Save Event</button>
-  <button onClick={closeModal}>Cancel</button> */}
-
-<div className="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title fw-bold" id="eventaddLabel">
-                                Add Event
-                            </h5>
-                            <button
-                                type="button"
-                                className="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                                onClick={closeModal}
-                            />
-                        </div>
-                        <div className="modal-body">
-                            <div className="mb-3">
-                                <label htmlFor="exampleFormControlInput99" className="form-label">
-                                    Event Name
-                                </label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="exampleFormControlInput99"
-                                    value={eventTitle}
-                                    onChange={(e) => setEventTitle(e.target.value)}
-                                />
-                            </div>
-  
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={closeModal}>
-                                Done
-                            </button>
-                            <button type="button" className="btn btn-primary" onClick={handleAddEvent}>
-                                Create
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-</Modal>
-
     </div>
   );
 }

@@ -11,14 +11,19 @@ const Patient = require('../models/Patients');
 
 
 
-// Get all available resources
+// Get all available resources for a surgery
 exports.getAvailableResources = async (req, res) => {
   try {
-    const { startTime, endTime } = req.query;
+    const { selectedDate, startTime, endTime } = req.query;
 
-    // Convert 12-hour format times to 24-hour format using moment.js
+    // Convert selected date, start time, and end time to moment objects for comparison
+    const convertedSelectedDate = moment(selectedDate, 'YYYY-MM-DD');
     const convertedStartTime = moment(startTime, 'hh:mm A').format('HH:mm');
     const convertedEndTime = moment(endTime, 'hh:mm A').format('HH:mm');
+
+    // Add a 15-minute buffer to the start time and end time
+    const bufferedStartTime = moment(convertedStartTime, 'HH:mm').subtract(15, 'minutes').format('HH:mm');
+    const bufferedEndTime = moment(convertedEndTime, 'HH:mm').add(15, 'minutes').format('HH:mm');
 
     const anaesthetists = await Anaesthetist.find();
     const surgeons = await Doctor.find();
@@ -26,74 +31,91 @@ exports.getAvailableResources = async (req, res) => {
     const kits = await Kit.find();
 
     const availableAnaesthetists = anaesthetists.filter(anaesthetist => {
-      const bookedSlots = anaesthetist.bookedSlots;
+       // Check for overlap with the specified date, start time, and end time
+       const hasOverlap = anaesthetist.bookedSlots.some(slot => {
+        const slotDate = moment(slot.date, 'YYYY-MM-DD');
+        const slotStartTime = moment(slot.startTime, 'HH:mm');
+        const slotEndTime = moment(slot.endTime, 'HH:mm');
 
-      // Check if any booked slot overlaps with the specified time range
-      const hasOverlap = bookedSlots.some(slot => {
         return (
-          slot.startTime < convertedEndTime &&
-          slot.endTime > convertedStartTime
+          slotDate.isSame(convertedSelectedDate, 'day') &&
+          (
+            (slotStartTime.isBefore(bufferedEndTime) && slotEndTime.isAfter(bufferedStartTime)) ||
+            (slotStartTime.isSame(bufferedEndTime) || slotEndTime.isSame(bufferedStartTime))
+          )
         );
       });
 
       return (
         !hasOverlap &&
-        anaesthetist.workingHours.startTime <= convertedStartTime &&
-        anaesthetist.workingHours.endTime >= convertedEndTime
+        anaesthetist.workingHours.startTime <= bufferedStartTime &&
+        anaesthetist.workingHours.endTime >= bufferedEndTime
       );
     });
 
     const availableSurgeons = surgeons.filter(surgeon => {
-      const bookedSlots = surgeon.bookedSlots;
+      // Logic for available surgeons
+      const hasOverlap = surgeon.bookedSlots.some(slot => {
+        const slotDate = moment(slot.date, 'YYYY-MM-DD');
+        const slotStartTime = moment(slot.startTime, 'HH:mm');
+        const slotEndTime = moment(slot.endTime, 'HH:mm');
 
-      // Check if any booked slot overlaps with the specified time range
-      const hasOverlap = bookedSlots.some(slot => {
         return (
-          slot.startTime < convertedEndTime &&
-          slot.endTime > convertedStartTime
+          slotDate.isSame(convertedSelectedDate, 'day') &&
+          (
+            (slotStartTime.isBefore(bufferedEndTime) && slotEndTime.isAfter(bufferedStartTime)) ||
+            (slotStartTime.isSame(bufferedEndTime) || slotEndTime.isSame(bufferedStartTime))
+          )
         );
       });
 
       return (
         !hasOverlap &&
-        surgeon.workingHours.startTime <= convertedStartTime &&
-        surgeon.workingHours.endTime >= convertedEndTime
+        surgeon.workingHours.startTime <= bufferedStartTime &&
+        surgeon.workingHours.endTime >= bufferedEndTime
       );
     });
 
     const availableOperationTheatres = operationTheatres.filter(theatre => {
-      const bookedSlots = theatre.bookedSlots;
+      // Logic for available operation theatres
+      const hasOverlap = theatre.bookedSlots.some(slot => {
+        const slotDate = moment(slot.date, 'YYYY-MM-DD');
+        const slotStartTime = moment(slot.startTime, 'HH:mm');
+        const slotEndTime = moment(slot.endTime, 'HH:mm');
 
-      // Check if any booked slot overlaps with the specified time range
-      const hasOverlap = bookedSlots.some(slot => {
         return (
-          slot.startTime < convertedEndTime &&
-          slot.endTime > convertedStartTime
+          slotDate.isSame(convertedSelectedDate, 'day') &&
+          (
+            (slotStartTime.isBefore(bufferedEndTime) && slotEndTime.isAfter(bufferedStartTime)) ||
+            (slotStartTime.isSame(bufferedEndTime) || slotEndTime.isSame(bufferedStartTime))
+          )
         );
       });
 
       return (
         !hasOverlap &&
-        theatre.operatingHours.startTime <= convertedStartTime &&
-        theatre.operatingHours.endTime >= convertedEndTime
+        theatre.operatingHours.startTime <= bufferedStartTime &&
+        theatre.operatingHours.endTime >= bufferedEndTime
       );
     });
 
-
     const availableKits = kits.filter(kit => {
-      const schedules = kit.schedules;
+      // Logic for available kits
+      const hasOverlap = kit.schedules.some(slot => {
+        const slotDate = moment(slot.date, 'YYYY-MM-DD');
+        const slotStartTime = moment(slot.startTime, 'HH:mm');
+        const slotEndTime = moment(slot.endTime, 'HH:mm');
 
-      // Check if any booked slot overlaps with the specified time range
-      const hasOverlap = schedules.some(slot => {
         return (
-          slot.startTime < convertedEndTime &&
-          slot.endTime > convertedStartTime
+          slotDate.isSame(convertedSelectedDate, 'day') &&
+          (
+            (slotStartTime.isBefore(bufferedEndTime) && slotEndTime.isAfter(bufferedStartTime)) ||
+            (slotStartTime.isSame(bufferedEndTime) || slotEndTime.isSame(bufferedStartTime))
+          )
         );
       });
 
-      return (
-        !hasOverlap
-      );
+      return !hasOverlap;
     });
 
     res.status(200).json({

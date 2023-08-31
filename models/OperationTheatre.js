@@ -6,10 +6,11 @@ const operationTheatreSchema = new mongoose.Schema({
   description: { type: String },
   operatingHours: {
     startTime: { type: String, default: '09:00' },
-    endTime: { type: String, default: '18:00' },
+    endTime: { type: String, default: '17:00' },
   },
   bookedSlots: [
     {
+      date:{ type: Date },
       startTime: { type: String },
       endTime: { type: String },
     },

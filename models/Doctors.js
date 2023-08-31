@@ -61,6 +61,7 @@ const doctorSchema = new mongoose.Schema({
   },
   bookedSlots: [
     {
+      date:{ type: Date },
       startTime: { type: String },
       endTime: { type: String },
     }

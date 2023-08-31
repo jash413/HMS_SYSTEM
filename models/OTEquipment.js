@@ -18,6 +18,7 @@ const kitSchema = new mongoose.Schema({
   equipment: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Equipment' }], // List of equipment IDs
   schedules: [
     {
+      date: { type: Date }, // Date of kit usage
       startTime: { type: String }, // Start time of kit usage
       endTime: { type: String }, // End time of kit usage
     }

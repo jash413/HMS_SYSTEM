@@ -14,6 +14,7 @@
 // import DoctorAppointment from "./pages/DoctorAppointment";
 // import DischargeForm from "./pages/Discharge";
 import Calendar from "./pages/Calendar";
+
 function App() {
   return (
     <div>

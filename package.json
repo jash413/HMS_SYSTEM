@@ -29,8 +29,8 @@
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.1",
     "pdfjs-dist": "^3.9.179",
-    "react-modal": "^3.16.1",
     "pdfkit": "^0.13.0",
+    "react-modal": "^3.16.1",
     "react-select": "^5.7.4"
   },
   "devDependencies": {

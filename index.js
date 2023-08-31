@@ -3,6 +3,7 @@ const cors = require('cors');
 const app = express();
 const port = 3100; // Replace with your desired port number
 
+
 // Middleware to enable CORS
 app.use(cors());
 
@@ -28,10 +29,6 @@ const wardRouter = require('./routes/ward');
 const admissionRouter = require('./routes/admission');
 const otRouter = require('./routes/ot');
 const medicinesRouter = require('./routes/medicines');
-
-
-const otRouter=require("./routes/ot")
-const medicinesRouter=require("./routes/medicines")
 
 // Use routes
 // app.use(usersRouter);

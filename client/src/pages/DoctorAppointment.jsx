@@ -4,13 +4,17 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import { error } from "jquery";
 
-const AdmissionForm = () => {
+const AppointmentForm = () => {
   const [formData, setFormData] = useState({
     patient: "",
     admissionDate: new Date().toISOString().split("T")[0],
     notes: "",
     admissionTime: "",
     doctor: "",
+    title:"",
+    from:"",
+    to:""
+    
   });
 
   const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
@@ -110,6 +114,9 @@ const AdmissionForm = () => {
         wardNumber: "",
         notes: "",
         admissionTime: "",
+        title:"",
+        from:"",
+        to:""
       });
     } catch (error) {
       toast.error(error.response.data.message);
@@ -241,6 +248,7 @@ const AdmissionForm = () => {
                             onChange={handleInputChange}
                             className="form-control"
                           />
+                          
                         </div>
 
                         <div className="col-md-6">
@@ -254,10 +262,38 @@ const AdmissionForm = () => {
                             value={formData.admissionTime}
                             onChange={handleInputChange}
                             className="form-control"
-                            id="admittime"
+                            id="title"
                           />
                         </div>
-
+                        <div className="col-md-6">
+                        <label htmlFor="admittime" className="form-label">
+                            Title
+                          </label>
+                          <input
+                            required
+                            type="text"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleInputChange}
+                            className="form-control"
+                            id="firstname"
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <label htmlFor="admittime" className="form-label">
+                            Ending Time
+                          </label>
+                          <input
+                            required
+                            type="time"
+                            name="to"
+                            value={formData.to}
+                            onChange={handleInputChange}
+                            className="form-control"
+                            id="title"
+                          />
+                        </div>
+                        
                         <div className="col-md-12">
                           <label htmlFor="addnote" className="form-label">
                             Add Note
@@ -280,10 +316,9 @@ const AdmissionForm = () => {
                           >
                             Submit
                           </button>
-                        </div>
-                      </div>
+                        </div>                        
+                     </div>
                     </form>
-
                     <ToastContainer position="top-right" autoClose={3000} />
                   </div>
                 </div>
@@ -296,4 +331,4 @@ const AdmissionForm = () => {
   );
 };
 
-export default AdmissionForm;
+export default AppointmentForm;

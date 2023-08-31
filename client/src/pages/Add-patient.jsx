@@ -388,11 +388,12 @@ const PatientForm = () => {
                             required
                             type="text"
                             name="doctor"
-                            value={patientData.selectedDoctor}
+                            value={patientData.doctor}
                             onChange={handleInputChange}
                             className="form-select"
                             aria-label="Default select example"
                           >
+                        <option value="">Select Doctor</option>    
                           {doctors.map((doctor) => (
                         <option
                           style={{ backgroundColor: "white", color: "black" }}

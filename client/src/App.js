@@ -13,7 +13,8 @@
 // import OperationTheatreForm from "./pages/OperationTheatreForm";
 // import DoctorAppointment from "./pages/DoctorAppointment";
 // import DischargeForm from "./pages/Discharge";
-import Calendar from "./pages/Calendar";
+// import Calendar from "./pages/Calendar";
+import Appointmentlist from "./pages/AppointmentList";
 
 function App() {
   return (
@@ -32,7 +33,8 @@ function App() {
       {/* <DischargeForm /> */}
       {/* <OperationTheatreForm /> */}
       {/* <DoctorAppointment/> */}
-      <Calendar/>
+      {/* <Calendar/> */}
+      <Appointmentlist/>
     </div>
   );
 }

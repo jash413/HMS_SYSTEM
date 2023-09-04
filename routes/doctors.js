@@ -17,4 +17,7 @@ router.patch('/doctors/:id', doctorController.updateDoctorById);
 // Route to delete a doctor by id
 router.delete('/doctors/:id', doctorController.deleteDoctorById);
 
+router.get('/api/doctor',doctorController.calculateSlots)
+
+
 module.exports = router;

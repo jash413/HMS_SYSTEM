@@ -46,4 +46,7 @@ router.patch('/surgery-records/:id', operationTheatreController.updateSurgeryRec
 // Generate Consent Form
 router.post('/generate-consent-form', operationTheatreController.generateConsentForm);
 
+// Get Common Available Slots
+router.get('/common-available-slots', operationTheatreController.getCommonAvailableSlots);
+
 module.exports = router;

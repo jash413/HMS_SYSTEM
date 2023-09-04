@@ -66,7 +66,17 @@ exports.getPatientById = async (req, res) => {
 // Controller for creating a new patient with file upload
 exports.createPatient =async (req, res) => {
   try {
-    const { phoneNumber } = req.body;
+
+        // Convert all string values in req.body to uppercase
+        const upperCaseData = {};
+        for (const key in req.body) {
+          if (typeof req.body[key] === 'string') {
+            upperCaseData[key] = req.body[key].toUpperCase();
+          } else {
+            upperCaseData[key] = req.body[key];
+          }
+        }
+    const { phoneNumber } = upperCaseData;
 
 // Check if a patient with the same phone number already exists
 const existingPatient = await Patient.findOne({ phoneNumber });
@@ -84,7 +94,7 @@ if (existingPatient) {
     }
 
       const newPatient = await Patient.create({
-        ...req.body,
+        ...upperCaseData,
         patient_id: patientId,
       });
   

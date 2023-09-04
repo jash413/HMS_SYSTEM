@@ -1,5 +1,5 @@
 // import Dashboard from "./pages/Dashboard";
-import PatientForm from "./pages/Add-patient";
+// import PatientForm from "./pages/Add-patient";
 // import Patientlist from "./pages/PatientList";
 // import Labs from "./pages/Labs";
 // import OTScheduleForm from "./pages/OTScheduleForm";
@@ -14,6 +14,7 @@ import PatientForm from "./pages/Add-patient";
 // import DoctorAppointment from "./pages/DoctorAppointment";
 // import DischargeForm from "./pages/Discharge";
 // import Calendar from "./pages/Calendar";
+import SurgerySchedulingForm from "./pages/ScheduleSurgery";
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
       {/* <BookingForm/> */}
       {/* <DoctorAdd/> */}
       {/* <DoctorList/> */}
-      <PatientForm />
+      {/* <PatientForm /> */}
       {/* <Patientlist /> */}
       {/* <AdmissionComponent /> */}
       {/* <Ward /> */}
@@ -33,6 +34,7 @@ function App() {
       {/* <OperationTheatreForm /> */}
       {/* <DoctorAppointment/> */}
       {/* <Calendar/> */}
+      <SurgerySchedulingForm />
     </div>
   );
 }

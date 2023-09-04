@@ -12,7 +12,18 @@ function SurgerySchedulingForm() {
     selectedTheatre: "",
     selectedKit: "",
     selectedPatient: "",
+    selectedDate: "",
   });
+
+  const [formData1, setFormData1] = useState({
+    selectedSurgeon: "",
+    selectedDate: "",
+    selectedDuration: "",
+    selectedAnaesthetist: "",
+    selectedTheatre: "",
+  });
+
+  const [availableSlots, setAvailableSlots] = useState([]); // to be fetched from backend
 
   const [availableSurgeons, setAvailableSurgeons] = useState([]);
   const [availableAnaesthetists, setAvailableAnaesthetists] = useState([]);
@@ -22,37 +33,62 @@ function SurgerySchedulingForm() {
   const [availableKits, setAvailableKits] = useState([]);
   const [selectedSurgeryType, setSelectedSurgeryType] = useState("");
   const [patients, setPatients] = useState([]);
+  const [surgeons, setSurgeons] = useState([]);
+  const [anaesthetists, setAnaesthetists] = useState([]);
+  const [operationTheatres, setOperationTheatres] = useState([]);
 
   useEffect(() => {
     fetchPatients();
+    fetchSurgeons();
+    fetchAnaesthetists();
+    fetchOperationTheatres();
   }, []);
 
   useEffect(() => {
-    if (formData.selectedStartTime && formData.selectedEndTime) {
+    if (formData.selectedStartTime && formData.selectedEndTime && formData.selectedDate) {
       fetchAvailableSurgeons(
         formData.selectedStartTime,
-        formData.selectedEndTime
+        formData.selectedEndTime,
+        formData.selectedDate
       );
       fetchAvailableAnaesthetists(
         formData.selectedStartTime,
-        formData.selectedEndTime
+        formData.selectedEndTime,
+        formData.selectedDate
       );
       fetchAvailableOperationTheatres(
         formData.selectedStartTime,
-        formData.selectedEndTime
+        formData.selectedEndTime,
+        formData.selectedDate
       );
-      fetchAvailableKits(formData.selectedStartTime, formData.selectedEndTime);
+      fetchAvailableKits(
+        formData.selectedStartTime, 
+        formData.selectedEndTime,
+        formData.selectedDate
+      );
+    }
+  }, [formData.selectedStartTime, formData.selectedEndTime, formData.selectedDate]);
+
+  useEffect(() => {
+    if (
+      formData1.selectedSurgeon &&
+      formData1.selectedDate &&
+      formData1.selectedDuration
+    ) {
+      fetchAvailableSlots();
     }
   }, [
-    formData.selectedStartTime,
-    formData.selectedEndTime,
-    selectedSurgeryType,
+    formData1.selectedSurgeon,
+    formData1.selectedDate,
+    formData1.selectedDuration,
+    formData1.selectedAnaesthetist,
+    formData1.selectedTheatre,
   ]);
 
-  const fetchAvailableSurgeons = async (startTime, endTime) => {
+  const fetchAvailableSurgeons = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}`
+        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`
       );
       setAvailableSurgeons(response.data.availableSurgeons);
     } catch (error) {
@@ -60,10 +96,10 @@ function SurgerySchedulingForm() {
     }
   };
 
-  const fetchAvailableAnaesthetists = async (startTime, endTime) => {
+  const fetchAvailableAnaesthetists = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}`
+        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`
       );
       setAvailableAnaesthetists(response.data.availableAnaesthetists);
     } catch (error) {
@@ -71,10 +107,10 @@ function SurgerySchedulingForm() {
     }
   };
 
-  const fetchAvailableOperationTheatres = async (startTime, endTime) => {
+  const fetchAvailableOperationTheatres = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}`
+        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`
       );
       setAvailableOperationTheatres(response.data.availableOperationTheatres);
     } catch (error) {
@@ -82,10 +118,10 @@ function SurgerySchedulingForm() {
     }
   };
 
-  const fetchAvailableKits = async (startTime, endTime) => {
+  const fetchAvailableKits = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}`
+        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`
       );
       setAvailableKits(response.data.availableKits);
     } catch (error) {
@@ -97,6 +133,46 @@ function SurgerySchedulingForm() {
     try {
       const response = await axios.get("http://localhost:3100/api/patients");
       setPatients(response.data);
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+    }
+  };
+
+  const fetchSurgeons = async () => {
+    try {
+      const response = await axios.get("http://localhost:3100/doctors");
+      setSurgeons(response.data);
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+    }
+  };
+
+  const fetchAnaesthetists = async () => {
+    try {
+      const response = await axios.get("http://localhost:3100/anaesthetists");
+      setAnaesthetists(response.data);
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+    }
+  };
+
+  const fetchOperationTheatres = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3100/operation-theatres"
+      );
+      setOperationTheatres(response.data);
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+    }
+  };
+
+  const fetchAvailableSlots = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3100/common-available-slots?doctorId=${formData1.selectedSurgeon}&anaesthetistId=${formData1.selectedAnaesthetist}&theatreId=${formData1.selectedTheatre}&date=${formData1.selectedDate}&duration=${formData1.selectedDuration}`
+      );
+      setAvailableSlots(response.data);
     } catch (error) {
       console.error("Error fetching patients:", error);
     }
@@ -126,7 +202,7 @@ function SurgerySchedulingForm() {
   const handleConsentForm = async () => {
     try {
       // Perform submission logic here
-      const response= await axios.post(
+      const response = await axios.post(
         "http://localhost:3100/generate-consent-form",
         {
           surgeryType: selectedSurgeryType,
@@ -136,8 +212,9 @@ function SurgerySchedulingForm() {
           anaesthetist_id: formData.selectedAnaesthetist,
           patient_id: formData.selectedPatient,
         },
-        { responseType: "blob" } );
-           // Create a Blob object from the response data
+        { responseType: "blob" }
+      );
+      // Create a Blob object from the response data
       const pdfBlob = new Blob([response.data], { type: "application/pdf" });
 
       // Create a URL for the Blob and trigger a download
@@ -260,6 +337,157 @@ function SurgerySchedulingForm() {
               <div className="col-sm-12">
                 <div className="card mb-3">
                   <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+                    <h5 className="mb-0 fw-bold ">Available Slots</h5>
+                  </div>
+                  <div className="card-body">
+                    <form onSubmit={handleSubmit}>
+                      <div className="row g-3 align-items-center">
+                        <div className="col-md-4">
+                          <label className="form-label">Select Date</label>
+                          <input
+                            type="date"
+                            name="selectedDate"
+                            value={formData1.selectedDate}
+                            onChange={(e) => {
+                              setFormData1((prevFormData) => ({
+                                ...prevFormData,
+                                selectedDate: e.target.value,
+                              }));
+                            }}
+                            className="form-control"
+                          />
+                        </div>
+                        <div className="col-md-4">
+                          <label htmlFor="admittime" className="form-label">
+                            Select Surgeon
+                          </label>
+                          <select
+                            name="selectedSurgeon"
+                            value={formData1.selectedSurgeon}
+                            onChange={(e) => {
+                              setFormData1((prevFormData) => ({
+                                ...prevFormData,
+                                selectedSurgeon: e.target.value,
+                              }));
+                            }}
+                            className="form-control"
+                          >
+                            <option value="">Select Surgeon</option>
+                            {surgeons.map((surgeon) => (
+                              <option key={surgeon._id} value={surgeon._id}>
+                                Dr {surgeon.first_name} {surgeon.last_name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="col-md-4">
+                          <label htmlFor="admittime" className="form-label">
+                            Select Anaesthetist
+                          </label>
+                          <select
+                            name="selectedAnaesthetist"
+                            value={formData1.selectedAnaesthetist}
+                            onChange={(e) => {
+                              setFormData1((prevFormData) => ({
+                                ...prevFormData,
+                                selectedAnaesthetist: e.target.value,
+                              }));
+                            }}
+                            className="form-control"
+                          >
+                            <option value="">Select Anaesthetist</option>
+                            {anaesthetists.map((anaesthetist) => (
+                              <option
+                                key={anaesthetist._id}
+                                value={anaesthetist._id}
+                              >
+                                {anaesthetist.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <br />
+                      <div className="row g-3 align-items-center">
+                        <div className="col-md-4">
+                          <label htmlFor="admittime" className="form-label">
+                            Select Operation Theatre
+                          </label>
+                          <select
+                            name="selectedTheatre"
+                            value={formData1.selectedTheatre}
+                            onChange={(e) => {
+                              setFormData1((prevFormData) => ({
+                                ...prevFormData,
+                                selectedTheatre: e.target.value,
+                              }));
+                            }}
+                            className="form-control"
+                          >
+                            <option value="">Select Operation Theatre</option>
+                            {operationTheatres.map((theatre) => (
+                              <option key={theatre._id} value={theatre._id}>
+                                {theatre.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="col-md-4">
+                          <label htmlFor="admittime" className="form-label">
+                            Select Duration
+                          </label>
+                          <select
+                            name="selectedDuration"
+                            value={formData1.selectedDuration}
+                            onChange={(e) => {
+                              setFormData1((prevFormData) => ({
+                                ...prevFormData,
+                                selectedDuration: e.target.value,
+                              }));
+                            }}
+                            className="form-control"
+                          >
+                            <option value="">Select Duration</option>
+                            <option value="30">30 Minutes</option>
+                            <option value="45">45 Minutes</option>
+                            <option value="60">60 Minutes</option>
+                            <option value="120">120 Minutes</option>
+                            <option value="180">180 Minutes</option>
+                          </select>
+                        </div>
+                      </div>
+                    </form>
+                    <br />
+                    <div className="row g-3 align-items-center">
+                      <div className="col-md-12">
+                        <table className="table table-bordered">
+                          <thead>
+                            <tr>
+                              <th scope="col">Start Time</th>
+                              <th scope="col">End Time</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {availableSlots.map((slot) => (
+                              <tr key={slot._id}>
+                                <td>{slot.startTime}</td>
+                                <td>{slot.endTime}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <ToastContainer position="top-right" autoClose={3000} />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="row mb-3">
+              <div className="col-sm-12">
+                <div className="card mb-3">
+                  <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
                     <h5 className="mb-0 fw-bold ">
                       Fill in the form below to schedule a surgery
                     </h5>
@@ -267,7 +495,7 @@ function SurgerySchedulingForm() {
                   <div className="card-body">
                     <form onSubmit={handleSubmit}>
                       <div className="row g-3 align-items-center">
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <label className="form-label">Select Patient</label>
                           <select
                             name="selectedPatient"
@@ -284,7 +512,20 @@ function SurgerySchedulingForm() {
                             ))}
                           </select>
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
+                          <label htmlFor="admittime" className="form-label">
+                            Select Date
+                          </label>
+                          <input
+                            type="date"
+                            name="selectedDate"
+                            value={formData.selectedDate}
+                            onChange={handleInputChange}
+                            required
+                            className="form-control"
+                          />
+                        </div>
+                        <div className="col-md-4">
                           <label htmlFor="admittime" className="form-label">
                             Select Surgery Type
                           </label>
@@ -309,7 +550,7 @@ function SurgerySchedulingForm() {
                       </div>
                       <br />
                       <div className="row g-3 align-items-center">
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <label className="form-label">Start Time</label>
                           <input
                             type="time"
@@ -320,7 +561,7 @@ function SurgerySchedulingForm() {
                             className="form-control"
                           />
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <label htmlFor="admittime" className="form-label">
                             End Time
                           </label>
@@ -333,10 +574,7 @@ function SurgerySchedulingForm() {
                             className="form-control"
                           />
                         </div>
-                      </div>
-                      <br />
-                      <div className="row g-3 align-items-center">
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <label className="form-label">Select Surgeon</label>
                           <select
                             name="selectedSurgeon"
@@ -353,7 +591,48 @@ function SurgerySchedulingForm() {
                             ))}
                           </select>
                         </div>
-                        <div className="col-md-6">
+                      </div>
+                      <br />
+                      <div className="row g-3 align-items-center">
+                        <div className="col-md-4">
+                          <label className="form-label">
+                            Select Operation Theatre
+                          </label>
+                          <select
+                            name="selectedTheatre"
+                            value={formData.selectedTheatre}
+                            onChange={handleInputChange}
+                            required
+                            className="form-control"
+                          >
+                            <option value="">Select Operation Theatre</option>
+                            {availableOperationTheatres.map((theatre) => (
+                              <option key={theatre._id} value={theatre._id}>
+                                {theatre.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="col-md-4">
+                          <label htmlFor="admittime" className="form-label">
+                            Select OT-Equipment Kit
+                          </label>
+                          <select
+                            name="selectedKit"
+                            value={formData.selectedKit}
+                            onChange={handleInputChange}
+                            required
+                            className="form-control"
+                          >
+                            <option value="">Select Kit</option>
+                            {availableKits.map((kit) => (
+                              <option key={kit._id} value={kit._id}>
+                                {kit.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="col-md-4">
                           <label htmlFor="admittime" className="form-label">
                             Select Anaesthetist
                           </label>
@@ -378,47 +657,6 @@ function SurgerySchedulingForm() {
                       </div>
                       <br />
                       <div className="row g-3 align-items-center">
-                        <div className="col-md-6">
-                          <label className="form-label">
-                            Select Operation Theatre
-                          </label>
-                          <select
-                            name="selectedTheatre"
-                            value={formData.selectedTheatre}
-                            onChange={handleInputChange}
-                            required
-                            className="form-control"
-                          >
-                            <option value="">Select Operation Theatre</option>
-                            {availableOperationTheatres.map((theatre) => (
-                              <option key={theatre._id} value={theatre._id}>
-                                {theatre.name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="col-md-6">
-                          <label htmlFor="admittime" className="form-label">
-                            Select OT-Equipment Kit
-                          </label>
-                          <select
-                            name="selectedKit"
-                            value={formData.selectedKit}
-                            onChange={handleInputChange}
-                            required
-                            className="form-control"
-                          >
-                            <option value="">Select Kit</option>
-                            {availableKits.map((kit) => (
-                              <option key={kit._id} value={kit._id}>
-                                {kit.name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      <br />
-                      <div className="row g-3 align-items-center">
                         <div className="col-md-1">
                           <button
                             type="submit"
@@ -428,19 +666,18 @@ function SurgerySchedulingForm() {
                           </button>
                         </div>
                         <div className="col-md-6">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          handleConsentForm();
-                        }}
-                        className="btn btn-primary mt-4"
-                      >
-                        Generate Consent Form
-                      </button>
-                    </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleConsentForm();
+                            }}
+                            className="btn btn-primary mt-4"
+                          >
+                            Generate Consent Form
+                          </button>
+                        </div>
                       </div>
                     </form>
-               
                     <ToastContainer position="top-right" autoClose={3000} />
                   </div>
                 </div>

@@ -1,6 +1,7 @@
 const Doctor = require('../models/Doctors');
 const moment = require("moment");
 
+
 // Function to generate the next doctor ID based on the last doctor ID in the database
 async function generateDoctorId() {
   try {
@@ -115,3 +116,11 @@ exports.deleteDoctorById = async (req, res) => {
     res.status(400).json({ message: 'Error deleting doctor', error: error.message });
   }
 };
+
+
+
+
+
+
+
+

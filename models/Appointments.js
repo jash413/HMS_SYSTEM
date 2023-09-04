@@ -16,21 +16,25 @@ const appointmentSchema = new mongoose.Schema({
     ref: "doctors",
     required: true,
   },
-  admissionDate: {
+  appointmentDate: {
     type: Date,
   },
   status: {
     type: String,
     enum: ["Scheduled", "Completed", "Cancelled"],
   },
-  to: {
+  endingTime: {
     type: String,
     required :true
   },
-  admissionTime: {
+  startingTime: {
     type: String,
     required:true
   },
+  selectedDate:{
+    type:Date,
+  
+  }
 
 });
 

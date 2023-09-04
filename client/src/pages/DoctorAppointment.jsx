@@ -7,20 +7,21 @@ import "react-toastify/dist/ReactToastify.css";
 const AppointmentForm = () => {
   const [formData, setFormData] = useState({
     patient: "",
-    admissionDate: new Date().toISOString().split("T")[0],
+    appointmentDate: new Date().toISOString().split("T")[0],
     notes: "",
-    admissionTime: "",
+    startingTime: "",
     doctor: "",
-    title:"",
-    from:"",
-    to:""
-    
+    title: "",
+    // from: "",
+    endingTime: "",
+    selectedDate: "",
   });
 
   const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
   const [doctors, setDoctors] = useState([]);
   const [patients, setPatients] = useState([]);
-  const [doctorData, setDoctorData] = useState({})
+  const [doctorData, setDoctorData] = useState({});
+  const [availableSlots, setAvailableSlots] = useState([]); // State to store available slots
 
   useEffect(() => {
     axios.get("http://localhost:3100/doctors").then((response) => {
@@ -42,6 +43,31 @@ const AppointmentForm = () => {
     }
   }, [formData.doctor]);
 
+  useEffect(() => {
+    if (formData.doctor) {
+      fetchAvailableSlots(formData.doctor);
+    } else {
+      setAvailableSlots([]); // Reset available slots when no doctor is selected
+    }
+  }, [formData.selectedDate]);
+
+  const fetchAvailableSlots = async (doctorId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3100/api/doctor?selectedDate=${formData.selectedDate}&id=${formData.doctor}`
+      );
+      if (response.status === 200) {
+        console.log(response.data.availableSlots);
+        // Set the available slots in the state
+        setAvailableSlots(response.data.availableSlots);
+      } else {
+        console.error("Failed to fetch available slots.");
+      }
+    } catch (error) {
+      console.error("Error fetching available slots:", error);
+    }
+  };
+
   const handleDoctorChange = (e) => {
     const selectedDoctor = e.target.value;
 
@@ -52,17 +78,17 @@ const AppointmentForm = () => {
     }));
     setSelectedPatientDetails(null); // Clear patient details
     axios
-    .get(`http://localhost:3100/doctors/${selectedDoctor}`)
-    .then((response) => {
-      setDoctorData(response.data);
-    })
-    .catch((error) => {
-      console.error("Error fetching doctor details:", error);
-    });
+      .get(`http://localhost:3100/doctors/${selectedDoctor}`)
+      .then((response) => {
+        setDoctorData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching doctor details:", error);
+      });
   };
 
   const handleSelectChange = (e) => {
-    const selectedOption=e.target.value
+    const selectedOption = e.target.value;
     setFormData((prevData) => ({
       ...prevData,
       patient: selectedOption,
@@ -91,7 +117,7 @@ const AppointmentForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3100/api/ap",
+        "http://localhost:3100/api/appointment",
         formData,
         {
           headers: {
@@ -102,21 +128,30 @@ const AppointmentForm = () => {
 
       if (response.status === 201) {
         toast.success("Appointment Scheduled successfully");
+        await axios.patch(`http://localhost:3100/doctors/${formData.doctor}`, {
+          bookedSlots: [
+            ...doctorData.bookedSlots,
+            {
+              date: formData.appointmentDate,
+              startTime: formData.startingTime,
+              endTime: formData.endingTime,
+            },
+          ],
+        });
       }
 
-      
       console.log("Doctor created:", response.data);
       // Reset the form after successful submission
       setFormData({
         patient: "",
-        doctor:"",
-        admissionDate: new Date().toISOString().split("T")[0],
+        doctor: "",
+        appointmentDate: new Date().toISOString().split("T")[0],
         wardNumber: "",
         notes: "",
-        admissionTime: "",
-        title:"",
-        from:"",
-        to:""
+        startingTime: "",
+        title: "",
+        // from: "",
+        endingTime: "",
       });
     } catch (error) {
       toast.error(error.response.data.message);
@@ -162,60 +197,67 @@ const AppointmentForm = () => {
               </div>
             </div>
             <div className="row mb-3">
-              {/* Patient Details Card */}
               <div className="col-sm-12">
                 <div className="card mb-3">
                   <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
-                    <h5 className="mb-0 fw-bold ">Patient Details</h5>
+                    <h5 className="mb-0 fw-bold ">Available Slots</h5>
                   </div>
                   <div className="card-body">
-                    <div className="row g-3 align-items-center">
-                      <div className="col-md-4">
-                        {selectedPatientDetails && (
-                          <h6 className="mb-0">
-                            <b>Name:</b> {selectedPatientDetails.firstName}{" "}
-                            {selectedPatientDetails.lastName}
-                          </h6>
-                        )}
+                    <form onSubmit={handleSubmit}>
+                      <div className="row g-3 align-items-center">
+                        <div className="col-md-4">
+                          <label className="form-label">Select Date</label>
+                          <input
+                            type="date"
+                            name="selectedDate"
+                            value={formData.selectedDate}
+                            onChange={(e) => {
+                              setFormData((prevFormData) => ({
+                                ...prevFormData,
+                                selectedDate: e.target.value,
+                              }));
+                            }}
+                            className="form-control"
+                          />
+                        </div>
                       </div>
-                      <div className="col-md-4">
-                        {selectedPatientDetails && (
-                          <h6 className="mb-0">
-                            <b>Email:</b> {selectedPatientDetails.emailAddress}
-                          </h6>
-                        )}
-                      </div>
-                    </div>
+                      <br />
+                    </form>
                     <br />
                     <div className="row g-3 align-items-center">
-                      <div className="col-md-4">
-                        {selectedPatientDetails && (
-                          <h6 className="mb-0">
-                            <b>Doctor:</b>{" "}
-                            {doctorData.first_name} {doctorData.last_name}
-                          </h6>
-                        )}
-                      </div>
-                      <div className="col-md-4">
-                        {selectedPatientDetails && (
-                          <h6 className="mb-0">
-                            <b>Phone number:</b>{" "}
-                            {selectedPatientDetails.phoneNumber}
-                          </h6>
-                        )}
+                      <div className="col-md-12">
+                        <table className="table table-bordered">
+                          <thead>
+                            <tr>
+                              <th scope="col">Start Time</th>
+                              <th scope="col">End Time</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {availableSlots.map((slot) => (
+                              <tr key={slot._id}>
+                                <td>{slot.startTime}</td>
+                                <td>{slot.endTime}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     </div>
+
+                    <ToastContainer position="top-right" autoClose={3000} />
                   </div>
                 </div>
               </div>
             </div>
+
             <div className="row mb-3">
               {/* Admission Form Card */}
               <div className="col-sm-12">
                 <div className="card mb-3">
                   <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
                     <h5 className="mb-0 fw-bold">
-                      Fill in the form below to admit a patient
+                      Fill in the form below to book an Appointment
                     </h5>
                   </div>
                   <div className="card-body">
@@ -238,35 +280,49 @@ const AppointmentForm = () => {
 
                         <div className="col-md-6">
                           <label htmlFor="admitdate" className="form-label">
-                            Admit Date
+                            Appointment Date
                           </label>
                           <input
                             required
                             type="date"
-                            name="admissionDate"
-                            value={formData.admissionDate}
+                            name="appointmentDate"
+                            value={formData.appointmentDate}
                             onChange={handleInputChange}
                             className="form-control"
                           />
-                          
                         </div>
 
                         <div className="col-md-6">
                           <label htmlFor="admittime" className="form-label">
-                            Admit Time
+                            Appointment Start Time
                           </label>
                           <input
                             required
                             type="time"
-                            name="admissionTime"
-                            value={formData.admissionTime}
+                            name="startingTime"
+                            value={formData.startingTime}
+                            onChange={handleInputChange}
+                            className="form-control"
+                            id="title"
+                          />
+                        </div>
+
+                        <div className="col-md-6">
+                          <label htmlFor="admittime" className="form-label">
+                            Appointment End Time
+                          </label>
+                          <input
+                            required
+                            type="time"
+                            name="endingTime"
+                            value={formData.endingTime}
                             onChange={handleInputChange}
                             className="form-control"
                             id="title"
                           />
                         </div>
                         <div className="col-md-6">
-                        <label htmlFor="admittime" className="form-label">
+                          <label htmlFor="admittime" className="form-label">
                             Title
                           </label>
                           <input
@@ -279,21 +335,7 @@ const AppointmentForm = () => {
                             id="firstname"
                           />
                         </div>
-                        <div className="col-md-6">
-                          <label htmlFor="admittime" className="form-label">
-                            Ending Time
-                          </label>
-                          <input
-                            required
-                            type="time"
-                            name="to"
-                            value={formData.to}
-                            onChange={handleInputChange}
-                            className="form-control"
-                            id="title"
-                          />
-                        </div>
-                        
+
                         <div className="col-md-12">
                           <label htmlFor="addnote" className="form-label">
                             Add Note
@@ -316,8 +358,8 @@ const AppointmentForm = () => {
                           >
                             Submit
                           </button>
-                        </div>                        
-                     </div>
+                        </div>
+                      </div>
                     </form>
                     <ToastContainer position="top-right" autoClose={3000} />
                   </div>

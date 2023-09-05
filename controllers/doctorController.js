@@ -1,3 +1,4 @@
+const { json } = require('body-parser');
 const Doctor = require('../models/Doctors');
 const moment = require("moment");
 
@@ -118,9 +119,82 @@ exports.deleteDoctorById = async (req, res) => {
 };
 
 
+exports.calculateSlots = async (req, res) => {
+  const {selectedDate,id } = req.query
+  console.log(id)
+  try {
+    const doctor = await Doctor.findById(id);
+    if (!doctor) {
+      console.log(doctor)
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+    // Calculate available slots
+  const availableSlots = calculateAvailableSlots(doctor.workingHours, doctor.bookedSlots,30,selectedDate);
 
+  // Send the availableSlots as a response
+  res.status(200).json({ availableSlots });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching doctor', error: error.message });
+  }
+};
+const calculateAvailableSlots = (workingHours, bookedSlots, duration, selectedDate) => {
+  const availableSlots = [];
 
+  // Convert working hours to moment objects
+  const startWorkingHour = moment(workingHours.startTime, 'HH:mm');
+  const endWorkingHour = moment(workingHours.endTime, 'HH:mm');
 
+  // Create a moment duration for the slot duration (45 minutes)
+  const slotDuration = moment.duration(duration, 'minutes');
 
+  // Initialize the current time to the start of working hours
+  let currentTime = startWorkingHour.clone();
 
+  // Iterate through the working hours
+  while (currentTime.isBefore(endWorkingHour)) {
+    // Calculate the end time of the current slot
+    const slotEndTime = currentTime.clone().add(slotDuration);
 
+    // Check if the slot end time is before the end of working hours
+    if (slotEndTime.isBefore(endWorkingHour)) {
+      // Check if the current time slot is booked for the selected date
+      const isSlotBooked = bookedSlots.some((bookedSlot) => {
+        const slotDate = moment(bookedSlot.date, 'YYYY-MM-DD').format('YYYY-MM-DD');
+        const startBookedTime = moment(bookedSlot.startTime, 'HH:mm');
+        const endBookedTime = moment(bookedSlot.endTime, 'HH:mm');
+        return (
+          slotDate === selectedDate &&
+          (
+            (startBookedTime.isBefore(slotEndTime) && endBookedTime.isAfter(currentTime)) ||
+            (startBookedTime.isSameOrBefore(currentTime) && endBookedTime.isSameOrAfter(slotEndTime))
+          )
+        );
+      });
+    
+      // If the slot is not booked, add it to the availableSlots array
+      if (!isSlotBooked) {
+        availableSlots.push({
+          startTime: currentTime.format('HH:mm'),
+          endTime: slotEndTime.format('HH:mm'),
+        });
+      }
+    }
+
+    // Move to the next slot
+    currentTime.add(slotDuration);
+  }
+
+  // Calculate remaining time based on the last available slot
+  const lastSlotEndTime = moment(availableSlots[availableSlots.length - 1].endTime, 'HH:mm');
+  const remainingTime = endWorkingHour.diff(lastSlotEndTime, 'minutes');
+
+  // Add a new slot for the remaining time
+  const remainingStartTime = lastSlotEndTime.format('HH:mm');
+  const remainingEndTime = endWorkingHour.format('HH:mm');
+  availableSlots.push({
+    startTime: remainingStartTime,
+    endTime: remainingEndTime,
+  });
+
+  return availableSlots;
+};

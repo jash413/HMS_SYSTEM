@@ -9,6 +9,23 @@ const Surgery = require("../models/Surgery");
 const PDFDocument = require("pdfkit");
 const Patient = require("../models/Patients");
 
+// Function to generate the next patient ID based on the last patient ID in the database
+async function generateSurgeryId() {
+  try {
+    const lastSurgery = await Surgery.findOne().sort({ surgeryID: -1 });
+    if (lastSurgery) {
+      const lastSurgeryIdNumber = parseInt(lastSurgery.surgeryID.substring(1));
+      const newSurgeryIdNumber = lastSurgeryIdNumber + 1;
+      return `S${newSurgeryIdNumber.toString().padStart(4, "0")}`;
+    } else {
+      return "S0001"; // Initial patient ID
+    }
+  } catch (error) {
+    console.error("Error generating surgery ID:", error);
+    throw error; // Throw the error to be handled in the caller function
+  }
+}
+
 // Get all available resources for a surgery
 exports.getAvailableResources = async (req, res) => {
   try {
@@ -295,42 +312,6 @@ exports.updateOTkit = async (req, res) => {
   }
 };
 
-// Create a new consent form
-exports.createConsentForm = async (req, res) => {
-  try {
-    const consentForm = new ConsentForm(req.body);
-    const savedConsentForm = await consentForm.save();
-    res.status(201).json(savedConsentForm);
-  } catch (error) {
-    res.status(500).json({ error: "Error creating consent form" });
-  }
-};
-
-// Get all consent forms
-exports.getConsentForms = async (req, res) => {
-  try {
-    const consentForms = await ConsentForm.find();
-    res.status(200).json(consentForms);
-  } catch (error) {
-    res.status(500).json({ error: "Error fetching consent forms" });
-  }
-};
-
-// Update a consent form
-exports.updateConsentForm = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updatedConsentForm = await ConsentForm.findByIdAndUpdate(
-      id,
-      req.body,
-      { new: true }
-    );
-    res.status(200).json(updatedConsentForm);
-  } catch (error) {
-    res.status(500).json({ error: "Error updating consent form" });
-  }
-};
-
 // Controller function to create a new surgery
 exports.createSurgery = async (req, res) => {
   try {
@@ -345,6 +326,11 @@ exports.createSurgery = async (req, res) => {
       surgeryType,
     } = req.body;
 
+    const surgeryId = await generateSurgeryId(); // Generate a new patient ID
+    if (!surgeryId) {
+      throw new Error("Error generating patient ID");
+    }
+
     // Create a new Surgery document
     const newSurgery = new Surgery({
       patient_id,
@@ -355,6 +341,7 @@ exports.createSurgery = async (req, res) => {
       end_time,
       kit_id,
       surgeryType,
+      surgeryID: surgeryId,
     });
 
     // Save the new Surgery document
@@ -378,6 +365,20 @@ exports.getAllSurgeries = async (req, res) => {
       .json({ error: "An error occurred while fetching surgeries." });
   }
 };
+
+// controller function to get surgery by search
+exports.getSurgeryBySearch = async (req, res) => {
+  try {
+    const { surgeryID } = req.query;
+    const surgeries = await Surgery.find({
+      surgeryID: { $regex: surgeryID, $options: "i" },
+    });
+    res.json(surgeries);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
 // Controller function to get a single surgery by ID
 exports.getSurgeryById = async (req, res) => {
@@ -461,6 +462,17 @@ exports.updateSurgeryRecord = async (req, res) => {
     res.status(200).json(updatedSurgeryRecord);
   } catch (error) {
     res.status(500).json({ error: "Error updating surgery record" });
+  }
+};
+
+// Delete a surgery record
+exports.deleteSurgeryRecord = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedSurgeryRecord = await SurgeryRecord.findByIdAndDelete(id);
+    res.status(200).json(deletedSurgeryRecord);
+  } catch (error) {
+    res.status(500).json({ error: "Error deleting surgery record" });
   }
 };
 
@@ -581,7 +593,7 @@ exports.getCommonAvailableSlots = async (req, res) => {
 
     // Calculate available slots for the selected doctor
     if (doctorId) {
-      console.log(doctorId)
+      console.log(doctorId);
       const doctor = await Doctor.findById(doctorId);
       const doctorSlots = calculateAvailableSlots(
         doctor.workingHours,

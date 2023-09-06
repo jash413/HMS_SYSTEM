@@ -28,14 +28,11 @@ router.get('/ot-kits', operationTheatreController.getOTkit);
 router.get('/ot-kits/:id', operationTheatreController.getOTkitById);
 router.patch('/ot-kits/:id', operationTheatreController.updateOTkit);
 
-// Create, read, and update routes for Consent Forms
-router.post('/consent-forms', operationTheatreController.createConsentForm);
-router.get('/consent-forms', operationTheatreController.getConsentForms);
-router.patch('/consent-forms/:id', operationTheatreController.updateConsentForm);
-
 // Create, read, and update routes for Surgery Schedules
 router.post('/surgeries', operationTheatreController.createSurgery);
 router.get('/surgeries', operationTheatreController.getAllSurgeries);
+router.get('/surgeries/search', operationTheatreController.getSurgeryBySearch);
+router.get('/surgeries/:id', operationTheatreController.getSurgeryById);
 router.get('/surgeries/:id', operationTheatreController.getSurgeryById);
 router.patch('/surgeries/:id', operationTheatreController.updateSurgery);
 router.delete('/surgeries/:id', operationTheatreController.deleteSurgery);
@@ -45,6 +42,7 @@ router.delete('/surgeries/:id', operationTheatreController.deleteSurgery);
 router.post('/surgery-records', operationTheatreController.createSurgeryRecord);
 router.get('/surgery-records', operationTheatreController.getSurgeryRecords);
 router.patch('/surgery-records/:id', operationTheatreController.updateSurgeryRecord);
+router.delete('/surgery-records/:id', operationTheatreController.deleteSurgeryRecord);
 
 // Generate Consent Form
 router.post('/generate-consent-form', operationTheatreController.generateConsentForm);

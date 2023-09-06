@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const db = require('./db');
 
 const surgerySchema = new mongoose.Schema({
+  surgeryID: { type: String, required: true, unique: true },
   patient_id: { type: mongoose.Schema.Types.ObjectId, ref: 'patients', required: true },
   doctor_id: { type: mongoose.Schema.Types.ObjectId, ref: 'doctors', required: true },
   anaesthetist_id: { type: mongoose.Schema.Types.ObjectId, ref: 'anaesthetists', required: true },

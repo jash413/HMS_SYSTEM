@@ -15,7 +15,7 @@
 // import DischargeForm from "./pages/Discharge";
 // import Calendar from "./pages/Calendar";
 import Appointmentlist from "./pages/AppointmentList";
-
+// import SurgerySchedulingForm from "./pages/ScheduleSurgery";
 function App() {
   return (
     <div>
@@ -35,6 +35,7 @@ function App() {
       {/* <DoctorAppointment/> */}
       {/* <Calendar/> */}
       <Appointmentlist/>
+      {/* <SurgerySchedulingForm/> */}
     </div>
   );
 }

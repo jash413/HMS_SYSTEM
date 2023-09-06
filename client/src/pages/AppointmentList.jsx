@@ -4,24 +4,71 @@ import $ from "jquery";
 import "datatables.net";
 function Appointmentlist() {
   const tableRef = useRef(null);
-  const [patients, setPatients] = useState([]);
+  const [appointments,setAppointments] = useState([])
+  const [patients,setPatients] = useState([])
+  const [doctors,setDoctors] = useState([])
 
   useEffect(() => {
     // Fetch the list of patients from the backend
-    fetchPatients();
+    fetchAppointments()
     setTimeout(() => {
       $(tableRef.current).DataTable();
     }, 500);
   }, []);
 
-  const fetchPatients = async () => {
+  useEffect(() =>{
+    fetchPatientList()
+    fetchDoctorlist()
+  },[appointments])
+
+  const fetchAppointments = async () => {
     try {
-      const response = await axios.get("http://localhost:3100/api/patients");
-      setPatients(response.data);
+      const response = await axios.get("http://localhost:3100/api/appointment");
+      setAppointments(response.data);
     } catch (error) {
       console.error(error);
     }
   };
+
+  const fetchPatientList = async () => {
+    try {
+        const patientIds = [...new Set(appointments.map((appointment) => appointment.patient))];
+        const patientData = [];
+    
+        for (const patientId of patientIds) {
+          const response = await axios.get(`http://localhost:3100/api/patients/${patientId}`);
+          patientData.push(response.data);
+        }
+    
+        setPatients(patientData);
+      } catch (err) {
+        console.error('Error fetching patients:', err);
+      }
+  }
+
+  const fetchDoctorlist = async () => {
+    try {
+      const doctorIds = [...new Set(appointments.map((appointment) => appointment.doctor))];
+      const doctorData = [];
+  
+      for (const doctorId of doctorIds) {
+        const response = await axios.get(`http://localhost:3100/doctors/${doctorId}`);
+        doctorData.push(response.data);
+      }
+  
+      setDoctors(doctorData);
+    } catch (err) {
+      console.error('Error fetching doctors:', err);
+    }
+  };
+  
+  const getDoctorName = (doctorId) => {
+    const doctor = doctors.find((doc) => doc._id === doctorId);
+    return doctor ? `${doctor.first_name} ${doctor.last_name}` : "";
+  };
+
+
+
   return (
     <div id="ihealth-layout" className="theme-tradewind">
       
@@ -32,7 +79,7 @@ function Appointmentlist() {
             <div className="row align-items-center">
               <div className="border-0 mb-4">
                 <div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                  <h3 className="fw-bold mb-0">Patient List</h3>
+                  <h3 className="fw-bold mb-0">Appointment List</h3>
                 </div>
               </div>
             </div>{" "}
@@ -48,31 +95,29 @@ function Appointmentlist() {
                   >
                     <thead>
                       <tr>
-                        <th>Patients Id</th>
-                        <th>Name</th>
-                        <th>Phone Number</th>
-                        <th>Email-Address</th>
-                        <th>Date</th>
-                        <th>Time</th>
+                        <th>Title</th>
+                        <th>Patient</th>
                         <th>Doctor</th>
-                        <th>Ward-Num</th>
+                        <th>Appointment Date</th>
+                        <th>Status</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+
                       </tr>
                     </thead>
                     <tbody>
-                      {patients.map((patient) => (
-                        <tr>
-                          <td>{patient.patient_id}</td>
-                          <td>
-                            {patient.firstName} {patient.lastName}
-                          </td>
-                          <td>{patient.phoneNumber}</td>
-                          <td>{patient.emailAddress}</td>
-                          <td>{patient.admitDate}</td>
-                          <td>{patient.admitTime}</td>
-                          <td>{patient.doctor}</td>
-                          <td>{patient.wardNumber}</td>
-                        </tr>
-                      ))}
+                        {appointments.map((appointment) => {
+                            return (
+                            <tr>
+                                <td>{appointment.title}</td>
+                                <td>{patients.find((patient) => patient._id === appointment.patient)?.firstName} {patients.find((patient) => patient._id === appointment.patient)?.lastName}</td>
+                                <td>{getDoctorName(appointment.doctor)}</td>
+                                <td>{appointment.appointmentDate}</td>
+                                <td>{appointment.status}</td>
+                                <td>{appointment.startingTime}</td>
+                                <td>{appointment.endingTime}</td>
+                            </tr>)
+                        })}
                     </tbody>
                   </table>
                 </div>

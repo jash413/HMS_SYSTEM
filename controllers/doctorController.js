@@ -59,7 +59,7 @@ exports.createDoctor = async (req, res) => {
         doctor_id: DoctorId,
         workingHours: {
           startTime: convertedStartTime,
-          EndTime: convertedEndTime,
+          endTime: convertedEndTime,
         },
       });
   

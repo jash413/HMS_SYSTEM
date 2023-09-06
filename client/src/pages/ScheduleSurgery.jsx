@@ -36,7 +36,32 @@ function SurgerySchedulingForm() {
   const [surgeons, setSurgeons] = useState([]);
   const [anaesthetists, setAnaesthetists] = useState([]);
   const [operationTheatres, setOperationTheatres] = useState([]);
+  const [selectedSurgeon, setSelectedSurgeon] = useState({});
+  const [selectedAnaesthetist, setSelectedAnaesthetist] = useState({});
+  const [selectedTheatre, setSelectedTheatre] = useState({});
+  const [selectedKit, setSelectedKit] = useState({});
 
+// fetch selected surgeon
+  useEffect(() => {
+    fetchSelectedSurgeon();
+  }, [formData.selectedSurgeon]);
+
+// fetch selected anaesthetist 
+  useEffect(() => {
+    fetchSelectedAnaesthetist();
+  }, [formData.selectedAnaesthetist]);
+
+// fetch selected theatre
+  useEffect(() => {
+    fetchSelectedTheatre();
+  }, [formData.selectedTheatre]);
+
+// fetch selected kit 
+  useEffect(() => {
+    fetchSelectedKit();
+  }, [formData.selectedKit]);
+
+// fetch patients, surgeons, anaesthetists, operation theatres
   useEffect(() => {
     fetchPatients();
     fetchSurgeons();
@@ -44,6 +69,7 @@ function SurgerySchedulingForm() {
     fetchOperationTheatres();
   }, []);
 
+// fetch available surgeons, anaesthetists, operation theatres, kits
   useEffect(() => {
     if (formData.selectedStartTime && formData.selectedEndTime && formData.selectedDate) {
       fetchAvailableSurgeons(
@@ -69,6 +95,7 @@ function SurgerySchedulingForm() {
     }
   }, [formData.selectedStartTime, formData.selectedEndTime, formData.selectedDate]);
 
+// fetch available slots
   useEffect(() => {
     if (
       formData1.selectedSurgeon &&
@@ -85,6 +112,7 @@ function SurgerySchedulingForm() {
     formData1.selectedTheatre,
   ]);
 
+// fetch available surgeons 
   const fetchAvailableSurgeons = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
@@ -96,6 +124,7 @@ function SurgerySchedulingForm() {
     }
   };
 
+// fetch available anaesthetists 
   const fetchAvailableAnaesthetists = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
@@ -107,6 +136,7 @@ function SurgerySchedulingForm() {
     }
   };
 
+// fetch available operation theatre 
   const fetchAvailableOperationTheatres = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
@@ -118,6 +148,7 @@ function SurgerySchedulingForm() {
     }
   };
 
+// fetch available kits 
   const fetchAvailableKits = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
@@ -129,6 +160,7 @@ function SurgerySchedulingForm() {
     }
   };
 
+// fetch all patients 
   const fetchPatients = async () => {
     try {
       const response = await axios.get("http://localhost:3100/api/patients");
@@ -138,6 +170,7 @@ function SurgerySchedulingForm() {
     }
   };
 
+// fetch all surgeons 
   const fetchSurgeons = async () => {
     try {
       const response = await axios.get("http://localhost:3100/doctors");
@@ -147,6 +180,7 @@ function SurgerySchedulingForm() {
     }
   };
 
+// fetch all anaesthetists 
   const fetchAnaesthetists = async () => {
     try {
       const response = await axios.get("http://localhost:3100/anaesthetists");
@@ -156,6 +190,7 @@ function SurgerySchedulingForm() {
     }
   };
 
+// fetch all operation theatres
   const fetchOperationTheatres = async () => {
     try {
       const response = await axios.get(
@@ -167,6 +202,7 @@ function SurgerySchedulingForm() {
     }
   };
 
+// fetch all available slots  
   const fetchAvailableSlots = async () => {
     try {
       const response = await axios.get(
@@ -177,6 +213,47 @@ function SurgerySchedulingForm() {
       console.error("Error fetching patients:", error);
     }
   };
+
+// fetch selected surgeon 
+  const fetchSelectedSurgeon = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3100/doctors/${formData.selectedSurgeon}`);
+      setSelectedSurgeon(response.data);
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+    }
+  }
+
+// fetch selected anaesthetist
+  const fetchSelectedAnaesthetist = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3100/anaesthetists/${formData.selectedAnaesthetist}`);
+      setSelectedAnaesthetist(response.data);
+    } catch (error) {
+      console.error("Error fetching anaesthetist:", error);
+    }
+  } 
+
+// fetch selected theatre
+  const fetchSelectedTheatre = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3100/operation-theatres/${formData.selectedTheatre}`);
+      setSelectedTheatre(response.data);
+    } catch (error) {
+      console.error("Error fetching theatre:", error);
+    }
+  }
+  
+// fetch selected kit
+  const fetchSelectedKit = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3100/ot-kits/${formData.selectedKit}`);
+      setSelectedKit(response.data);
+    } catch (error) {
+      console.error("Error fetching kit:", error);
+    }
+  }
+
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -244,14 +321,19 @@ function SurgerySchedulingForm() {
         patient_id: formData.selectedPatient,
       });
 
-      console.log("Surgery scheduled successfully:", response.data);
+      if (response.status === 201) {
+        toast.success("Surgery scheduled successfully!");
+
+        console.log(selectedSurgeon);
 
       // Update Surgeon's bookedSlots
       await axios.patch(
         `http://localhost:3100/doctors/${formData.selectedSurgeon}`,
         {
           bookedSlots: [
+            ...selectedSurgeon.bookedSlots,
             {
+              date: formData.selectedDate,
               startTime: formData.selectedStartTime,
               endTime: formData.selectedEndTime,
             },
@@ -264,7 +346,9 @@ function SurgerySchedulingForm() {
         `http://localhost:3100/anaesthetists/${formData.selectedAnaesthetist}`,
         {
           bookedSlots: [
+            ...selectedAnaesthetist.bookedSlots,
             {
+              date: formData.selectedDate,
               startTime: formData.selectedStartTime,
               endTime: formData.selectedEndTime,
             },
@@ -277,7 +361,9 @@ function SurgerySchedulingForm() {
         `http://localhost:3100/operation-theatres/${formData.selectedTheatre}`,
         {
           bookedSlots: [
+            ...selectedTheatre.bookedSlots,
             {
+              date: formData.selectedDate,
               startTime: formData.selectedStartTime,
               endTime: formData.selectedEndTime,
             },
@@ -290,16 +376,15 @@ function SurgerySchedulingForm() {
         `http://localhost:3100/ot-kits/${formData.selectedKit}`,
         {
           schedules: [
+            ...selectedKit.schedules,
             {
+              date: formData.selectedDate,
               startTime: formData.selectedStartTime,
               endTime: formData.selectedEndTime,
             },
           ],
         }
       );
-      if (response.status === 201) {
-        toast.success(response.data.message);
-      }
       // Reset the form after successful submission
       setFormData({
         selectedStartTime: "",
@@ -311,6 +396,7 @@ function SurgerySchedulingForm() {
         selectedPatient: "",
       });
       setSelectedSurgeryType("");
+      }
     } catch (error) {
       // console.log(formData);
       toast.error(error.response.data.message);

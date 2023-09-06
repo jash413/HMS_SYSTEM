@@ -8,11 +8,13 @@ router.get('/available-resources', operationTheatreController.getAvailableResour
 // Create, read, and update routes for Operation Theatres
 router.post('/operation-theatres', operationTheatreController.createOperationTheatre);
 router.get('/operation-theatres', operationTheatreController.getOperationTheatres);
+router.get('/operation-theatres/:id', operationTheatreController.getOperationTheatreById);
 router.patch('/operation-theatres/:id', operationTheatreController.updateOperationTheatre);
 
 // Create, read, and update routes for Anaesthetists
 router.post('/anaesthetists', operationTheatreController.createAnaesthetist);
 router.get('/anaesthetists', operationTheatreController.getAnaesthetists);
+router.get('/anaesthetists/:id', operationTheatreController.getAnaesthetistById);
 router.patch('/anaesthetists/:id', operationTheatreController.updateAnaesthetist);
 
 // Create, read, and update routes for OT Equipments
@@ -23,6 +25,7 @@ router.patch('/ot-equipments/:id', operationTheatreController.updateOTEquipment)
 // Create, read, and update routes for OT Kits
 router.post('/ot-kits', operationTheatreController.createOTkit);
 router.get('/ot-kits', operationTheatreController.getOTkit);
+router.get('/ot-kits/:id', operationTheatreController.getOTkitById);
 router.patch('/ot-kits/:id', operationTheatreController.updateOTkit);
 
 // Create, read, and update routes for Consent Forms

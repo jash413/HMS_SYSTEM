@@ -26,26 +26,6 @@ exports.getAvailableResources = async (req, res) => {
     const operationTheatres = await OperationTheatre.find();
     const kits = await Kit.find();
 
-    const availableAnaesthetists = anaesthetists.filter((anaesthetist) => {
-      const hasOverlap = anaesthetist.bookedSlots.some((slot) => {
-        const slotDate = moment(slot.date, "YYYY-MM-DD").format("YYYY-MM-DD");
-        const slotStartTime = moment(slot.startTime, "HH:mm").format("HH:mm");
-        const slotEndTime = moment(slot.endTime, "HH:mm").format("HH:mm");
-
-        return (
-          slotDate === convertedSelectedDate &&
-          ((slotStartTime >= convertedStartTime && slotStartTime < convertedEndTime) ||
-            (slotEndTime > convertedStartTime && slotEndTime <= convertedEndTime))
-        );
-      });
-
-      return (
-        !hasOverlap &&
-        anaesthetist.workingHours.startTime <= convertedStartTime &&
-        anaesthetist.workingHours.endTime >= convertedEndTime
-      );
-    });
-
     const availableSurgeons = surgeons.filter((surgeon) => {
       const hasOverlap = surgeon.bookedSlots.some((slot) => {
         const slotDate = moment(slot.date, "YYYY-MM-DD").format("YYYY-MM-DD");
@@ -54,8 +34,10 @@ exports.getAvailableResources = async (req, res) => {
 
         return (
           slotDate === convertedSelectedDate &&
-          ((slotStartTime >= convertedStartTime && slotStartTime < convertedEndTime) ||
-            (slotEndTime > convertedStartTime && slotEndTime <= convertedEndTime))
+          ((slotStartTime >= convertedStartTime &&
+            slotStartTime < convertedEndTime) ||
+            (slotEndTime > convertedStartTime &&
+              slotEndTime <= convertedEndTime))
         );
       });
 
@@ -63,6 +45,28 @@ exports.getAvailableResources = async (req, res) => {
         !hasOverlap &&
         surgeon.workingHours.startTime <= convertedStartTime &&
         surgeon.workingHours.endTime >= convertedEndTime
+      );
+    });
+
+    const availableAnaesthetists = anaesthetists.filter((anaesthetist) => {
+      const hasOverlap = anaesthetist.bookedSlots.some((slot) => {
+        const slotDate = moment(slot.date, "YYYY-MM-DD").format("YYYY-MM-DD");
+        const slotStartTime = moment(slot.startTime, "HH:mm").format("HH:mm");
+        const slotEndTime = moment(slot.endTime, "HH:mm").format("HH:mm");
+
+        return (
+          slotDate === convertedSelectedDate &&
+          ((slotStartTime >= convertedStartTime &&
+            slotStartTime < convertedEndTime) ||
+            (slotEndTime > convertedStartTime &&
+              slotEndTime <= convertedEndTime))
+        );
+      });
+
+      return (
+        !hasOverlap &&
+        anaesthetist.workingHours.startTime <= convertedStartTime &&
+        anaesthetist.workingHours.endTime >= convertedEndTime
       );
     });
 
@@ -74,8 +78,10 @@ exports.getAvailableResources = async (req, res) => {
 
         return (
           slotDate === convertedSelectedDate &&
-          ((slotStartTime >= convertedStartTime && slotStartTime < convertedEndTime) ||
-            (slotEndTime > convertedStartTime && slotEndTime <= convertedEndTime))
+          ((slotStartTime >= convertedStartTime &&
+            slotStartTime < convertedEndTime) ||
+            (slotEndTime > convertedStartTime &&
+              slotEndTime <= convertedEndTime))
         );
       });
 
@@ -94,8 +100,10 @@ exports.getAvailableResources = async (req, res) => {
 
         return (
           slotDate === convertedSelectedDate &&
-          ((slotStartTime >= convertedStartTime && slotStartTime < convertedEndTime) ||
-            (slotEndTime > convertedStartTime && slotEndTime <= convertedEndTime))
+          ((slotStartTime >= convertedStartTime &&
+            slotStartTime < convertedEndTime) ||
+            (slotEndTime > convertedStartTime &&
+              slotEndTime <= convertedEndTime))
         );
       });
 
@@ -134,6 +142,17 @@ exports.getOperationTheatres = async (req, res) => {
   }
 };
 
+// Get an operation theatre by ID
+exports.getOperationTheatreById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const operationTheatre = await OperationTheatre.findById(id);
+    res.status(200).json(operationTheatre);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching operation theatre" });
+  }
+};
+
 // Update an operation theatre
 exports.updateOperationTheatre = async (req, res) => {
   try {
@@ -167,6 +186,17 @@ exports.getAnaesthetists = async (req, res) => {
     res.status(200).json(anaesthetists);
   } catch (error) {
     res.status(500).json({ error: "Error fetching anaesthetists" });
+  }
+};
+
+// Get an anaesthetist by ID
+exports.getAnaesthetistById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const anaesthetist = await Anaesthetist.findById(id);
+    res.status(200).json(anaesthetist);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching anaesthetist" });
   }
 };
 
@@ -238,6 +268,17 @@ exports.getOTkit = async (req, res) => {
     res.status(200).json(otKits);
   } catch (error) {
     res.status(500).json({ error: "Error fetching OT kits" });
+  }
+};
+
+// Get an OT kit by ID
+exports.getOTkitById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const otKit = await Kit.findById(id);
+    res.status(200).json(otKit);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching OT kit" });
   }
 };
 
@@ -540,6 +581,7 @@ exports.getCommonAvailableSlots = async (req, res) => {
 
     // Calculate available slots for the selected doctor
     if (doctorId) {
+      console.log(doctorId)
       const doctor = await Doctor.findById(doctorId);
       const doctorSlots = calculateAvailableSlots(
         doctor.workingHours,
@@ -660,7 +702,6 @@ const calculateAvailableSlots = (
   return availableSlots;
 };
 
-
 // Function to find common available slots across selected resources
 const findCommonSlots = (availableSlots) => {
   // Initialize an array to store common slots
@@ -701,5 +742,3 @@ const findCommonSlots = (availableSlots) => {
 
   return commonSlots;
 };
-
-

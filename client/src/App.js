@@ -1,3 +1,4 @@
+import Index from "./pages/Main";
 // import Dashboard from "./pages/Dashboard";
 // import PatientForm from "./pages/Add-patient";
 // import Patientlist from "./pages/PatientList";
@@ -14,11 +15,15 @@
 // import DoctorAppointment from "./pages/DoctorAppointment";
 // import DischargeForm from "./pages/Discharge";
 // import Calendar from "./pages/Calendar";
-import Appointmentlist from "./pages/AppointmentList";
+// import SurgerySchedulingForm from "./pages/ScheduleSurgery";
+
 
 function App() {
   return (
     <div>
+      <Index />
+      {/* <Header /> */}
+      {/* <Sidebar /> */}
       {/* <UploadDocument /> */}
       {/* <Labs/> */}
       {/* <Dashboard /> */}
@@ -34,11 +39,7 @@ function App() {
       {/* <OperationTheatreForm /> */}
       {/* <DoctorAppointment/> */}
       {/* <Calendar/> */}
-<<<<<<< HEAD
       <SurgerySchedulingForm />
-=======
-      <Appointmentlist/>
->>>>>>> f27fa0be756da1a939df1a97f7aa2d70ab221ece
     </div>
   );
 }

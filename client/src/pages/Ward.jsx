@@ -44,7 +44,7 @@ const Ward = () => {
         setPatientDetails(response.data);
       } catch (error) {
         console.error("Error fetching patient details:", error);
-      }finally {
+      } finally {
         setLoading(false);
       }
     };
@@ -59,10 +59,19 @@ const Ward = () => {
 
     return (
       <div>
-        <p><b>Patient Name:</b> {patientDetails.firstName} {patientDetails.lastName}</p>
-        <p><b>Patient Gender:</b> {patientDetails.gender}</p>
-        <p><b>Patient Doctor:</b> {patientDetails.selectedDoctor}</p>
-        <p><b>Patient Phone Number:</b> {patientDetails.phoneNumber}</p>
+        <p>
+          <b>Patient Name:</b> {patientDetails.firstName}{" "}
+          {patientDetails.lastName}
+        </p>
+        <p>
+          <b>Patient Gender:</b> {patientDetails.gender}
+        </p>
+        <p>
+          <b>Patient Doctor:</b> {patientDetails.selectedDoctor}
+        </p>
+        <p>
+          <b>Patient Phone Number:</b> {patientDetails.phoneNumber}
+        </p>
         {/* <p><b>Admission Date:</b> {patientDetails.admitDate}</p> */}
         {/* Add more patient details here */}
       </div>
@@ -95,7 +104,6 @@ const Ward = () => {
     });
   };
 
-
   const fetchWards = async () => {
     try {
       const response = await axios.get("http://localhost:3100/api/ward");
@@ -104,7 +112,6 @@ const Ward = () => {
       console.error("Error fetching ward data:", error);
     }
   };
-
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -128,142 +135,148 @@ const Ward = () => {
   const handleAddWardRemove = async (e) => {
     e.preventDefault();
     try {
-      await axios.delete(`http://localhost:3100/api/ward?wardNumber=${wardData.wardNumber}`);
+      await axios.delete(
+        `http://localhost:3100/api/ward?wardNumber=${wardData.wardNumber}`
+      );
       fetchWards();
       toast.success("Room removed successfully");
     } catch (error) {
       toast.error("Error removing ward");
       console.error(error);
     }
-  }
+  };
   return (
-    <div id="ihealth-layout" className="theme-tradewind">
-      <div className="main px-lg-4 px-md-4">
-        <div className="body d-flex py-3">
-          <div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-            <h3 className="fw-bold mb-0">Rooms</h3>
-          </div>
-          <div className="card">
-            <div className="card-header py-3 d-flex bg-transparent border-bottom-0">
-              <h6 className="mb-0 fw-bold">Hospital Room Booking Status</h6>
-            </div>
-            <div className="card-body">
-              <div className="room_book">
-                <div className="row row-cols-2 row-cols-sm-4 row-cols-md-6 row-cols-lg-6 g-3">
-                {wards.map((ward) => (
-                    <div className="room col" key={ward.wardNumber}>
-                      <label htmlFor={ward.wardNumber}>
-                        <PopoverComponent
-                          target={
-                            <i
-                              style={{
-                                color: getStatusColor(ward.status),
-                              }}
-                              className="icofont-patient-bed fs-2"
-                            />
-                          }
-                          content={
-                            <>
-                              <p><b>Room No:</b> {ward.wardNumber}</p>
-                              <p><b>Room Type:</b> {ward.type}</p>
-                              <p><b>Room Status:</b> {ward.status}</p>
-                              <PatientDetailsComponent ward={ward} />
-                            </>
-                          }
+    <div className="container-xxl">
+      <div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+        <h3 className="fw-bold mb-0">Rooms</h3>
+      </div>
+      <div className="card">
+        <div className="card-header py-3 d-flex bg-transparent border-bottom-0">
+          <h6 className="mb-0 fw-bold">Hospital Room Booking Status</h6>
+        </div>
+        <div className="card-body">
+          <div className="room_book">
+            <div className="row row-cols-2 row-cols-sm-4 row-cols-md-6 row-cols-lg-6 g-3">
+              {wards.map((ward) => (
+                <div className="room col" key={ward.wardNumber}>
+                  <label htmlFor={ward.wardNumber}>
+                    <PopoverComponent
+                      target={
+                        <i
+                          style={{
+                            color: getStatusColor(ward.status),
+                          }}
+                          className="icofont-patient-bed fs-2"
                         />
-                        <span className="text-muted">{ward.wardNumber}</span>
-                      </label>
-                    </div>
-                  ))}
+                      }
+                      content={
+                        <>
+                          <p>
+                            <b>Room No:</b> {ward.wardNumber}
+                          </p>
+                          <p>
+                            <b>Room Type:</b> {ward.type}
+                          </p>
+                          <p>
+                            <b>Room Status:</b> {ward.status}
+                          </p>
+                          <PatientDetailsComponent ward={ward} />
+                        </>
+                      }
+                    />
+                    <span className="text-muted">{ward.wardNumber}</span>
+                  </label>
                 </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div className="card">
+        <div className="card-header py-3 d-flex bg-transparent border-bottom-0">
+          <h6 className="mb-0 fw-bold">Add Room</h6>
+        </div>
+        <div className="card-body">
+          <form onSubmit={handleAddWard}>
+            <div className="row g-3 align-items-center">
+              <div className="col-md-4">
+                <label className="form-label">Ward Number:</label>
+                <input
+                  type="text"
+                  id="newWardNumber"
+                  value={formData.newWard.wardNumber}
+                  onChange={(e) =>
+                    setFormData({
+                      newWard: {
+                        ...formData.newWard,
+                        wardNumber: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </div>
+              <div className="col-md-4">
+                <label htmlFor="admittime" className="form-label">
+                  Ward Type:
+                </label>
+                <input
+                  type="text"
+                  id="newWardType"
+                  value={formData.newWard.type}
+                  onChange={(e) =>
+                    setFormData({
+                      newWard: {
+                        ...formData.newWard,
+                        type: e.target.value,
+                      },
+                    })
+                  }
+                />
               </div>
             </div>
-          </div>
-          <br />
-          <div className="card">
-            <div className="card-header py-3 d-flex bg-transparent border-bottom-0">
-              <h6 className="mb-0 fw-bold">Add Room</h6>
+            <button type="submit" className="btn btn-primary mt-4">
+              Add
+            </button>
+          </form>
+          <ToastContainer position="top-right" autoClose={3000} />
+        </div>
+      </div>
+      <br />
+      <div className="card">
+        <div className="card-header py-3 d-flex bg-transparent border-bottom-0">
+          <h6 className="mb-0 fw-bold">Remove Room</h6>
+        </div>
+        <div className="card-body">
+          <form onSubmit={handleAddWardRemove}>
+            <div className="row g-3 align-items-center">
+              <div className="col-md-6">
+                <label htmlFor="admittime" className="form-label">
+                  Ward Number
+                </label>
+                <br />
+                <select
+                  name="wardNumber"
+                  value={wardData.wardNumber}
+                  onChange={handleInputChange}
+                  className="form-select"
+                >
+                  <option value="">Select a ward number</option>
+                  {wards.map((ward) =>
+                    ward.status === "Vacant" ? (
+                      <option key={ward._id} value={ward.wardNumber}>
+                        {ward.wardNumber}-{ward.type}
+                      </option>
+                    ) : null
+                  )}
+                </select>
+              </div>
             </div>
-            <div className="card-body">
-              <form onSubmit={handleAddWard}>
-                <div className="row g-3 align-items-center">
-                  <div className="col-md-4">
-                    <label className="form-label">Ward Number:</label>
-                    <input
-                      type="text"
-                      id="newWardNumber"
-                      value={formData.newWard.wardNumber}
-                      onChange={(e) =>
-                        setFormData({
-                          newWard: {
-                            ...formData.newWard,
-                            wardNumber: e.target.value,
-                          },
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="col-md-4">
-                    <label htmlFor="admittime" className="form-label">
-                      Ward Type:
-                    </label>
-                    <input
-                      type="text"
-                      id="newWardType"
-                      value={formData.newWard.type}
-                      onChange={(e) =>
-                        setFormData({
-                          newWard: {
-                            ...formData.newWard,
-                            type: e.target.value,
-                          },
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-                <button type="submit" className="btn btn-primary mt-4">
-                  Add
-                </button>
-              </form>
-              <ToastContainer position="top-right" autoClose={3000} />
-            </div>
-          </div>
-          <br />
-          <div className="card">
-            <div className="card-header py-3 d-flex bg-transparent border-bottom-0">
-              <h6 className="mb-0 fw-bold">Remove Room</h6>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleAddWardRemove}>
-                <div className="row g-3 align-items-center">
-                <div className="col-md-6">
-                          <label htmlFor="admittime" className="form-label">
-                            Ward Number
-                          </label>
-                          <br />
-                          <select
-                            name="wardNumber"
-                            value={wardData.wardNumber}
-                            onChange={handleInputChange}
-                            className="form-select"
-                          >
-                            <option value="">Select a ward number</option>
-                            {wards.map((ward) => (ward.status==="Vacant")?(
-                              <option key={ward._id} value={ward.wardNumber}>
-                                {ward.wardNumber}-{ward.type}
-                              </option>
-                            ):null)}
-                          </select>
-                        </div>
-                </div>
-                <button type="submit" className="btn btn-primary mt-4">
-                  Remove
-                </button>
-              </form>
-              <ToastContainer position="top-right" autoClose={3000} />
-            </div>
-          </div>
+            <button type="submit" className="btn btn-primary mt-4">
+              Remove
+            </button>
+          </form>
+          <ToastContainer position="top-right" autoClose={3000} />
         </div>
       </div>
     </div>

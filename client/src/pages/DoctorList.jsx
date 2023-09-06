@@ -24,65 +24,52 @@ function DoctorList() {
     }
   };
   return (
-    <div id="ihealth-layout" className="theme-tradewind">
-    
-      <div className="main px-lg-4 px-md-4">
-        
-        
-        {/* Body: Body */}
-        <div className="body d-flex py-3">
-          <div className="container-xxl">
-            <div className="row align-items-center">
-              <div className="border-0 mb-4">
-                <div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-                  <h3 className="fw-bold mb-0">Doctor List</h3>
-                </div>
-              </div>
-            </div>{" "}
-            {/* Row end  */}
-            <div className="row mb-3">
-              <div className="card">
-                <div className="card-body">
-                  <table
-                    id="patient-table"
-                    className="table table-hover align-middle mb-0"
-                    style={{ width: "100%" }}
-                    ref={tableRef}
-                  >
-                    <thead>
-                      <tr>
-                        <th>Doctor Id</th>
-                        <th>Name</th>
-                        <th>Phone Number</th>
-                        <th>Email-Address</th>
-                        <th>Date</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {doctors.map((doctor) => (
-                        <tr>
-                          <td>{doctor.doctor_id}</td>
-                          <td>
-                            {doctor.first_name} {doctor.last_name}
-                          </td>
-                          <td>{doctor.phone}</td>
-                          <td>{doctor.email}</td>
-                          <td>{doctor.admitDate}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+    <div className="container-xxl">
+      <div className="row align-items-center">
+        <div className="border-0 mb-4">
+          <div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <h3 className="fw-bold mb-0">Doctor List</h3>
           </div>
         </div>
-       
-        
+      </div>{" "}
+      {/* Row end  */}
+      <div className="row mb-3">
+        <div className="card">
+          <div className="card-body">
+            <table
+              id="patient-table"
+              className="table table-hover align-middle mb-0"
+              style={{ width: "100%" }}
+              ref={tableRef}
+            >
+              <thead>
+                <tr>
+                  <th>Doctor Id</th>
+                  <th>Name</th>
+                  <th>Phone Number</th>
+                  <th>Email-Address</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {doctors.map((doctor) => (
+                  <tr>
+                    <td>{doctor.doctor_id}</td>
+                    <td>
+                      {doctor.first_name} {doctor.last_name}
+                    </td>
+                    <td>{doctor.phone}</td>
+                    <td>{doctor.email}</td>
+                    <td>{doctor.admitDate}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
-    
   );
 }
 
-export default DoctorList
+export default DoctorList;

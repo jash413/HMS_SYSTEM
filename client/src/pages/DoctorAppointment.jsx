@@ -20,8 +20,7 @@ const AppointmentForm = () => {
   const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
   const [doctors, setDoctors] = useState([]);
   const [patients, setPatients] = useState([]);
-  const [doctorData, setDoctorData] = useState({});
-  const [availableSlots, setAvailableSlots] = useState([]); // State to store available slots
+  const [doctorData, setDoctorData] = useState({})
 
   useEffect(() => {
     axios.get("http://localhost:3100/doctors").then((response) => {
@@ -144,14 +143,14 @@ const AppointmentForm = () => {
       // Reset the form after successful submission
       setFormData({
         patient: "",
-        doctor: "",
-        appointmentDate: new Date().toISOString().split("T")[0],
+        doctor:"",
+        admissionDate: new Date().toISOString().split("T")[0],
         wardNumber: "",
         notes: "",
-        startingTime: "",
-        title: "",
-        // from: "",
-        endingTime: "",
+        admissionTime: "",
+        title:"",
+        from:"",
+        to:""
       });
     } catch (error) {
       toast.error(error.response.data.message);
@@ -197,67 +196,60 @@ const AppointmentForm = () => {
               </div>
             </div>
             <div className="row mb-3">
+              {/* Patient Details Card */}
               <div className="col-sm-12">
                 <div className="card mb-3">
                   <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
-                    <h5 className="mb-0 fw-bold ">Available Slots</h5>
+                    <h5 className="mb-0 fw-bold ">Patient Details</h5>
                   </div>
                   <div className="card-body">
-                    <form onSubmit={handleSubmit}>
-                      <div className="row g-3 align-items-center">
-                        <div className="col-md-4">
-                          <label className="form-label">Select Date</label>
-                          <input
-                            type="date"
-                            name="selectedDate"
-                            value={formData.selectedDate}
-                            onChange={(e) => {
-                              setFormData((prevFormData) => ({
-                                ...prevFormData,
-                                selectedDate: e.target.value,
-                              }));
-                            }}
-                            className="form-control"
-                          />
-                        </div>
-                      </div>
-                      <br />
-                    </form>
-                    <br />
                     <div className="row g-3 align-items-center">
-                      <div className="col-md-12">
-                        <table className="table table-bordered">
-                          <thead>
-                            <tr>
-                              <th scope="col">Start Time</th>
-                              <th scope="col">End Time</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {availableSlots.map((slot) => (
-                              <tr key={slot._id}>
-                                <td>{slot.startTime}</td>
-                                <td>{slot.endTime}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                      <div className="col-md-4">
+                        {selectedPatientDetails && (
+                          <h6 className="mb-0">
+                            <b>Name:</b> {selectedPatientDetails.firstName}{" "}
+                            {selectedPatientDetails.lastName}
+                          </h6>
+                        )}
+                      </div>
+                      <div className="col-md-4">
+                        {selectedPatientDetails && (
+                          <h6 className="mb-0">
+                            <b>Email:</b> {selectedPatientDetails.emailAddress}
+                          </h6>
+                        )}
                       </div>
                     </div>
-
-                    <ToastContainer position="top-right" autoClose={3000} />
+                    <br />
+                    <div className="row g-3 align-items-center">
+                      <div className="col-md-4">
+                        {selectedPatientDetails && (
+                          <h6 className="mb-0">
+                            <b>Doctor:</b>{" "}
+                            {doctorData.first_name} {doctorData.last_name}
+                          </h6>
+                        )}
+                      </div>
+                      <div className="col-md-4">
+                        {selectedPatientDetails && (
+                          <h6 className="mb-0">
+                            <b>Phone number:</b>{" "}
+                            {selectedPatientDetails.phoneNumber}
+                          </h6>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-
             <div className="row mb-3">
               {/* Admission Form Card */}
               <div className="col-sm-12">
                 <div className="card mb-3">
                   <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
                     <h5 className="mb-0 fw-bold">
-                      Fill in the form below to book an Appointment
+                      Fill in the form below to admit a patient
                     </h5>
                   </div>
                   <div className="card-body">
@@ -280,49 +272,35 @@ const AppointmentForm = () => {
 
                         <div className="col-md-6">
                           <label htmlFor="admitdate" className="form-label">
-                            Appointment Date
+                            Admit Date
                           </label>
                           <input
                             required
                             type="date"
-                            name="appointmentDate"
-                            value={formData.appointmentDate}
+                            name="admissionDate"
+                            value={formData.admissionDate}
                             onChange={handleInputChange}
                             className="form-control"
                           />
+                          
                         </div>
 
                         <div className="col-md-6">
                           <label htmlFor="admittime" className="form-label">
-                            Appointment Start Time
+                            Admit Time
                           </label>
                           <input
                             required
                             type="time"
-                            name="startingTime"
-                            value={formData.startingTime}
-                            onChange={handleInputChange}
-                            className="form-control"
-                            id="title"
-                          />
-                        </div>
-
-                        <div className="col-md-6">
-                          <label htmlFor="admittime" className="form-label">
-                            Appointment End Time
-                          </label>
-                          <input
-                            required
-                            type="time"
-                            name="endingTime"
-                            value={formData.endingTime}
+                            name="admissionTime"
+                            value={formData.admissionTime}
                             onChange={handleInputChange}
                             className="form-control"
                             id="title"
                           />
                         </div>
                         <div className="col-md-6">
-                          <label htmlFor="admittime" className="form-label">
+                        <label htmlFor="admittime" className="form-label">
                             Title
                           </label>
                           <input
@@ -335,7 +313,21 @@ const AppointmentForm = () => {
                             id="firstname"
                           />
                         </div>
-
+                        <div className="col-md-6">
+                          <label htmlFor="admittime" className="form-label">
+                            Ending Time
+                          </label>
+                          <input
+                            required
+                            type="time"
+                            name="to"
+                            value={formData.to}
+                            onChange={handleInputChange}
+                            className="form-control"
+                            id="title"
+                          />
+                        </div>
+                        
                         <div className="col-md-12">
                           <label htmlFor="addnote" className="form-label">
                             Add Note
@@ -358,8 +350,8 @@ const AppointmentForm = () => {
                           >
                             Submit
                           </button>
-                        </div>
-                      </div>
+                        </div>                        
+                     </div>
                     </form>
                     <ToastContainer position="top-right" autoClose={3000} />
                   </div>

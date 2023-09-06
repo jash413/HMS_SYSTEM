@@ -13,6 +13,7 @@ function SurgerySchedulingForm() {
     selectedKit: "",
     selectedPatient: "",
     selectedDate: "",
+
   });
 
   const [formData1, setFormData1] = useState({
@@ -21,6 +22,7 @@ function SurgerySchedulingForm() {
     selectedDuration: "",
     selectedAnaesthetist: "",
     selectedTheatre: "",
+    selectedDate:""
   });
 
   const [availableSlots, setAvailableSlots] = useState([]); // to be fetched from backend

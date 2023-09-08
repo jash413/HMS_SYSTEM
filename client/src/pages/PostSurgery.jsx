@@ -3,6 +3,7 @@ import axios from "axios";
 import AsyncSelect from "react-select/async";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS
+import moment from "moment";
 
 const PostSurgeryForm = () => {
   const [formData, setFormData] = useState({
@@ -12,42 +13,76 @@ const PostSurgeryForm = () => {
     patient_condition: "",
   });
 
-  const [selectedSurgeryDetails, setSelectedSurgeryDetails] = useState(null);
+  const [selectedSurgeryDetails, setSelectedSurgeryDetails] = useState({});
   const [selectedPatientDetails, setSelectedPatientDetails] = useState({});
   const [selectedSurgeonDetails, setSelectedSurgeonDetails] = useState({});
+  const [selectedAnaesthetistDetails, setSelectedAnaesthetistDetails] =
+    useState({});
+  const [selectedTheatreDetails, setselectedTheatreDetails] = useState({});
 
   // Get the selected patient details
   useEffect(() => {
-    if (selectedSurgeryDetails) {
-      axios.get(`http://localhost:3100/api/patients/${selectedSurgeryDetails.patient_id}`).then((response) => {
-        setSelectedPatientDetails(response.data);
-      });
+    if (Object.keys(selectedSurgeryDetails).length !== 0) {
+      axios
+        .get(
+          `http://localhost:3100/api/patients/${selectedSurgeryDetails.patient_id}`
+        )
+        .then((response) => {
+          setSelectedPatientDetails(response.data);
+        });
     }
   }, [selectedSurgeryDetails]);
 
   // Get the selected surgeon details
   useEffect(() => {
-    if (selectedSurgeryDetails) {
-      axios.get(`http://localhost:3100/doctors/${selectedSurgeryDetails.surgeon_id}`).then((response) => {
-        setSelectedSurgeonDetails(response.data);
-      });
+    if (Object.keys(selectedSurgeryDetails).length !== 0) {
+      axios
+        .get(
+          `http://localhost:3100/doctors/${selectedSurgeryDetails.doctor_id}`
+        )
+        .then((response) => {
+          setSelectedSurgeonDetails(response.data);
+        });
     }
   }, [selectedSurgeryDetails]);
 
+  // Get the selected anaesthetist details
+  useEffect(() => {
+    if (Object.keys(selectedSurgeryDetails).length !== 0) {
+      axios
+        .get(
+          `http://localhost:3100/anaesthetists/${selectedSurgeryDetails.anaesthetist_id}`
+        )
+        .then((response) => {
+          setSelectedAnaesthetistDetails(response.data);
+        });
+    }
+  }, [selectedSurgeryDetails]);
+
+  // Get the selected theatre details
+  useEffect(() => {
+    if (Object.keys(selectedSurgeryDetails).length !== 0) {
+      axios
+        .get(
+          `http://localhost:3100/operation-theatres/${selectedSurgeryDetails.theatre_id}`
+        )
+        .then((response) => {
+          setselectedTheatreDetails(response.data);
+        });
+    }
+  }, [selectedSurgeryDetails]);
 
   const loadOptions = (inputValue) => {
     return axios
       .get(`http://localhost:3100/surgeries/search?surgeryID=${inputValue}`)
       .then((response) => {
         const allSurgeries = response.data;
-        return allSurgeries.map((surgery) => ({
+        return allSurgeries.filter((surgery) => (surgery.record_generated === false)).map((surgery) => ({
           value: surgery._id,
           label: `${surgery.surgeryID}`,
         }));
       });
   };
-
-  // 
 
   const handleSelectChange = (selectedOption) => {
     setFormData((prevData) => ({
@@ -55,16 +90,27 @@ const PostSurgeryForm = () => {
       surgery_id: selectedOption.value,
     }));
 
-     // Get the selected patient's details
-     axios
-     .get(`http://localhost:3100/surgeries/${selectedOption.value}`)
-     .then((response) => {
-       setSelectedSurgeryDetails(response.data);
-       console.log(selectedSurgeryDetails);
-     })
-     .catch((error) => {
-       console.error("Error fetching surgery details:", error);
-     });
+    // Get the selected patient's details
+    axios
+      .get(`http://localhost:3100/surgeries/${selectedOption.value}`)
+      .then((response) => {
+        const SelectedDate = moment(response.data.date).format("YYYY-MM-DD");
+        setSelectedSurgeryDetails({
+          surgeryID: response.data.surgeryID,
+          patient_id: response.data.patient_id,
+          doctor_id: response.data.doctor_id,
+          anaesthetist_id: response.data.anaesthetist_id,
+          theatre_id: response.data.theatre_id,
+          start_time: response.data.start_time,
+          end_time: response.data.end_time,
+          surgeryType: response.data.surgeryType,
+          date: SelectedDate,
+        });
+        console.log(selectedSurgeryDetails);
+      })
+      .catch((error) => {
+        console.error("Error fetching surgery details:", error);
+      });
   };
 
   const handleInputChange = (e) => {
@@ -82,17 +128,38 @@ const PostSurgeryForm = () => {
         "http://localhost:3100/surgery-records",
         formData
       );
-      console.log(response.data);
+      console.log(response);
       if (response.status === 201) {
         toast.success("Record created successfully");
       }
+
+      // Update the surgery record_generated field to true
+      const updateResponse = await axios.patch(
+        `http://localhost:3100/surgeries/${formData.surgery_id}`,
+        { record_generated: true }
+      );
+      console.log(updateResponse);
+      
+
       // Clear form fields
       setFormData({
-        surgery_id: null,
+        surgery_id: "",
         surgeon_notes: "",
         anaesthetist_notes: "",
         patient_condition: "",
       });
+      // Clear selection
+      setSelectedSurgeryDetails({
+        surgeryID: "",
+          patient_id: "",
+          doctor_id: "",
+          anaesthetist_id: "",
+          theatre_id: "",
+          start_time: "",
+          end_time: "",
+          surgeryType: "",
+          date: "",
+      })
     } catch (error) {
       toast.error(error.response.data.message);
       // console.log(formData);
@@ -117,33 +184,80 @@ const PostSurgeryForm = () => {
               <h5 className="mb-0 fw-bold ">Surgery Details</h5>
             </div>
             <div className="card-body">
-            <div className="row g-3 align-items-center">
-              <div className="col-md-4">
-                {selectedSurgeryDetails && (
-                  <h6 className="mb-0">
-                    <b>Surgery ID:</b> {selectedSurgeryDetails.surgeryID}
-                  </h6>
-                )}
+              <div className="row g-3 align-items-center">
+                <div className="col-md-4">
+                  {selectedSurgeryDetails && (
+                    <h6 className="mb-0">
+                      <b>Surgery ID:</b> {selectedSurgeryDetails.surgeryID}
+                    </h6>
+                  )}
+                </div>
+                <div className="col-md-4">
+                  {selectedPatientDetails && (
+                    <h6 className="mb-0">
+                      <b>Patient:</b> {selectedPatientDetails.firstName}{" "}
+                      {selectedPatientDetails.lastName}
+                    </h6>
+                  )}
+                </div>
+                <div className="col-md-4">
+                  {selectedSurgeonDetails && (
+                    <h6 className="mb-0">
+                      <b>Surgeon:</b> {selectedSurgeonDetails.first_name}{" "}
+                      {selectedSurgeonDetails.last_name}
+                    </h6>
+                  )}
+                </div>
               </div>
-              <div className="col-md-4">
-                {selectedPatientDetails && (
-                  <h6 className="mb-0">
-                    <b>Patient:</b> {selectedPatientDetails.firstName} {selectedPatientDetails.lastName}
-                  </h6>
-                )}
+              <br />
+              <div className="row g-3 align-items-center">
+                <div className="col-md-4">
+                  {selectedAnaesthetistDetails && (
+                    <h6 className="mb-0">
+                      <b>Anaesthetist:</b> {selectedAnaesthetistDetails.name}
+                    </h6>
+                  )}
+                </div>
+                <div className="col-md-4">
+                  {selectedTheatreDetails && (
+                    <h6 className="mb-0">
+                      <b>Operation Theatre:</b> {selectedTheatreDetails.name}
+                    </h6>
+                  )}
+                </div>
+                <div className="col-md-4">
+                  {selectedSurgeryDetails && (
+                    <h6 className="mb-0">
+                      <b>Surgery Type:</b> {selectedSurgeryDetails.surgeryType}
+                    </h6>
+                  )}
+                </div>
+              </div>
+              <br />
+              <div className="row g-3 align-items-center">
+                <div className="col-md-4">
+                  {selectedSurgeryDetails && (
+                    <h6 className="mb-0">
+                      <b>Start Time:</b> {selectedSurgeryDetails.start_time}
+                    </h6>
+                  )}
+                </div>
+                <div className="col-md-4">
+                  {selectedSurgeryDetails && (
+                    <h6 className="mb-0">
+                      <b>End Time:</b> {selectedSurgeryDetails.end_time}
+                    </h6>
+                  )}
+                </div>
+                <div className="col-md-4">
+                  {selectedSurgeryDetails && (
+                    <h6 className="mb-0">
+                      <b>Surgery Date:</b> {selectedSurgeryDetails.date}
+                    </h6>
+                  )}
+                </div>
               </div>
             </div>
-            <br />
-            <div className="row g-3 align-items-center">
-              <div className="col-md-4">
-                {selectedSurgeryDetails && (
-                  <h6 className="mb-0">
-                    <b>Surgeon:</b> {selectedSurgeonDetails.first_name} {selectedSurgeonDetails.last_name}
-                  </h6>
-                )}
-              </div>
-            </div>
-          </div>
           </div>
           <div className="card mb-3">
             <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
@@ -157,6 +271,7 @@ const PostSurgeryForm = () => {
                   <div className="col-md-6">
                     <label className="form-label">Select Surgery</label>
                     <AsyncSelect
+                      required
                       value={formData.surgery_id.value}
                       onChange={handleSelectChange}
                       loadOptions={loadOptions}
@@ -165,69 +280,21 @@ const PostSurgeryForm = () => {
                       noOptionsMessage={() => null}
                     />
                   </div>
-                  {/* <div className="col-md-6">
-                  <label htmlFor="admittime" className="form-label">
-                    Ward Number
-                  </label>
-                  <br />
-                  <select
-                    name="wardNumber"
-                    value={formData.wardNumber}
-                    onChange={handleInputChange}
-                    className="form-select"
-                  >
-                    <option value="">Select a ward number</option>
-                    {vacantWards.map((ward) => (
-                      <option key={ward._id} value={ward.wardNumber}>
-                        {ward.wardNumber}-{ward.type}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="col-md-6">
+                    <label className="form-label">Surgeon Notes</label>
+                    <input required className="form-control" type="textarea" name="surgeon_notes" onChange={handleInputChange} value={formData.surgeon_notes} />
+                  </div>
+                </div><br/>
+                <div className="row g-3 align-items-center">
+                  <div className="col-md-6">
+                    <label className="form-label">Anaesthetist Notes</label>
+                    <input required className="form-control" type="textarea" name="anaesthetist_notes" onChange={handleInputChange} value={formData.anaesthetist_notes} />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Patient Condition</label>
+                    <input required className="form-control" type="textarea" name="patient_condition" onChange={handleInputChange} value={formData.patient_condition} />
+                  </div>
                 </div>
-                <div className="col-md-6">
-                  <label htmlFor="admitdate" className="form-label">
-                    Admit Date
-                  </label>
-                  <br />
-                  <input
-                    required
-                    type="date"
-                    name="admissionDate"
-                    value={formData.admissionDate}
-                    onChange={handleInputChange}
-                    className="form-control"
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="admittime" className="form-label">
-                    Admit Time
-                  </label>
-                  <input
-                    required
-                    type="time"
-                    name="admissionTime"
-                    value={formData.admissionTime}
-                    onChange={handleInputChange}
-                    className="form-control"
-                    id="admittime"
-                  />
-                </div> */}
-                </div>
-                <br />
-                {/* <div className="col-md-12">
-                <label htmlFor="addnote" className="form-label">
-                  Add Note
-                </label>
-                <textarea
-                  required
-                  className="form-control"
-                  name="notes"
-                  value={formData.notes}
-                  onChange={handleInputChange}
-                  id="addnote"
-                  rows={3}
-                />
-              </div> */}
                 <button type="submit" className="btn btn-primary mt-4">
                   Submit
                 </button>

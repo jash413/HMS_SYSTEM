@@ -24,6 +24,7 @@ import SurgerySchedulingForm from "./ScheduleSurgery";
 
 // Report pages
 import PostSurgeryForm from "./PostSurgery";
+import PostSurgeryUpdate from "./PostSurgeryUpdate";
 
 // Ward pages
 import Ward from "./Ward";
@@ -517,6 +518,7 @@ function Index() {
                 element={<SurgerySchedulingForm />}
               />
               <Route path="/create-report" element={<PostSurgeryForm />} />
+              <Route path="/update-report" element={<PostSurgeryUpdate />} />
               <Route path="/room-status" element={<Ward />} />
             </Routes>
           </div>

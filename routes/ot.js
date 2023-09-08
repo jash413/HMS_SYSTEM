@@ -41,6 +41,9 @@ router.delete('/surgeries/:id', operationTheatreController.deleteSurgery);
 // Create, read, and update routes for Surgery Records
 router.post('/surgery-records', operationTheatreController.createSurgeryRecord);
 router.get('/surgery-records', operationTheatreController.getSurgeryRecords);
+router.get('/surgery-records/search', operationTheatreController.getSurgeryRecordsBySurgeryId)
+router.get('/surgery-records/:id', operationTheatreController.getSurgeryRecordById);
+router.patch('/surgery-records/update', operationTheatreController.updateSurgeryRecordBySurgeryId)
 router.patch('/surgery-records/:id', operationTheatreController.updateSurgeryRecord);
 router.delete('/surgery-records/:id', operationTheatreController.deleteSurgeryRecord);
 

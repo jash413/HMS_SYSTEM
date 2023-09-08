@@ -11,14 +11,8 @@ const surgerySchema = new mongoose.Schema({
   end_time: { type: String, required: true },
   kit_id: { type: mongoose.Schema.Types.ObjectId, ref: 'kits', required: true },
   surgeryType: { type: String, required: true },
-  selectedDate: { type: Date, required: true },
-  selectedStartTime: { type: String, required: true },
-  selectedEndTime: { type: String, required: true },
-  selectedSurgeon: { type: String, required: true },
-  selectedAnaesthetist: { type: String, required: true },
-  selectedTheatre: { type: String, required: true },
-  selectedKit: { type: String, required: true },
-  selectedPatient: { type: String, required: true },
+  date: { type: Date, required: true },
+  record_generated: { type: Boolean, default: false },
 });
 
 const Surgery = mongoose.model('Surgery', surgerySchema);

@@ -22,7 +22,6 @@ function SurgerySchedulingForm() {
     selectedDuration: "",
     selectedAnaesthetist: "",
     selectedTheatre: "",
-    selectedDate:""
   });
 
   const [availableSlots, setAvailableSlots] = useState([]); // to be fetched from backend
@@ -289,7 +288,6 @@ function SurgerySchedulingForm() {
       selectedAnaesthetist: "",
       selectedTheatre: "",
       selectedKit: "",
-      // selectedPatient: "",
     }));
   };
 
@@ -336,6 +334,7 @@ function SurgerySchedulingForm() {
         theatre_id: formData.selectedTheatre,
         kit_id: formData.selectedKit,
         patient_id: formData.selectedPatient,
+        date: formData.selectedDate,
       });
 
       if (response.status === 201) {
@@ -415,7 +414,7 @@ function SurgerySchedulingForm() {
         setSelectedSurgeryType("");
       }
     } catch (error) {
-      // console.log(formData);
+      console.log(formData);
       toast.error(error.response.data.message);
       console.error("Error submitting form:", error);
     }

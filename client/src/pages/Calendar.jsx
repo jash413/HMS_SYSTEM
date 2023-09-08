@@ -4,6 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import moment from "moment";
 import axios from "axios";
 
+// Custom event content renderer
 const renderEventContent = (eventInfo) => {
   const isSurgery = eventInfo.event.classNames.includes("surgery-event");
   const eventStyle = {
@@ -12,13 +13,8 @@ const renderEventContent = (eventInfo) => {
     color: "white",
     fontSize: "12px",
     fontWeight: "bold",
+    backgroundColor: isSurgery ? "red" : "blue",
   };
-
-  if (isSurgery) {
-    eventStyle.backgroundColor = "red";
-  } else {
-    eventStyle.backgroundColor = "blue";
-  }
 
   return (
     <div style={eventStyle}>
@@ -31,76 +27,77 @@ const renderEventContent = (eventInfo) => {
 
 function Calendar() {
   const [appointments, setAppointments] = useState([]);
-  const [appointmentsFromSurgerySection, setAppointmentsFromSurgerySection] =
-    useState([]);
+  const [surgeryAppointments, setSurgeryAppointments] = useState([]);
+
   useEffect(() => {
     // Fetch appointments data from the "Appointment" form API
-   // Fetch appointments data from the "Appointment" form API
-axios
-.get("http://localhost:3100/api/appointment") // Replace with the actual endpoint
-.then((response) => {
-  setAppointments(response.data.map((appointment) => ({
-    ...appointment,
-    admissionDate: moment(appointment.appointmentDate).format("YYYY-MM-DD"), // Extract date from appointmentDate
-    admissionTime: moment(appointment.startingTime, "HH:mm").format("HH:mm"), // Format startingTime as HH:mm
-    to: moment(appointment.endingTime, "HH:mm").format("HH:mm"), // Format endingTime as HH:mm
-  })));
-})
-.catch((error) => {
-  console.error(
-    'Error fetching appointments from "Appointment" form:',
-    error
-  );
-});
+    axios
+      .get("http://localhost:3100/api/appointment") // Replace with the actual endpoint
+      .then((response) => {
+        const formattedAppointments = response.data.map((appointment) => ({
+          ...appointment,
+          admissionDate: moment(appointment.appointmentDate).format("YYYY-MM-DD"),
+          admissionTime: moment(appointment.startingTime, "HH:mm").format("HH:mm"),
+          to: moment(appointment.endingTime, "HH:mm").format("HH:mm"),
+          title: "Appointment",
+        }));
+        setAppointments(formattedAppointments);
+      })
+      .catch((error) => {
+        console.error('Error fetching appointments from "Appointment" form:', error);
+      });
+
     // Fetch surgery data from the "Surgery" API
     axios
       .get("http://localhost:3100/surgeries") // Replace with the actual endpoint
       .then((response) => {
-        // Map surgery appointments
         const surgeryAppointments = response.data.map((surgery) => ({
           ...surgery,
           title: "Surgery",
-          admissionDate: surgery.selectedDate, // Use start_time as admissionDate
-          admissionTime:surgery.start_time, // Extract time from start_time
-          to: surgery.end_time// Extract time from end_time
+          admissionDate: surgery.selectedDate,
+          admissionTime: surgery.start_time,
+          to: surgery.end_time,
         }));
-        setAppointmentsFromSurgerySection(surgeryAppointments);
+        setSurgeryAppointments(surgeryAppointments);
       })
       .catch((error) => {
         console.error('Error fetching surgeries from "Surgery" API:', error);
       });
   }, []);
 
-  const allAppointments = [...appointments, ...appointmentsFromSurgerySection];
-  console.log(allAppointments);
-const handleEventClick = (eventInfo) => {
-  console.log(eventInfo);
+  const allAppointments = [...appointments, ...surgeryAppointments];
 
-  const { title, admissionDate, admissionTime, to } = eventInfo.event.extendedProps;
-  const message = `Details:\nTitle: ${title}\nAdmission Date: ${admissionDate}\nAdmission Time: ${admissionTime}\nTo: ${to}`;
-  console.log(message);
-};
+  const handleEventClick = (eventInfo) => {
+    const { title, admissionDate, admissionTime, to } = eventInfo.event;
+    const message = `Details:\nTitle: ${title}\nAdmission Date: ${admissionDate}\nAdmission Time: ${admissionTime}\nTo: ${to}`;
+    console.log(message);
+  };
 
   return (
     <div className="container-xxl">
       <div className="row align-items-center">
         <div className="col-lg-12 col-md-12">
           <div className="card">
-            <div className="card-body">
+            <div className="card-body" id="my_calendar">
               <FullCalendar
                 plugins={[dayGridPlugin]}
                 initialView="dayGridMonth"
                 weekends={true}
-                events={allAppointments.map(appointment => ({
+                editable={true}
+                selectable={true}
+                events={allAppointments.map((appointment) => ({
                   title: `${appointment.title} (${appointment.admissionTime} - ${appointment.to})`,
-                  start: moment(`${appointment.admissionDate} ${appointment.admissionTime}`, "YYYY-MM-DD hh:mm").toDate(),
-                  end: moment(`${appointment.admissionDate} ${appointment.to}`, "YYYY-MM-DD hh:mm").toDate(),
-                  classNames: [
-                    appointment.title === "Surgery" ? "surgery-event" : "normal-event",
-                  ],
+                  start: moment(
+                    `${appointment.admissionDate} ${appointment.admissionTime}`,
+                    "YYYY-MM-DD hh:mm"
+                  ).toDate(),
+                  end: moment(
+                    `${appointment.admissionDate} ${appointment.to}`,
+                    "YYYY-MM-DD hh:mm"
+                  ).toDate(),
                 }))}
-                eventContent={renderEventContent} 
-                eventClick={handleEventClick} // Add eventClick prop 
+                // eventContent={renderEventContent} // Custom event content renderer
+                eventClick={handleEventClick} // Add eventClick prop
               />
             </div>
           </div>

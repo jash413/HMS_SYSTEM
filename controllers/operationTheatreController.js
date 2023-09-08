@@ -1,6 +1,5 @@
 const OperationTheatre = require("../models/OperationTheatre");
 const Anaesthetist = require("../models/Anaesthetist");
-const ConsentForm = require("../models/ConsentForm");
 const SurgeryRecord = require("../models/SurgeryRecord");
 const Doctor = require("../models/Doctors");
 const { Equipment, Kit } = require("../models/OTEquipment");
@@ -324,6 +323,7 @@ exports.createSurgery = async (req, res) => {
       end_time,
       kit_id,
       surgeryType,
+      date,
     } = req.body;
 
     const surgeryId = await generateSurgeryId(); // Generate a new patient ID
@@ -342,6 +342,7 @@ exports.createSurgery = async (req, res) => {
       kit_id,
       surgeryType,
       surgeryID: surgeryId,
+      date,
     });
 
     // Save the new Surgery document
@@ -447,6 +448,44 @@ exports.getSurgeryRecords = async (req, res) => {
     res.status(200).json(surgeryRecords);
   } catch (error) {
     res.status(500).json({ error: "Error fetching surgery records" });
+  }
+};
+
+// Get a surgery record by ID
+exports.getSurgeryRecordById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const surgeryRecord = await SurgeryRecord.findById(id);
+    res.status(200).json(surgeryRecord);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching surgery record" });
+  }
+};
+
+// Get surgery records by surgery ID
+exports.getSurgeryRecordsBySurgeryId = async (req, res) => {
+  try {
+    const { surgeryId } = req.query;
+    const surgeryRecords = await SurgeryRecord.find({ surgery_id: surgeryId });
+    res.status(200).json(surgeryRecords);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching surgery records" });
+  }
+};
+
+
+// Update surgery record by surgery id
+exports.updateSurgeryRecordBySurgeryId = async (req, res) => {
+  try {
+    const { surgeryId } = req.query;
+    const updatedSurgeryRecord = await SurgeryRecord.findOneAndUpdate(
+      { surgery_id: surgeryId },
+      req.body,
+      { new: true }
+    );
+    res.status(200).json(updatedSurgeryRecord);
+  } catch (error) {
+    res.status(500).json({ error: "Error updating surgery record" });
   }
 };
 

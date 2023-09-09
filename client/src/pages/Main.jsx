@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useState,useEffect} from "react";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
+import Preloader from "../components/Preloader";
 
 // Import pages
 
@@ -24,14 +25,26 @@ import SurgerySchedulingForm from "./ScheduleSurgery";
 
 // Report pages
 import PostSurgeryForm from "./PostSurgery";
+import ViewReport from "./ViewReport";
 import PostSurgeryUpdate from "./PostSurgeryUpdate";
 
 // Ward pages
 import Ward from "./Ward";
 
 function Index() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading data (e.g., fetching from an API)
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, []);
+
   return (
+    
     <Router>
+      {loading ? <Preloader /> : (
       <div id="ihealth-layout" className="theme-tradewind">
         {/* sidebar */}
         <div className="sidebar px-4 py-4 py-md-5 me-0">
@@ -188,6 +201,11 @@ function Index() {
                   <li>
                     <Link to="/create-report">
                       <a className="ms-link">Create Report</a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/view-report">
+                      <a className="ms-link">View Report</a>
                     </Link>
                   </li>
                   <li>
@@ -519,11 +537,13 @@ function Index() {
               />
               <Route path="/create-report" element={<PostSurgeryForm />} />
               <Route path="/update-report" element={<PostSurgeryUpdate />} />
+              <Route path="/view-report" element={<ViewReport />} />
               <Route path="/room-status" element={<Ward />} />
             </Routes>
           </div>
         </div>
       </div>
+)}
     </Router>
   );
 }

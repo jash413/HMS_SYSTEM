@@ -154,7 +154,7 @@ function Index() {
                   data-bs-target="#menu-OT"
                   href="#"
                 >
-                  <i className="icofont-blind fs-5" />{" "}
+                  <i className="icofont-operation-theater fs-5" />{" "}
                   <span>Operation Theatre</span>{" "}
                   <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
                 </a>
@@ -179,7 +179,7 @@ function Index() {
                   data-bs-target="#menu-SR"
                   href="#"
                 >
-                  <i className="icofont-blind fs-5" />{" "}
+                  <i className="icofont-patient-file fs-5" />{" "}
                   <span>Surgery Report</span>{" "}
                   <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
                 </a>

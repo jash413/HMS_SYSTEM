@@ -30,12 +30,13 @@ const admissionRouter = require('./routes/admission');
 const otRouter = require('./routes/ot');
 const medicinesRouter = require('./routes/medicines');
 
+
 // Use routes
 // app.use(usersRouter);
 app.use(otRouter);
 app.use(patientsRouter);
 app.use(doctorsRouter);
-app.use(wardRouter);
+// app.use(wardRouter);
 app.use(appointmentsRouter);
 // app.use(billingRouter);
 // app.use(departmentsRouter);
@@ -48,7 +49,8 @@ app.use(pdfRouter);
 app.use(medicinesRouter)
 // app.use(hospitalRouter); // Use hospital route
 app.use(admissionRouter);
-// app.use(wardRouter);
+app.use(wardRouter);
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {

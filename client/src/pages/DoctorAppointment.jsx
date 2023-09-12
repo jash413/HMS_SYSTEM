@@ -132,6 +132,7 @@ const AppointmentForm = () => {
           bookedSlots: [
             ...doctorData.bookedSlots,
             {
+              title:formData.title,
               date: formData.appointmentDate,
               startTime: formData.startingTime,
               endTime: formData.endingTime,

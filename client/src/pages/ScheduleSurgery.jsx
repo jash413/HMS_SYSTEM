@@ -349,6 +349,7 @@ function SurgerySchedulingForm() {
             bookedSlots: [
               ...selectedSurgeon.bookedSlots,
               {
+                title:"surgery",
                 date: formData.selectedDate,
                 startTime: formData.selectedStartTime,
                 endTime: formData.selectedEndTime,

@@ -34,7 +34,7 @@ const AppointmentForm = () => {
         const allPatients = response.data;
         // Filter patients based on the selected doctor
         const doctorPatients = allPatients.filter(
-          (patient) => patient.selectedDoctor === formData.doctor._id
+          (patient) => patient.doctor === formData.doctor
         );
         setPatients(doctorPatients);
       });

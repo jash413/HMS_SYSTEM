@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import { error } from "jquery";
+
 
 const AppointmentForm = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +12,6 @@ const AppointmentForm = () => {
     startingTime: "",
     doctor: "",
     title: "",
-    // from: "",
     endingTime: "",
     selectedDate: "",
   });
@@ -33,6 +32,7 @@ const AppointmentForm = () => {
     if (formData.doctor) {
       axios.get(`http://localhost:3100/api/patients`).then((response) => {
         const allPatients = response.data;
+        // Filter patients based on the selected doctor
         const doctorPatients = allPatients.filter(
           (patient) => patient.selectedDoctor === formData.doctor._id
         );
@@ -42,6 +42,7 @@ const AppointmentForm = () => {
       setPatients([]); // Reset patients when no doctor is selected
     }
   }, [formData.doctor]);
+  
 
   useEffect(() => {
     if (formData.doctor) {
@@ -125,6 +126,7 @@ const AppointmentForm = () => {
           },
         }
       );
+      console.log(formData)
 
       if (response.status === 201) {
         toast.success("Appointment Scheduled successfully");

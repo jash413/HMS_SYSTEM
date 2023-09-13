@@ -4,7 +4,7 @@ const doctorController = require('../controllers/doctorController');
 
 // Route to get all doctors
 router.get('/doctors', doctorController.getAllDoctors);
-
+ 
 // Route to create a new doctor
 router.post('/doctors', doctorController.createDoctor);
 

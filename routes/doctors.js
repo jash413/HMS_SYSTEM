@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const doctorController = require('../controllers/doctorController');
+const authenticateToken = require('../middleware/authMiddleware');
 
 // Route to get all doctors
-router.get('/doctors', doctorController.getAllDoctors);
-
+router.get('/doctors',doctorController.getAllDoctors);
+ 
 // Route to create a new doctor
 router.post('/doctors', doctorController.createDoctor);
 

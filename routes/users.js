@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../controllers/userController');
+const UserController = require('../controllers/userController');
+const passport = require('passport');
+// const passportConfig = require('../config/passport'); // Passport.js configuration file
 
-// User registration
-router.post('/api/register', userController.registerUser);
+// User registration route
+router.post('/register', UserController.register);
 
-// User login
-router.post('/api/login', userController.loginUser);
+// User login route
+router.post('/login', UserController.login);
 
-// User logout
-router.post('/api/logout', userController.logoutUser);
+// Protected route (requires JWT token)
+router.get('/protected', passport.authenticate('jwt', { session: false }), UserController.protectedRoute);
 
 module.exports = router;
-

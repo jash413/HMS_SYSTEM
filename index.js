@@ -12,7 +12,7 @@ app.use(express.json());
 
 
 // Routes
-// const usersRouter = require('./routes/user');
+const usersRouter = require('./routes/users');
 const patientsRouter = require('./routes/patients');
 const doctorsRouter = require('./routes/doctors');
 const appointmentsRouter = require('./routes/appointments');
@@ -32,7 +32,7 @@ const medicinesRouter = require('./routes/medicines');
 
 
 // Use routes
-// app.use(usersRouter);
+app.use(usersRouter);
 app.use(otRouter);
 app.use(patientsRouter);
 app.use(doctorsRouter);

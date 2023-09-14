@@ -1,20 +1,17 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const ehrController = require('../controllers/ehr');
+const ehrController = require("../controllers/ehrController");
 
-// Route to get all EHR records
-router.get('/ehr', ehrController.getAllEHRRecords);
+// Create a new record for a specific component
+router.post("/api/ehr/:component", ehrController.createRecord);
 
-// Route to create a new EHR record
-router.post('/ehr', ehrController.createEHRRecord);
+// Retrieve records for a specific component
+router.get("/api/ehr/:component/:id", ehrController.getRecordsForComponent);
 
-// Route to get a specific EHR record by id
-router.get('/ehr/:id', ehrController.getEHRRecordById);
+// Update a record for a specific component
+router.put("/api/ehr/:component/:id", ehrController.updateRecord);
 
-// Route to update an EHR record by id
-router.patch('/ehr/:id', ehrController.updateEHRRecordById);
-
-// Route to delete an EHR record by id
-router.delete('/ehr/:id', ehrController.deleteEHRRecordById);
+// Delete a record for a specific component
+router.delete("/api/ehr/:component/:id", ehrController.deleteRecord);
 
 module.exports = router;

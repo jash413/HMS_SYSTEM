@@ -32,6 +32,10 @@ import PostSurgeryUpdate from "./PostSurgeryUpdate";
 // Ward pages
 import Ward from "./Ward";
 
+// EHR page
+import EMR from "./EMR";
+
+
 function Index() {
   const userPermissions = JSON.parse(localStorage.getItem("permissions"));
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Initially not authenticated
@@ -243,7 +247,39 @@ function Index() {
                       </li>
                       )}
                     </ul>
+                    
                   </li>
+                  <li className="collapsed">
+                    <a
+                      className="m-link"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#menu-ehr"
+                      href="#"
+                    >
+                      <i className="icofont-patient-file fs-5" />{" "}
+                      <span>EHR</span>{" "}
+                      <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                    </a>
+                    {/* Menu: Sub menu ul */}
+                    <ul className="sub-menu collapse" id="menu-ehr">
+                      {userPermissions.includes("emr-create") && (
+                      <li>
+                        <Link to="/emr-create">
+                          <a className="ms-link">Create Report</a>
+                        </Link>
+                      </li>
+                      )}
+                      {userPermissions.includes("emr-update") && (
+                      <li>
+                        <Link to="/emr-update">
+                          <a className="ms-link">Update Report</a>
+                        </Link>
+                      </li>
+                      )}
+                    </ul>
+                    
+                  </li>
+
                 </ul>
                 {/* Menu: menu collepce btn */}
                 <button
@@ -572,6 +608,7 @@ function Index() {
                     element={<PostSurgeryUpdate />}
                   />
                   <Route path="/room-status" element={<Ward />} />
+                  <Route path="/emr-create" element={<EMR />} />
                 </Routes>
               </div>
             </div>

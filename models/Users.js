@@ -10,6 +10,10 @@ const userSchema = new Schema({
     ref: 'Hospital',
     required: true,
   },
+  name: {
+    type: String,
+    required: true,
+  },
   username: {
     type: String,
     required: true,
@@ -26,7 +30,7 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['doctor', 'nurse', 'admin'],
+    enum: ['Doctor', 'Nurse', 'Admin'],
     required: true,
   },
   permissions: {

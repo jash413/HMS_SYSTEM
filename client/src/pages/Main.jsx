@@ -33,6 +33,10 @@ import PostSurgeryUpdate from "./PostSurgeryUpdate";
 // Ward pages
 import Ward from "./Ward";
 
+// EHR page
+import EMR from "./EMR";
+
+
 function Index() {
   const userPermissions = JSON.parse(localStorage.getItem("permissions"));
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Initially not authenticated
@@ -121,201 +125,209 @@ function Index() {
                       </a>
                     </Link>
                   </li>
-                  {userPermissions.includes(
-                    "view-doctorlist" ||
-                      "add-doctor" ||
-                      "add-appointment" ||
-                      "view-calendar"
-                  ) && (
-                    <li className="collapsed">
-                      <a
-                        className="m-link"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#menu-Doctor"
-                        href="#"
-                      >
-                        <i className="icofont-doctor-alt fs-5" />{" "}
-                        <span>Doctor</span>{" "}
-                        <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                      </a>
-                      {/* Menu: Sub menu ul */}
-                      <ul className="sub-menu collapse" id="menu-Doctor">
-                        {userPermissions.includes("view-doctorlist") && (
-                          <li>
-                            <Link to="/doctor-list">
-                              <a className="ms-link">All Doctors</a>
-                            </Link>
-                          </li>
-                        )}
-                        {userPermissions.includes("add-doctor") && (
-                          <li>
-                            <Link to="/doctor-add">
-                              <a className="ms-link">Add Doctor</a>
-                            </Link>
-                          </li>
-                        )}
-                        {userPermissions.includes("add-appointment") && (
-                          <li>
-                            <Link to="/doctor-appointment">
-                              <a className="ms-link">Appointment</a>
-                            </Link>
-                          </li>
-                        )}
-                        {userPermissions.includes("view-calendar") && (
-                          <li>
-                            <Link to="/calendar">
-                              <a className="ms-link">Doctor Schedule</a>
-                            </Link>
-                          </li>
-                        )}
-                      </ul>
-                    </li>
-                  )}
-                  {userPermissions.includes(
-                    "view-patientlist" || "add-patient"
-                  ) && (
-                    <li className="collapsed">
-                      <a
-                        className="m-link"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#menu-Patient"
-                        href="#"
-                      >
-                        <i className="icofont-blind fs-5" />{" "}
-                        <span>Patient</span>{" "}
-                        <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                      </a>
-                      {/* Menu: Sub menu ul */}
-                      <ul className="sub-menu collapse" id="menu-Patient">
-                        {userPermissions.includes("view-patientlist") && (
-                          <li>
-                            <Link to="/patient-list">
-                              <a className="ms-link">Patient List</a>
-                            </Link>
-                          </li>
-                        )}
-                        {userPermissions.includes("add-patient") && (
-                          <li>
-                            <Link to="/patient-add">
-                              <a className="ms-link">Add Patient</a>
-                            </Link>
-                          </li>
-                        )}
-                      </ul>
-                    </li>
-                  )}
-                  {userPermissions.includes(
-                    "admission" || "discharge" || "transfer" || "view-ward"
-                  ) && (
-                    <li className="collapsed">
-                      <a
-                        className="m-link"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#menu-ADT"
-                        href="#"
-                      >
-                        <i className="icofont-blind fs-5" /> <span>A/D/T</span>{" "}
-                        <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                      </a>
-                      {/* Menu: Sub menu ul */}
-                      <ul className="sub-menu collapse" id="menu-ADT">
-                        {userPermissions.includes("admission") && (
-                          <li>
-                            <Link to="/admission">
-                              <a className="ms-link">Admission</a>
-                            </Link>
-                          </li>
-                        )}
-                        {userPermissions.includes("discharge") && (
-                          <li>
-                            <Link to="/discharge">
-                              <a className="ms-link">Discharge</a>
-                            </Link>
-                          </li>
-                        )}
-                        {userPermissions.includes("transfer") && (
-                          <li>
-                            <Link to="/transfer">
-                              <a className="ms-link">Transfer</a>
-                            </Link>
-                          </li>
-                        )}
-                        {userPermissions.includes("view-ward") && (
-                          <li>
-                            <Link to="/room-status">
-                              <a className="ms-link">Room Status</a>
-                            </Link>
-                          </li>
-                        )}
-                      </ul>
-                    </li>
-                  )}
-                  {userPermissions.includes(
-                    "view-surgerylist" || "schedule-surgery"
-                  ) && (
-                    <li className="collapsed">
-                      <a
-                        className="m-link"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#menu-OT"
-                        href="#"
-                      >
-                        <i className="icofont-operation-theater fs-5" />{" "}
-                        <span>Operation Theatre</span>{" "}
-                        <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                      </a>
-                      {/* Menu: Sub menu ul */}
-                      <ul className="sub-menu collapse" id="menu-OT">
-                        {userPermissions.includes("view-surgerylist") && (
-                          <li>
-                            <Link to="/surgery-list">
-                              <a className="ms-link">Surgery List</a>
-                            </Link>
-                          </li>
-                        )}
-                        {userPermissions.includes("schedule-surgery") && (
-                          <li>
-                            <Link to="/schedule-surgery">
-                              <a className="ms-link">Schedule Surgery</a>
-                            </Link>
-                          </li>
-                        )}
-                      </ul>
-                    </li>
-                  )}
-                  {userPermissions.includes(
-                    "create-report" || "update-report"
-                  ) && (
-                    <li className="collapsed">
-                      <a
-                        className="m-link"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#menu-SR"
-                        href="#"
-                      >
-                        <i className="icofont-patient-file fs-5" />{" "}
-                        <span>Surgery Report</span>{" "}
-                        <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                      </a>
-                      {/* Menu: Sub menu ul */}
-                      <ul className="sub-menu collapse" id="menu-SR">
-                        {userPermissions.includes("create-report") && (
-                          <li>
-                            <Link to="/create-report">
-                              <a className="ms-link">Create Report</a>
-                            </Link>
-                          </li>
-                        )}
-                        {userPermissions.includes("update-report") && (
-                          <li>
-                            <Link to="/update-report">
-                              <a className="ms-link">Update Report</a>
-                            </Link>
-                          </li>
-                        )}
-                      </ul>
-                    </li>
-                  )}
+                  <li className="collapsed">
+                    <a
+                      className="m-link"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#menu-Doctor"
+                      href="#"
+                    >
+                      <i className="icofont-doctor-alt fs-5" />{" "}
+                      <span>Doctor</span>{" "}
+                      <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                    </a>
+                    {/* Menu: Sub menu ul */}
+                    <ul className="sub-menu collapse" id="menu-Doctor">
+                      {userPermissions.includes("view-doctorlist") && (
+                      <li>
+                        <Link to="/doctor-list">
+                          <a className="ms-link">All Doctors</a>
+                        </Link>
+                      </li>
+                      )}
+                      {userPermissions.includes("add-doctor") && (
+                      <li>
+                        <Link to="/doctor-add">
+                          <a className="ms-link">Add Doctor</a>
+                        </Link>
+                      </li>
+                      )}
+                      {userPermissions.includes("add-appointment") && (
+                      <li>
+                        <Link to="/doctor-appointment">
+                          <a className="ms-link">Appointment</a>
+                        </Link>
+                      </li>
+                      )}
+                      {userPermissions.includes("view-calendar") && (
+                      <li>
+                        <Link to="/calendar">
+                          <a className="ms-link">Doctor Schedule</a>
+                        </Link>
+                      </li>
+                      )}
+                    </ul>
+                  </li>
+                  <li className="collapsed">
+                    <a
+                      className="m-link"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#menu-Patient"
+                      href="#"
+                    >
+                      <i className="icofont-blind fs-5" /> <span>Patient</span>{" "}
+                      <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                    </a>
+                    {/* Menu: Sub menu ul */}
+                    <ul className="sub-menu collapse" id="menu-Patient">
+                      {userPermissions.includes("view-patientlist") && (
+                      <li>
+                        <Link to="/patient-list">
+                          <a className="ms-link">Patient List</a>
+                        </Link>
+                      </li>
+                      )}
+                      {userPermissions.includes("add-patient") && (
+                      <li>
+                        <Link to="/patient-add">
+                          <a className="ms-link">Add Patient</a>
+                        </Link>
+                      </li>
+                      )}
+                    </ul>
+                  </li>
+                  <li className="collapsed">
+                    <a
+                      className="m-link"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#menu-ADT"
+                      href="#"
+                    >
+                      <i className="icofont-blind fs-5" /> <span>A/D/T</span>{" "}
+                      <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                    </a>
+                    {/* Menu: Sub menu ul */}
+                    <ul className="sub-menu collapse" id="menu-ADT">
+                      {userPermissions.includes("admission") && (
+                      <li>
+                        <Link to="/admission">
+                          <a className="ms-link">Admission</a>
+                        </Link>
+                      </li>
+                      )}
+                      {userPermissions.includes("discharge") && (
+                      <li>
+                        <Link to="/discharge">
+                          <a className="ms-link">Discharge</a>
+                        </Link>
+                      </li>
+                      )}
+                      {userPermissions.includes("transfer") && (
+                      <li>
+                        <Link to="/transfer">
+                          <a className="ms-link">Transfer</a>
+                        </Link>
+                      </li>
+                      )}
+                      {userPermissions.includes("view-ward") && (
+                      <li>
+                        <Link to="/room-status">
+                          <a className="ms-link">Room Status</a>
+                        </Link>
+                      </li>
+                      )}
+                    </ul>
+                  </li>
+                  <li className="collapsed">
+                    <a
+                      className="m-link"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#menu-OT"
+                      href="#"
+                    >
+                      <i className="icofont-operation-theater fs-5" />{" "}
+                      <span>Operation Theatre</span>{" "}
+                      <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                    </a>
+                    {/* Menu: Sub menu ul */}
+                    <ul className="sub-menu collapse" id="menu-OT">
+                      {userPermissions.includes("view-surgerylist") && (
+                      <li>
+                        <Link to="/surgery-list">
+                          <a className="ms-link">Surgery List</a>
+                        </Link>
+                      </li>
+                      )}
+                      {userPermissions.includes("schedule-surgery") && (
+                      <li>
+                        <Link to="/schedule-surgery">
+                          <a className="ms-link">Schedule Surgery</a>
+                        </Link>
+                      </li>
+                      )}
+                    </ul>
+                  </li>
+                  <li className="collapsed">
+                    <a
+                      className="m-link"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#menu-SR"
+                      href="#"
+                    >
+                      <i className="icofont-patient-file fs-5" />{" "}
+                      <span>Surgery Report</span>{" "}
+                      <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                    </a>
+                    {/* Menu: Sub menu ul */}
+                    <ul className="sub-menu collapse" id="menu-SR">
+                      {userPermissions.includes("create-report") && (
+                      <li>
+                        <Link to="/create-report">
+                          <a className="ms-link">Create Report</a>
+                        </Link>
+                      </li>
+                      )}
+                      {userPermissions.includes("update-report") && (
+                      <li>
+                        <Link to="/update-report">
+                          <a className="ms-link">Update Report</a>
+                        </Link>
+                      </li>
+                      )}
+                    </ul>
+                    
+                  </li>
+                  <li className="collapsed">
+                    <a
+                      className="m-link"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#menu-ehr"
+                      href="#"
+                    >
+                      <i className="icofont-patient-file fs-5" />{" "}
+                      <span>EHR</span>{" "}
+                      <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                    </a>
+                    {/* Menu: Sub menu ul */}
+                    <ul className="sub-menu collapse" id="menu-ehr">
+                      {userPermissions.includes("emr-create") && (
+                      <li>
+                        <Link to="/emr-create">
+                          <a className="ms-link">Create Report</a>
+                        </Link>
+                      </li>
+                      )}
+                      {userPermissions.includes("emr-update") && (
+                      <li>
+                        <Link to="/emr-update">
+                          <a className="ms-link">Update Report</a>
+                        </Link>
+                      </li>
+                      )}
+                    </ul>
+                    
+                  </li>
+
                 </ul>
                 {/* Menu: menu collepce btn */}
                 <button
@@ -647,6 +659,7 @@ function Index() {
                     element={<PostSurgeryUpdate />}
                   />
                   <Route path="/room-status" element={<Ward />} />
+                  <Route path="/emr-create" element={<EMR />} />
                 </Routes>
               </div>
             </div>

@@ -1,16 +1,11 @@
 const mongoose = require("mongoose");
-
-// Define the schema models for different components
 const VitalSigns = require("../models/VitalSigns");
 const LabResults = require("../models/LabResults");
 const Medications = require("../models/Medications");
-const ConsultationNotes = require("../models/ConsultationNotes");
-const DiagnosticImaging = require("../models/DiagnosticImagining");
-const Immunizations = require("../models/Immunizations");
+const ClinicalExaminations = require("../models/ClinicalExaminations");
+const DiagnosticImaging = require("../models/DiagnosticImaging");
 const Prescriptions = require("../models/Prescriptions");
-const MedicalHistory = require("../models/MedicalHistory");
-const Visits = require("../models/Visit");
-// Add more models for other components as needed
+const MedicalHistory = require("../models/MedicalHistory"); // Updated to use merged modal
 
 // Create a new record for a specific component
 exports.createRecord = async (req, res) => {
@@ -19,7 +14,6 @@ exports.createRecord = async (req, res) => {
     const requestBody = req.body;
 
     let newRecord;
-
     switch (component) {
       case "vitalsigns":
         newRecord = new VitalSigns(requestBody);
@@ -30,23 +24,17 @@ exports.createRecord = async (req, res) => {
       case "medications":
         newRecord = new Medications(requestBody);
         break;
-      case "consultationnotes":
-        newRecord = new ConsultationNotes(requestBody);
+      case "ClinicalExaminations":
+        newRecord = new ClinicalExaminations(requestBody);
         break;
       case "diagnosticimaging":
         newRecord = new DiagnosticImaging(requestBody);
-        break;
-      case "immunizations":
-        newRecord = new Immunizations(requestBody);
         break;
       case "prescriptions":
         newRecord = new Prescriptions(requestBody);
         break;
       case "medicalhistory":
         newRecord = new MedicalHistory(requestBody);
-        break;
-      case "visits":
-        newRecord = new Visits(requestBody);
         break;
       // Add more cases for other components
       default:
@@ -78,23 +66,17 @@ exports.getRecordsForComponent = async (req, res) => {
       case "medications":
         records = await Medications.find({ patient: id });
         break;
-      case "consultationnotes":
-        records = await ConsultationNotes.find({ visit: id });
+      case "ClinicalExaminations":
+        records = await ClinicalExaminations.find({ visit: id });
         break;
       case "diagnosticimaging":
         records = await DiagnosticImaging.find({ visit: id });
-        break;
-      case "immunizations":
-        records = await Immunizations.find({ patient: id });
         break;
       case "prescriptions":
         records = await Prescriptions.find({ visit: id });
         break;
       case "medicalhistory":
-        records = await MedicalHistory.find({ patient: id });
-        break;
-      case "visits":
-        records = await Visits.find({ patient: id });
+        records = await MedicalHistory.find({ patient: id }); // Updated to use merged modal
         break;
       // Add more cases for other components
       default:
@@ -131,18 +113,13 @@ exports.updateRecord = async (req, res) => {
           new: true,
         });
         break;
-      case "consultationnotes":
-        updatedRecord = await ConsultationNotes.findByIdAndUpdate(id, updatedRecordData, {
+      case "ClinicalExaminations":
+        updatedRecord = await ClinicalExaminations.findByIdAndUpdate(id, updatedRecordData, {
           new: true,
         });
         break;
       case "diagnosticimaging":
         updatedRecord = await DiagnosticImaging.findByIdAndUpdate(id, updatedRecordData, {
-          new: true,
-        });
-        break;
-      case "immunizations":
-        updatedRecord = await Immunizations.findByIdAndUpdate(id, updatedRecordData, {
           new: true,
         });
         break;
@@ -154,12 +131,7 @@ exports.updateRecord = async (req, res) => {
       case "medicalhistory":
         updatedRecord = await MedicalHistory.findByIdAndUpdate(id, updatedRecordData, {
           new: true,
-        });
-        break;
-      case "visits":
-        updatedRecord = await Visits.findByIdAndUpdate(id, updatedRecordData, {
-          new: true,
-        });
+        }); // Updated to use merged modal
         break;
       // Add more cases for other components
       default:
@@ -187,23 +159,17 @@ exports.deleteRecord = async (req, res) => {
       case "medications":
         await Medications.findByIdAndDelete(id);
         break;
-      case "consultationnotes":
-        await ConsultationNotes.findByIdAndDelete(id);
+      case "ClinicalExaminations":
+        await ClinicalExaminations.findByIdAndDelete(id);
         break;
       case "diagnosticimaging":
         await DiagnosticImaging.findByIdAndDelete(id);
-        break;
-      case "immunizations":
-        await Immunizations.findByIdAndDelete(id);
         break;
       case "prescriptions":
         await Prescriptions.findByIdAndDelete(id);
         break;
       case "medicalhistory":
-        await MedicalHistory.findByIdAndDelete(id);
-        break;
-      case "visits":
-        await Visits.findByIdAndDelete(id);
+        await MedicalHistory.findByIdAndDelete(id); // Updated to use merged modal
         break;
       // Add more cases for other components
       default:

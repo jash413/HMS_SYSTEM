@@ -34,6 +34,7 @@ import Ward from "./Ward";
 
 // User pages
 import UserRegistration from "./UserRegistration";
+import EMR from "./EMR";
 
 const myContext = createContext();
 const tokenContext = createContext();
@@ -376,7 +377,42 @@ function Index() {
                           )}
                         </ul>
                       </li>
+                      
                     )}
+                    {(userPermissions.includes("create-ehr") ||
+                      userPermissions.includes("update-ehr")) && (
+                      <li className="collapsed">
+                        <a
+                          className="m-link"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#menu-SR1"
+                          href="#"
+                        >
+                          <i className="icofont-patient-file fs-5" />{" "}
+                          <span>EHR</span>{" "}
+                          <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                        </a>
+                        {/* Menu: Sub menu ul */}
+                        <ul className="sub-menu collapse" id="menu-SR1">
+                          {userPermissions.includes("create-ehr") && (
+                            <li>
+                              <Link to="/create-ehr">
+                                <a className="ms-link">Create EHR</a>
+                              </Link>
+                            </li>
+                          )}
+                          {userPermissions.includes("update-ehr") && (
+                            <li>
+                              <Link to="/update-ehr">
+                                <a className="ms-link">Update EHR</a>
+                              </Link>
+                            </li>
+                          )}
+                        </ul>
+                      </li>
+                      
+                    )}
+                    
                   </ul>
                   {/* Menu: menu collepce btn */}
                   <button
@@ -712,6 +748,8 @@ function Index() {
                     />
                     <Route path="/room-status" element={<Ward />} />
                     <Route path="/create-user" element={<UserRegistration />} />
+                    <Route path="/create-ehr" element={<EMR />} />'
+                    <Route path="/update-ehr"  />'
                   </Routes>
                 </div>
               </div>

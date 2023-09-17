@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { myContext, tokenContext } from "./Main";
 
 const EMR = () => {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
+
   const [formData, setFormData] = useState({
     patient: "",
     doctor: "",
@@ -31,36 +35,6 @@ const EMR = () => {
     instructions: "",
     medication: "",
   });
-  useEffect(() => {
-    if (formData.doctor) {
-      axios.get(`http://localhost:3100/api/patients`).then((response) => {
-        const allPatients = response.data;
-        // Filter patients based on the selected doctor
-        const doctorPatients = allPatients.filter(
-          (patient) => patient.doctor === formData.doctor
-        );
-        setPatients(doctorPatients);
-      });
-    } else {
-      setPatients([]); // Reset patients when no doctor is selected
-    }
-  }, [formData.doctor]);
-  const handleSelectChange = (e) => {
-    const selectedOption = e.target.value;
-    setFormData((prevData) => ({
-      ...prevData,
-      patient: selectedOption,
-    }));
-
-    axios
-      .get(`http://localhost:3100/api/patients/${selectedOption}`)
-      .then((response) => {
-        setSelectedPatientDetails(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching patient details:", error);
-      });
-  };
 
   const [clinicalExaminations, setClinicalExaminations] = useState({
     noteDate: "",
@@ -73,8 +47,54 @@ const EMR = () => {
 
   const [doctors, setDoctors] = useState([]);
 
+  const [immunizationCount, setImmunizationCount] = useState(1); // Added immunization count
+
   useEffect(() => {
-    axios.get("http://localhost:3100/doctors").then((response) => {
+    if (formData.doctor) {
+      axios.get(`http://localhost:3100/api/patients`,{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }).then((response) => {
+        const allPatients = response.data;
+        // Filter patients based on the selected doctor
+        const doctorPatients = allPatients.filter(
+          (patient) => patient.doctor === formData.doctor
+        );
+        setPatients(doctorPatients);
+      });
+    } else {
+      setPatients([]); // Reset patients when no doctor is selected
+    }
+  }, [formData.doctor]);
+
+  const handleSelectChange = (e) => {
+    const selectedOption = e.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      patient: selectedOption,
+    }));
+
+    axios
+      .get(`http://localhost:3100/api/patients/${selectedOption}`,{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        setSelectedPatientDetails(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching patient details:", error);
+      });
+  };
+
+  useEffect(() => {
+    axios.get("http://localhost:3100/doctors",{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }).then((response) => {
       setDoctors(response.data);
     });
   }, []);
@@ -129,14 +149,19 @@ const EMR = () => {
       ...medicalHistory,
       immunizations: [...medicalHistory.immunizations, {}],
     });
+    // Increment the immunization count
+    setImmunizationCount(immunizationCount + 1);
   };
+
   const handleRemoveImmunization = (index) => {
     const updatedImmunizations = [...medicalHistory.immunizations];
     updatedImmunizations.splice(index, 1);
-    setMedicalHistory((prevData) => ({
-      ...prevData,
+    setMedicalHistory({
+      ...medicalHistory,
       immunizations: updatedImmunizations,
-    }));
+    });
+    // Decrement the immunization count
+    setImmunizationCount(immunizationCount - 1);
   };
 
   const handleDoctorChange = (e) => {
@@ -434,7 +459,7 @@ const EMR = () => {
             className="btn btn-danger custom-button"
             onClick={() => handleRemoveImmunization(index)}
           >
-            <span aria-hidden="true" style={colo}>×</span>
+            <span aria-hidden="true">×</span>
           </button>
         </div>
       )}
@@ -452,6 +477,7 @@ const EMR = () => {
     )}
   </div>
 ))}
+
 
                 </div>
                 {/* End Immunizations */}

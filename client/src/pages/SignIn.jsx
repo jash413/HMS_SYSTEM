@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 
 function SignIn({ onSignIn }) {
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate(); // Initialize the navigate function
   const [formData, setFormData] = useState({
     username: "",
@@ -25,6 +26,7 @@ function SignIn({ onSignIn }) {
     }
 
     try {
+      setIsLoading(true);
       // Make a POST request to your server for authentication
       const response = await axios.post(
         "http://localhost:3100/login",
@@ -47,17 +49,17 @@ function SignIn({ onSignIn }) {
         // Use navigate function to navigate to the dashboard or another page
         navigate("/dashboard");
 
-        // Reset the form 
+        // Reset the form
         setFormData({
           username: "",
           password: "",
         });
-
-
       }
     } catch (error) {
       toast.error(error.response.data.message);
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -127,13 +129,19 @@ function SignIn({ onSignIn }) {
                     </div>
                   </div>
                   <div className="col-12 text-center mt-4">
-                    <button
-                      type="submit"
-                      className="btn btn-lg btn-block btn-light lift text-uppercase"
-                      atl="signin"
-                    >
-                      SIGN IN
-                    </button>
+                    {isLoading ? (
+                      <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                    ) : (
+                      <button
+                        type="submit"
+                        className="btn btn-lg btn-block btn-light lift text-uppercase"
+                        atl="signin"
+                      >
+                        SIGN IN
+                      </button>
+                    )}
                   </div>
                 </form>
                 {/* End Form */}

@@ -10,7 +10,7 @@ router.post('/register', UserController.register);
 // User login route
 router.post('/login', UserController.login);
 
-// Protected route (requires JWT token)
-router.get('/protected', passport.authenticate('jwt', { session: false }), UserController.protectedRoute);
+// Route to send OTP via SMS
+router.post("/send-otp", UserController.sendOTPSMS);
 
 module.exports = router;

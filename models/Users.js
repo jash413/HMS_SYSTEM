@@ -10,6 +10,10 @@ const userSchema = new Schema({
     ref: 'Hospital',
     required: true,
   },
+  doctor_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Doctor',
+  },
   name: {
     type: String,
     required: true,

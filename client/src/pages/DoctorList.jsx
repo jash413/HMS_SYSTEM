@@ -1,9 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import $ from "jquery";
 import "datatables.net";
+import { myContext, tokenContext } from "./Main";
 
 function DoctorList() {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
   const tableRef = useRef(null);
   const [doctors, setDoctors] = useState([]);
 
@@ -17,8 +20,16 @@ function DoctorList() {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get("http://localhost:3100/doctors");
-      setDoctors(response.data);
+      const response = await axios.get("http://localhost:3100/doctors", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      const doctor = response.data.filter((doctor) => {
+        return doctor.hospital_id === userData.hospital_id;
+      }
+      );
+      setDoctors(doctor);
     } catch (error) {
       console.error(error);
     }

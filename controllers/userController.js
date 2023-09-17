@@ -2,11 +2,19 @@ const passport = require('../middleware/passport');
 const jwt = require('jsonwebtoken');
 const User = require('../models/Users'); // Import your user model
 const bcrypt = require('bcrypt'); // Import bcrypt for password hashing
+const twilio = require("twilio");
+
+// Initialize Twilio client with your credentials
+const accountSid = "ACbbaa2a14b8f333557ce6bf12d147bae4";
+const authToken = "e20b74904da96c249a8f01a68df3de96";
+const twilioPhoneNumber = "+18184939912";
+
+const client = twilio(accountSid, authToken);
 
 // Function to handle user registration
 exports.register = async (req, res) => {
   try {
-    const { hospital_id ,name ,username, password, email, role, permissions } = req.body;
+    const { hospital_id ,doctor_id ,name ,username, password, email, role, permissions } = req.body;
 
     // Check if the username or email is already taken
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
@@ -19,7 +27,7 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new user with hashed password and permissions
-    const newUser = new User({ hospital_id,name ,username, password: hashedPassword, email, role, permissions });
+    const newUser = new User({ hospital_id,doctor_id ,name ,username, password: hashedPassword, email, role, permissions });
     await newUser.save();
 
     return res.status(201).json({ message: 'Registration successful.' });
@@ -53,9 +61,31 @@ exports.login = (req, res) => {
   })(req, res);
 };
 
-// Function to handle protected routes (verify JWT token)
-exports.protectedRoute = (req, res) => {
-  // If the request reaches this point, it means the JWT token has been verified
-  // You can access user information, including permissions, from req.user
-  return res.status(200).json({ message: 'Protected route accessed successfully', user: req.user });
+// Function to send OTP via SMS
+exports.sendOTPSMS = async (req, res) => {
+  try {
+    // Generate a random OTP (you can use any OTP generation library)
+    const otp = generateRandomOTP(); // Implement your own OTP generation logic
+
+    // User's phone number to send the OTP
+    const phoneNumber = req.body.phoneNumber; // Assuming you receive the phone number in the request body
+
+    // Send OTP via Twilio
+    await client.messages.create({
+      body: `Your OTP is: ${otp}`,
+      from: twilioPhoneNumber,
+      to: phoneNumber,
+    });
+
+    res.status(200).json({ message: "OTP sent successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to send OTP." });
+  }
 };
+
+// Function to generate a random OTP (example)
+function generateRandomOTP() {
+  return Math.floor(1000 + Math.random() * 9000).toString();
+}
+

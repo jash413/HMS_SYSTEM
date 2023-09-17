@@ -1,29 +1,76 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Import the CSS
+import "react-toastify/dist/ReactToastify.css";
 
 const EMR = () => {
-  const [patientData, setPatientData] = useState({
-    // Initialize state for patient data fields
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    emailAddress: "",
-    admitDate: "",
-    admitTime: "",
-    gender: "Male",
-    addNote: "",
-    paymentOption: "",
-    insuranceInformation: "false",
-    insuranceNumber: "",
-    wardNumber: "",
+  const [formData, setFormData] = useState({
+    patient: "",
     doctor: "",
-    advanceAmount: "",
+  });
+  const [vitalSigns, setVitalSigns] = useState({
+    bloodPressure: "",
+    heartRate: "",
+    respiratoryRate: "",
+    temperature: "",
+  });
+  const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
+  const [doctorData, setDoctorData] = useState({});
+  const [patients, setPatients] = useState([]);
+  const [medicalHistory, setMedicalHistory] = useState({
+    allergies: "",
+    chronicConditions: "",
+    surgeries: "",
+    medications: "",
+    familyHistory: "",
+    immunizations: [{}],
   });
 
-  const [insurance, setInsurance] = useState(true);
+  const [prescriptions, setPrescriptions] = useState({
+    prescribingPhysician: "",
+    instructions: "",
+    medication: "",
+  });
+  useEffect(() => {
+    if (formData.doctor) {
+      axios.get(`http://localhost:3100/api/patients`).then((response) => {
+        const allPatients = response.data;
+        // Filter patients based on the selected doctor
+        const doctorPatients = allPatients.filter(
+          (patient) => patient.doctor === formData.doctor
+        );
+        setPatients(doctorPatients);
+      });
+    } else {
+      setPatients([]); // Reset patients when no doctor is selected
+    }
+  }, [formData.doctor]);
+  const handleSelectChange = (e) => {
+    const selectedOption = e.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      patient: selectedOption,
+    }));
+
+    axios
+      .get(`http://localhost:3100/api/patients/${selectedOption}`)
+      .then((response) => {
+        setSelectedPatientDetails(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching patient details:", error);
+      });
+  };
+
+  const [clinicalExaminations, setClinicalExaminations] = useState({
+    noteDate: "",
+    healthcareProvider: "",
+    subjectiveNote: "",
+    objectiveNote: "",
+    assessment: "",
+    plan: "",
+  });
+
   const [doctors, setDoctors] = useState([]);
 
   useEffect(() => {
@@ -32,401 +79,546 @@ const EMR = () => {
     });
   }, []);
 
-  const handleInsurance = (event) => {
-    if (event.target.value === "true") {
-      setInsurance(false);
-    } else {
-      setInsurance(true);
-    }
+  const handleVitalSignsChange = (e) => {
+    const { name, value } = e.target;
+    setVitalSigns({
+      ...vitalSigns,
+      [name]: value,
+    });
   };
 
-  const handleInputChange = (event) => {
-    const { name, value, type, checked } = event.target;
-    setPatientData((prevData) => ({
+  const handleMedicalHistoryChange = (e) => {
+    const { name, value } = e.target;
+    setMedicalHistory({
+      ...medicalHistory,
+      [name]: value,
+    });
+  };
+
+  const handlePrescriptionsChange = (e) => {
+    const { name, value } = e.target;
+    setPrescriptions({
+      ...prescriptions,
+      [name]: value,
+    });
+  };
+
+  const handleClinicalExaminationsChange = (e) => {
+    const { name, value } = e.target;
+    setClinicalExaminations({
+      ...clinicalExaminations,
+      [name]: value,
+    });
+  };
+
+  const handleImmunizationChange = (e, index) => {
+    const { name, value } = e.target;
+    const updatedImmunizations = [...medicalHistory.immunizations];
+    updatedImmunizations[index] = {
+      ...updatedImmunizations[index],
+      [name]: value,
+    };
+    setMedicalHistory({
+      ...medicalHistory,
+      immunizations: updatedImmunizations,
+    });
+  };
+
+  const handleAddImmunization = () => {
+    setMedicalHistory({
+      ...medicalHistory,
+      immunizations: [...medicalHistory.immunizations, {}],
+    });
+  };
+  const handleRemoveImmunization = (index) => {
+    const updatedImmunizations = [...medicalHistory.immunizations];
+    updatedImmunizations.splice(index, 1);
+    setMedicalHistory((prevData) => ({
       ...prevData,
-      [name]: type === "checkbox" ? checked : value,
+      immunizations: updatedImmunizations,
     }));
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleDoctorChange = (e) => {
+    const selectedDoctor = e.target.value;
 
-    try {
-      const formData = new FormData();
-      for (const key in patientData) {
-        formData.append(key, patientData[key]);
-      }
-
-      const response = await axios.post(
-        "http://localhost:3100/api/patients",
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (response.status === 201) {
-        toast.success("Patient created successfully");
-      }
-
-      console.log("Patient created:", response.data);
-      // Reset the form after successful submission
-      setPatientData({
-        // Reset patient data fields
-        firstName: "",
-        lastName: "",
-        phoneNumber: "",
-        emailAddress: "",
-        admitDate: "",
-        admitTime: "",
-        gender: "",
-        addNote: "",
-        paymentOption: "",
-        insuranceInformation: "false",
-        insuranceNumber: "",
-        wardNumber: "",
-        doctor: "",
-        advanceAmount: "",
+    setFormData((prevData) => ({
+      ...prevData,
+      doctor: selectedDoctor,
+      patient: "", // Clear the selected patient when doctor changes
+    }));
+    setSelectedPatientDetails(null); // Clear patient details
+    axios
+      .get(`http://localhost:3100/doctors/${selectedDoctor}`)
+      .then((response) => {
+        setDoctorData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching doctor details:", error);
       });
-    } catch (error) {
-      toast.error(error.response.data.message);
-      console.error("Error creating patient:", error.response.data);
-      console.log(patientData);
-    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const formData = {
+      vitalSigns,
+      medicalHistory,
+      clinicalExaminations,
+      prescriptions,
+    };
+
+    // Send formData to your backend API for storage
+
+    // Optionally, you can reset the form fields
+    setVitalSigns({
+      bloodPressure: "",
+      heartRate: "",
+      respiratoryRate: "",
+      temperature: "",
+    });
+    setMedicalHistory({
+      allergies: "",
+      chronicConditions: "",
+      surgeries: "",
+      medications: "",
+      familyHistory: "",
+      immunizations: [{}],
+    });
+    setClinicalExaminations({
+      noteDate: "",
+      healthcareProvider: "",
+      subjectiveNote: "",
+      objectiveNote: "",
+      assessment: "",
+      plan: "",
+    });
+    setPrescriptions({
+      prescribingPhysician: "",
+      instructions: "",
+      medication: "",
+    });
   };
 
   return (
     <div className="container-xxl">
-      <div className="row align-items-center">
-        <div className="border-0 mb-4">
-          <div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-            <h3 className="fw-bold mb-0">Add Patient</h3>
-          </div>
+      <div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+        <h3 className="fw-bold mb-0">Appointment</h3>
+        <div className="dropdown">
+          <select
+            className="btn btn-primary form-control"
+            id="dropdownMenuButton2"
+            name="doctor"
+            onChange={handleDoctorChange}
+          >
+            <option
+              style={{ backgroundColor: "white", color: "black" }}
+              value=""
+            >
+              Select Doctor
+            </option>
+            {doctors.map((doctor) => (
+              <option
+                style={{ backgroundColor: "white", color: "black" }}
+                key={doctor._id}
+                value={doctor._id}
+              >
+                {doctor.first_name} {doctor.last_name}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>{" "}
-      {/* Row end  */}
-      <div className="row mb-3">
-        <div className="col-sm-12">
-          <div className="card mb-3">
-            <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
-              <h6 className="mb-0 fw-bold ">Patients Basic Inforamtion</h6>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleSubmit}>
+        <div className="col-md-6">
+          <select className="form-control" onChange={handleSelectChange}>
+            <option value="">Select patient</option>
+            {patients.map((patient) => (
+              <option key={patient._id} value={patient._id}>
+                {patient.firstName} {patient.lastName}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <form onSubmit={handleSubmit}>
+        {/* Vital Signs section */}
+        <div className="row mb-3">
+          <div className="col-sm-12">
+            <div className="card mb-3">
+              <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+                <h6 className="mb-0 fw-bold">Vital Signs of Patient</h6>
+              </div>
+              <div className="card-body">
                 <div className="row g-3 align-items-center">
                   <div className="col-md-6">
-                    <label htmlFor="firstname" className="form-label">
-                      First Name
+                    <label htmlFor="bloodPressure" className="form-label">
+                      Blood Pressure
                     </label>
                     <input
                       required
                       type="text"
-                      name="firstName"
-                      value={patientData.firstName}
-                      onChange={handleInputChange}
+                      name="bloodPressure"
+                      value={vitalSigns.bloodPressure}
+                      onChange={handleVitalSignsChange}
                       className="form-control"
-                      id="firstname"
+                      id="bloodPressure"
                     />
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="lastname" className="form-label">
-                      Last Name
+                    <label htmlFor="heartRate" className="form-label">
+                      Heart Rate
                     </label>
                     <input
                       required
                       type="text"
-                      name="lastName"
-                      value={patientData.lastName}
-                      onChange={handleInputChange}
+                      name="heartRate"
+                      value={vitalSigns.heartRate}
+                      onChange={handleVitalSignsChange}
                       className="form-control"
-                      id="lastname"
+                      id="heartRate"
                     />
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="phonenumber" className="form-label">
-                      Phone Number
+                    <label htmlFor="respiratoryRate" className="form-label">
+                      Respiratory Rate
                     </label>
                     <input
                       required
                       type="text"
-                      name="phoneNumber"
-                      value={patientData.phoneNumber}
-                      onChange={handleInputChange}
+                      name="respiratoryRate"
+                      value={vitalSigns.respiratoryRate}
+                      onChange={handleVitalSignsChange}
                       className="form-control"
-                      id="phonenumber"
+                      id="respiratoryRate"
                     />
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="emailaddress" className="form-label">
-                      Email Address
+                    <label htmlFor="temperature" className="form-label">
+                      Temperature
                     </label>
                     <input
                       required
-                      type="email"
-                      name="emailAddress"
-                      value={patientData.emailAddress}
-                      onChange={handleInputChange}
+                      type="text"
+                      name="temperature"
+                      value={vitalSigns.temperature}
+                      onChange={handleVitalSignsChange}
                       className="form-control"
-                      id="emailaddress"
+                      id="temperature"
+                    />
+                  </div>
+                </div>
+                <br />
+                {/* ... */}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Medical History section */}
+        <div className="row mb-3">
+          <div className="col-sm-12">
+            <div className="card mb-3">
+              <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+                <h6 className="mb-0 fw-bold">Medical History</h6>
+              </div>
+              <div className="card-body">
+                <div className="row g-3 align-items-center">
+                  <div className="col-md-6">
+                    <label htmlFor="allergies" className="form-label">
+                      Allergies
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      name="allergies"
+                      value={medicalHistory.allergies}
+                      onChange={handleMedicalHistoryChange}
+                      className="form-control"
+                      id="allergies"
                     />
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="admitdate" className="form-label">
-                      Admit Date
+                    <label htmlFor="chronicConditions" className="form-label">
+                      Chronic Conditions
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      name="chronicConditions"
+                      value={medicalHistory.chronicConditions}
+                      onChange={handleMedicalHistoryChange}
+                      className="form-control"
+                      id="chronicConditions"
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="surgeries" className="form-label">
+                      Surgeries
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      name="surgeries"
+                      value={medicalHistory.surgeries}
+                      onChange={handleMedicalHistoryChange}
+                      className="form-control"
+                      id="surgeries"
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="medications" className="form-label">
+                      Medications
+                    </label>
+                    <input
+                      type="text"
+                      name="medications"
+                      value={medicalHistory.medications}
+                      onChange={handleMedicalHistoryChange}
+                      className="form-control"
+                      id="medications"
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="familyHistory" className="form-label">
+                      Family History
+                    </label>
+                    <input
+                      type="text"
+                      name="familyHistory"
+                      value={medicalHistory.familyHistory}
+                      onChange={handleMedicalHistoryChange}
+                      className="form-control"
+                      id="familyHistory"
+                    />
+                  </div>
+                </div>
+                {/* Immunizations */}
+                <div className="mt-4">
+                  <h6>Immunizations</h6>
+                  {medicalHistory.immunizations.map((immunization, index) => (
+  <div key={index}>
+    <div className="row g-3 align-items-center">
+      <div className="col-md-4">
+        <label className="form-label">Vaccine Name</label>
+        <input
+          type="text"
+          name="vaccineName"
+          value={immunization.vaccineName}
+          onChange={(e) => handleImmunizationChange(e, index)}
+          className="form-control"
+        />
+      </div>
+      <div className="col-md-4">
+        <label className="form-label">Vaccine Date</label>
+        <input
+          type="date"
+          name="vaccineDate"
+          value={immunization.vaccineDate}
+          onChange={(e) => handleImmunizationChange(e, index)}
+          className="form-control"
+        />
+      </div>
+      <div className="col-md-3">
+        <label className="form-label">Administered By</label>
+        <input
+          type="text"
+          name="administeredBy"
+          value={immunization.administeredBy}
+          onChange={(e) => handleImmunizationChange(e, index)}
+          className="form-control"
+        />
+      </div>
+      {index > 0 && (
+        <div className="col-md-1">
+          <button
+            type="button"
+            className="btn btn-danger custom-button"
+            onClick={() => handleRemoveImmunization(index)}
+          >
+            <span aria-hidden="true" style={colo}>×</span>
+          </button>
+        </div>
+      )}
+    </div>
+    {index === medicalHistory.immunizations.length - 1 && (
+      <div className="d-flex justify-content-between mt-2">
+        <button
+          type="button"
+          className="btn btn-primary custom-button"
+          onClick={handleAddImmunization}
+        >
+          Add Another Immunization
+        </button>
+      </div>
+    )}
+  </div>
+))}
+
+                </div>
+                {/* End Immunizations */}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Prescriptions section */}
+        <div className="row mb-3">
+          <div className="col-sm-12">
+            <div className="card mb-3">
+              <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+                <h6 className="mb-0 fw-bold">Prescriptions</h6>
+              </div>
+              <div className="card-body">
+                <div className="row g-3 align-items-center">
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="prescribingPhysician"
+                      className="form-label"
+                    >
+                      Prescribing Physician
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      name="prescribingPhysician"
+                      value={prescriptions.prescribingPhysician}
+                      onChange={handlePrescriptionsChange}
+                      className="form-control"
+                      id="prescribingPhysician"
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="instructions" className="form-label">
+                      Instructions
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      name="instructions"
+                      value={prescriptions.instructions}
+                      onChange={handlePrescriptionsChange}
+                      className="form-control"
+                      id="instructions"
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="medication" className="form-label">
+                      Medication
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      name="medication"
+                      value={prescriptions.medication}
+                      onChange={handlePrescriptionsChange}
+                      className="form-control"
+                      id="medication"
+                    />
+                  </div>
+                  {/* Add more prescription-related fields here */}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Clinical Examinations section */}
+        <div className="row mb-3">
+          <div className="col-sm-12">
+            <div className="card mb-3">
+              <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+                <h6 className="mb-0 fw-bold">Clinical Examinations</h6>
+              </div>
+              <div className="card-body">
+                <div className="row g-3 align-items-center">
+                  <div className="col-md-6">
+                    <label htmlFor="noteDate" className="form-label">
+                      Note Date
                     </label>
                     <input
                       required
                       type="date"
-                      name="admitDate"
-                      value={patientData.admitDate}
-                      onChange={handleInputChange}
+                      name="noteDate"
+                      value={clinicalExaminations.noteDate}
+                      onChange={handleClinicalExaminationsChange}
                       className="form-control"
-                      id="admitdate"
+                      id="noteDate"
                     />
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="admittime" className="form-label">
-                      Admit Time
+                    <label htmlFor="healthcareProvider" className="form-label">
+                      Healthcare Provider
                     </label>
                     <input
                       required
-                      type="time"
-                      name="admitTime"
-                      value={patientData.admitTime}
-                      onChange={handleInputChange}
+                      type="text"
+                      name="healthcareProvider"
+                      value={clinicalExaminations.healthcareProvider}
+                      onChange={handleClinicalExaminationsChange}
                       className="form-control"
-                      id="admittime"
+                      id="healthcareProvider"
                     />
                   </div>
-                  {/* <div className="col-md-6">
-                          <label
-                            htmlFor="formFileMultiple"
-                            className="form-label"
-                          >
-                            Files Document Upload
-                          </label>
-                          <input
-                            className="form-control"
-                            type="file"
-                            name="filesDocumentUpload"
-                            multiple
-                            onChange={handleFileChange}
-                            id="formFileMultiple"
-                          />
-                        </div> */}
-                  <div className="col-md-6">
-                    <label className="form-label">Gender</label>
-                    <div className="row">
-                      <div className="col-md-6">
-                        <div className="form-check">
-                          <input
-                            required
-                            className="form-check-input"
-                            type="radio"
-                            name="gender"
-                            value="Male"
-                            checked={patientData.gender === "Male"}
-                            onChange={handleInputChange}
-                            id="exampleRadios11"
-                            defaultChecked
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="exampleRadios11"
-                          >
-                            Male
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-md-6">
-                        <div className="form-check">
-                          <input
-                            required
-                            className="form-check-input"
-                            type="radio"
-                            name="gender"
-                            value="female"
-                            checked={patientData.gender === "Female"}
-                            onChange={handleInputChange}
-                            id="exampleRadios22"
-                            defaultValue="option2"
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="exampleRadios22"
-                          >
-                            Female
-                          </label>
-                        </div>
-                      </div>
-                    </div>
+                  <div className="col-12">
+                    <label htmlFor="subjectiveNote" className="form-label">
+                      Subjective Note
+                    </label>
+                    <textarea
+                      required
+                      name="subjectiveNote"
+                      value={clinicalExaminations.subjectiveNote}
+                      onChange={handleClinicalExaminationsChange}
+                      className="form-control"
+                      id="subjectiveNote"
+                    ></textarea>
+                  </div>
+                  <div className="col-12">
+                    <label htmlFor="objectiveNote" className="form-label">
+                      Objective Note
+                    </label>
+                    <textarea
+                      required
+                      name="objectiveNote"
+                      value={clinicalExaminations.objectiveNote}
+                      onChange={handleClinicalExaminationsChange}
+                      className="form-control"
+                      id="objectiveNote"
+                    ></textarea>
+                  </div>
+                  <div className="col-12">
+                    <label htmlFor="assessment" className="form-label">
+                      Assessment
+                    </label>
+                    <textarea
+                      required
+                      name="assessment"
+                      value={clinicalExaminations.assessment}
+                      onChange={handleClinicalExaminationsChange}
+                      className="form-control"
+                      id="assessment"
+                    ></textarea>
+                  </div>
+                  <div className="col-12">
+                    <label htmlFor="plan" className="form-label">
+                      Plan
+                    </label>
+                    <textarea
+                      required
+                      name="plan"
+                      value={clinicalExaminations.plan}
+                      onChange={handleClinicalExaminationsChange}
+                      className="form-control"
+                      id="plan"
+                    ></textarea>
                   </div>
                 </div>
-                <br />
-                <div className="row g-3 align-items-center">
-                  <div className="col-md-6">
-                    <label className="form-label">Select Payment Option</label>
-                    <select
-                      required
-                      className="form-select"
-                      aria-label="Default select example"
-                      name="paymentOption"
-                      value={patientData.paymentOption}
-                      onChange={handleInputChange}
-                    >
-                      <option>Payment Option</option>
-                      <option value="Credit Card">Credit Card</option>
-                      <option value="Debit Card">Debit Card</option>
-                      <option value="Upi">Upi</option>
-                      <option value="Cash">Cash</option>
-                      <option disabled={insurance} value="Cashless">
-                        Cashless(Insurance)
-                      </option>
-                    </select>
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Insurance Information</label>
-                    <div className="row">
-                      <div className="col-md-6">
-                        <div className="form-check">
-                          <input
-                            required
-                            onClick={handleInsurance}
-                            className="form-check-input"
-                            type="radio"
-                            name="insuranceInformation"
-                            value="true"
-                            checked={
-                              patientData.insuranceInformation === "true"
-                            }
-                            onChange={handleInputChange}
-                            id="exampleRadios1"
-                            defaultValue="true"
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="exampleRadios1"
-                          >
-                            Yes I have Insurance
-                          </label>
-                        </div>
-                      </div>
-                      <div className="col-md-6">
-                        <div className="form-check">
-                          <input
-                            onClick={handleInsurance}
-                            className="form-check-input"
-                            type="radio"
-                            name="insuranceInformation"
-                            value="false"
-                            checked={
-                              patientData.insuranceInformation === "false"
-                            }
-                            onChange={handleInputChange}
-                            id="exampleRadios2"
-                            defaultValue="false"
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="exampleRadios2"
-                          >
-                            No I don't have Insurance
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="insinfo" className="form-label">
-                      Insurance Number
-                    </label>
-                    <input
-                      disabled={insurance}
-                      type="text"
-                      name="insuranceNumber"
-                      value={patientData.insuranceNumber}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      id="insinfo"
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="roominfo" className="form-label">
-                      Ward Number
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      name="wardNumber"
-                      value={patientData.wardNumber}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      id="roominfo"
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Select Doctor</label>
-                    <select
-                      required
-                      type="text"
-                      name="doctor"
-                      value={patientData.doctor}
-                      onChange={handleInputChange}
-                      className="form-select"
-                      aria-label="Default select example"
-                    >
-                      <option value="">Select Doctor</option>
-                      {doctors.map((doctor) => (
-                        <option
-                          style={{ backgroundColor: "white", color: "black" }}
-                          key={doctor._id}
-                          value={doctor._id}
-                        >
-                          {doctor.first_name} {doctor.last_name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="advancepayment" className="form-label">
-                      Advance Amount
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      name="advanceAmount"
-                      value={patientData.advanceAmount}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      id="advancepayment"
-                    />
-                  </div>
-                </div>
-                <br />
-                <div className="col-md-12">
-                  <label htmlFor="addnote" className="form-label">
-                    Add Note
-                  </label>
-                  <textarea
-                    required
-                    className="form-control"
-                    name="addNote"
-                    value={patientData.addNote}
-                    onChange={handleInputChange}
-                    id="addnote"
-                    rows={3}
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary mt-4">
-                  Submit
-                </button>
-              </form>
-              <ToastContainer position="top-right" autoClose={3000} />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+        <button type="submit" className="btn btn-primary mt-4">
+          Submit
+        </button>
+      </form>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const consultationNotesSchema = new mongoose.Schema({
+const clinicalExaminationsSchema = new mongoose.Schema({
   visit: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Visit", // Replace with the actual name of your Visit model
@@ -27,6 +27,6 @@ const consultationNotesSchema = new mongoose.Schema({
   // Add other fields as needed
 });
 
-const ConsultationNotes = mongoose.model("ConsultationNotes", consultationNotesSchema);
+const ClinicalExaminations = mongoose.model("ClinicalExaminations", clinicalExaminationsSchema);
 
-module.exports = ConsultationNotes;
+module.exports =  ClinicalExaminations;

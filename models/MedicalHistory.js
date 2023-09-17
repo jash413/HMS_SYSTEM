@@ -13,6 +13,14 @@ const medicalHistorySchema = new mongoose.Schema({
   familyHistory: {
     type: String,
   },
+  // Immunization-related fields
+  immunizations: [
+    {
+      vaccineName: String,
+      vaccineDate: Date,
+      administeredBy: String,
+    },
+  ],
   // Add other fields as needed
 });
 

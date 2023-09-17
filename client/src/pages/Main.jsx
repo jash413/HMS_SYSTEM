@@ -1,6 +1,5 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
-
 
 // Import pages
 
@@ -47,53 +46,6 @@ function Index() {
     setUser(JSON.parse(localStorage.getItem("user")));
   };
 
-  const handleSignOut = () => {
-    // Clear user authentication state
-    setIsAuthenticated(false);
-    setUser(null);
-  
-    // Clear user data from local storage
-    localStorage.removeItem("user");
-    localStorage.removeItem("permissions");
-    localStorage.removeItem("token");
-  
-    // Redirect to the sign-in page (replace '/signin' with your sign-in route)
-    window.location.href = "/";
-  };
-  
-
-  // Handle Sidebar
-  useEffect(() => {
-    if(isAuthenticated){
-    // Function to toggle the sidebar
-    const toggleSidebar = () => {
-      const sidebar = document.querySelector(".sidebar");
-      sidebar.classList.toggle("open");
-      sidebar.classList.remove("sidebar-mini");
-    };
-
-    // Function to toggle sidebar mini version
-    const toggleSidebarMini = () => {
-      const sidebar = document.querySelector(".sidebar");
-      sidebar.classList.toggle("sidebar-mini");
-      sidebar.classList.remove("open");
-    };
-
-    // Attach event listeners
-    const menuToggle = document.querySelector(".menu-toggle");
-    const sidebarMiniBtn = document.querySelector(".sidebar-mini-btn");
-
-    menuToggle.addEventListener("click", toggleSidebar);
-    sidebarMiniBtn.addEventListener("click", toggleSidebarMini);
-
-    // Cleanup the event handlers when the component unmounts
-    return () => {
-      menuToggle.removeEventListener("click", toggleSidebar);
-      sidebarMiniBtn.removeEventListener("click", toggleSidebarMini);
-    };
-  }
-  }, [isAuthenticated]);
-
   return (
     <Router>
       <div id="ihealth-layout" className="theme-tradewind">
@@ -107,7 +59,7 @@ function Index() {
             {/* sidebar */}
             <div className="sidebar px-4 py-4 py-md-5 me-0">
               <div className="d-flex flex-column h-100">
-                <Link to="/dashboard" className="mb-0 brand-icon">
+                <Link to="/" className="mb-0 brand-icon">
                   <a className="mb-0 brand-icon">
                     <span className="logo-icon">
                       <i className="icofont-heart-beat fs-2" />
@@ -525,9 +477,7 @@ function Index() {
                       <div className="dropdown user-profile ml-2 ml-sm-3 d-flex align-items-center zindex-popover">
                         <div className="u-info me-2">
                           <p className="mb-0 text-end line-height-sm ">
-                            <span className="font-weight-bold">
-                              {user.name}
-                            </span>
+                            <span className="font-weight-bold">{user.name}</span>
                           </p>
                           <small>{user.role} Profile</small>
                         </div>
@@ -582,8 +532,7 @@ function Index() {
                                 Patient Invoices
                               </a>
                               <a
-                                href="/"
-                                onClick={handleSignOut}
+                                href="ui-elements/auth-signin.html"
                                 className="list-group-item list-group-item-action border-0 "
                               >
                                 <i className="icofont-logout fs-6 me-3" />

@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { myContext, tokenContext } from "./Main";
 
 
 const AppointmentForm = () => {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
   const [formData, setFormData] = useState({
     patient: "",
     appointmentDate: new Date().toISOString().split("T")[0],
@@ -23,8 +26,16 @@ const AppointmentForm = () => {
   const [availableSlots, setAvailableSlots] = useState([]); // State to store available slots
 
   useEffect(() => {
-    axios.get("http://localhost:3100/doctors").then((response) => {
-      setDoctors(response.data);
+    axios.get("http://localhost:3100/doctors",{
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }).then((response) => {
+      const doctor = response.data.filter((doctor) => {
+        return doctor.hospital_id === userData.hospital_id;
+      }
+      );
+      setDoctors(doctor);
     });
   }, []);
 
@@ -87,6 +98,24 @@ const AppointmentForm = () => {
         console.error("Error fetching doctor details:", error);
       });
   };
+
+  useEffect(() => {
+    if(userData.role==="Doctor"){
+      setFormData((prevData) => ({
+        ...prevData,
+        doctor: userData.doctor_id,
+      }));
+      setSelectedPatientDetails(null); // Clear patient details
+      axios
+        .get(`http://localhost:3100/doctors/${userData.doctor_id}`)
+        .then((response) => {
+          setDoctorData(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching doctor details:", error);
+        });
+    }
+  }, [userData.role==="Doctor"]);
 
   const handleSelectChange = (e) => {
     const selectedOption = e.target.value;
@@ -169,6 +198,7 @@ const AppointmentForm = () => {
         <div className="border-0 mb-4">
           <div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
             <h3 className="fw-bold mb-0">Appointment</h3>
+            {userData.role==="Admin" && (
             <div className="dropdown">
               <select
                 className="btn btn-primary form-control"
@@ -193,6 +223,7 @@ const AppointmentForm = () => {
                 ))}
               </select>
             </div>
+            )}
           </div>
         </div>
       </div>

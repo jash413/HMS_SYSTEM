@@ -1,26 +1,24 @@
 import React from "react";
-import { useState } from "react";
+import { useState,useContext } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { myContext, tokenContext } from "./Main";
 
 function DoctorAdd() {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
   const [doctorData, setDoctorData] = useState({
     first_name: "",
     last_name: "",
     gender: "Male",
     specialization: "",
-
+    hospital_id: userData.hospital_id,
     email: "",
     phone: "",
     join_date: "",
-    // username:"",
-    // pass:"",
-    // confirmpass:"",
     cabin: "",
     workingHours: "",
-    // access:""
   });
 
   const handleInputChange = (event) => {
@@ -42,6 +40,7 @@ function DoctorAdd() {
         {
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
           },
         }
       );

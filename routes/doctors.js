@@ -4,10 +4,10 @@ const doctorController = require('../controllers/doctorController');
 const authenticateToken = require('../middleware/authMiddleware');
 
 // Route to get all doctors
-router.get('/doctors',doctorController.getAllDoctors);
+router.get('/doctors',authenticateToken,doctorController.getAllDoctors);
  
 // Route to create a new doctor
-router.post('/doctors', doctorController.createDoctor);
+router.post('/doctors',authenticateToken,doctorController.createDoctor);
 
 // Route to get a specific doctor by id
 router.get('/doctors/:id', doctorController.getDoctorById);

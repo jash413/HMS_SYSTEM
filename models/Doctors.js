@@ -4,12 +4,11 @@ const db = require("./db");
 // Define the Doctor schema
 const doctorSchema = new mongoose.Schema(
   {
-    // hospital_id: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'Hospital',
-    //   required: true,
-    // },
-
+    hospital_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Hospital',
+      required: true,
+    },
     doctor_id: {
       type: String,
       unique: true,
@@ -60,6 +59,10 @@ const doctorSchema = new mongoose.Schema(
     workingHours: {
       startTime: { type: String, required: true },
       endTime: { type: String, required: true },
+    },
+    user_created: {
+      type: Boolean,
+      default: false,
     },
     bookedSlots: [
       {

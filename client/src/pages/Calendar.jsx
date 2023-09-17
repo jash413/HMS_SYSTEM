@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import moment from "moment";
 import axios from "axios";
+import { myContext, tokenContext } from "./Main";
 
 // Custom event content renderer
 const renderEventContent = (eventInfo) => {
@@ -26,6 +27,8 @@ const renderEventContent = (eventInfo) => {
 };
 
 function Calendar() {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [selectedDoctorData, setSelectedDoctorData] = useState({});
@@ -98,8 +101,16 @@ function Calendar() {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:3100/doctors").then((response) => {
-      setDoctors(response.data);
+    axios.get("http://localhost:3100/doctors",{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((response) => {
+      const doctor = response.data.filter((doctor) => {
+        return doctor.hospital_id === userData.hospital_id;
+      }
+      );
+      setDoctors(doctor);
     });
   }, []);
 
@@ -113,12 +124,23 @@ function Calendar() {
     }
   }, [selectedDoctor]);
 
+  useEffect(() => {
+    if (userData.role==="Doctor") {
+      axios
+        .get(`http://localhost:3100/doctors/${userData.doctor_id}`)
+        .then((response) => {
+          setSelectedDoctorData(response.data);
+        });
+    }
+  }, [userData.role==="Doctor"]);
+
   return (
     <div className="container-xxl">
       <div className="row align-items-center">
         <div className="border-0 mb-4">
           <div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom">
             <h3 className="fw-bold mb-0">Calendar</h3>
+            {userData.role === "Admin" && (
             <div className="dropdown">
               <select
                 className="btn btn-primary form-control"
@@ -144,6 +166,7 @@ function Calendar() {
                 ))}
               </select>
             </div>
+            )}
             <div className="col-auto d-flex">
               <button
                 type="button"

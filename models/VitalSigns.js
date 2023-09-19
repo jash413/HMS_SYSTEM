@@ -1,11 +1,6 @@
 const mongoose = require("mongoose");
 
 const VitalSignsSchema = new mongoose.Schema({
-  visit: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Visit",
-    required: true,
-  },
   bloodPressure: {
     type: String,
     required: true,

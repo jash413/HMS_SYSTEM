@@ -42,10 +42,10 @@ exports.createRecord = async (req, res) => {
     }
 
     const savedRecord = await newRecord.save();
-
     res.status(201).json(savedRecord);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
+    console.error(error)
   }
 };
 

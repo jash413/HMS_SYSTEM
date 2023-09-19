@@ -1,15 +1,18 @@
 const mongoose = require("mongoose");
 
 const medicalHistorySchema = new mongoose.Schema({
-  patient: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Patients", // Replace with the actual name of your Patient model
-    required: true,
+  conditions: {
+    type: String,
   },
-  conditions: [String],
-  surgeries: [String],
-  allergies: [String],
-  medications: [String],
+  surgeries: {
+    type: String,
+  },
+  allergies: {
+    type: String,
+  },
+  medications: {
+    type: String,
+  },
   familyHistory: {
     type: String,
   },

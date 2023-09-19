@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const ehrController = require("../controllers/ehrController");
+const authenticateToken = require('../middleware/authMiddleware');
 
 // Create a new record for a specific component
-router.post("/api/ehr/:component", ehrController.createRecord);
+router.post("/api/ehr/:component",authenticateToken,ehrController.createRecord);
 
 // Retrieve records for a specific component
 router.get("/api/ehr/:component/:id", ehrController.getRecordsForComponent);

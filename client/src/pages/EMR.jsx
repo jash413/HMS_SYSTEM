@@ -8,20 +8,21 @@ const EMR = () => {
   const userData = useContext(myContext);
   const token = useContext(tokenContext);
 
+  // ID of patient and doctor
   const [formData, setFormData] = useState({
     patient: "",
     doctor: "",
   });
-  const [vitalSigns, setVitalSigns] = useState({
+
+  // Form data
+  const [vitalsigns, setvitalsigns] = useState({
     bloodPressure: "",
     heartRate: "",
     respiratoryRate: "",
     temperature: "",
   });
-  const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
-  const [doctorData, setDoctorData] = useState({});
-  const [patients, setPatients] = useState([]);
-  const [medicalHistory, setMedicalHistory] = useState({
+
+  const [medicalhistory, setmedicalhistory] = useState({
     allergies: "",
     chronicConditions: "",
     surgeries: "",
@@ -36,7 +37,7 @@ const EMR = () => {
     medication: "",
   });
 
-  const [clinicalExaminations, setClinicalExaminations] = useState({
+  const [clinicalexaminations, setclinicalexaminations] = useState({
     noteDate: "",
     healthcareProvider: "",
     subjectiveNote: "",
@@ -45,10 +46,18 @@ const EMR = () => {
     plan: "",
   });
 
+  // selected resources details
+  const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
+  const [doctorData, setDoctorData] = useState({});
+
+// dropdown
+  const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
 
   const [immunizationCount, setImmunizationCount] = useState(1); // Added immunization count
 
+
+  // fetch patients
   useEffect(() => {
     if (formData.doctor) {
       axios.get(`http://localhost:3100/api/patients`,{
@@ -89,6 +98,7 @@ const EMR = () => {
       });
   };
 
+  // fetch doctors
   useEffect(() => {
     axios.get("http://localhost:3100/doctors",{
         headers: {
@@ -99,18 +109,18 @@ const EMR = () => {
     });
   }, []);
 
-  const handleVitalSignsChange = (e) => {
+  const handlevitalsignsChange = (e) => {
     const { name, value } = e.target;
-    setVitalSigns({
-      ...vitalSigns,
+    setvitalsigns({
+      ...vitalsigns,
       [name]: value,
     });
   };
 
-  const handleMedicalHistoryChange = (e) => {
+  const handlemedicalhistoryChange = (e) => {
     const { name, value } = e.target;
-    setMedicalHistory({
-      ...medicalHistory,
+    setmedicalhistory({
+      ...medicalhistory,
       [name]: value,
     });
   };
@@ -123,41 +133,41 @@ const EMR = () => {
     });
   };
 
-  const handleClinicalExaminationsChange = (e) => {
+  const handleclinicalexaminationsChange = (e) => {
     const { name, value } = e.target;
-    setClinicalExaminations({
-      ...clinicalExaminations,
+    setclinicalexaminations({
+      ...clinicalexaminations,
       [name]: value,
     });
   };
 
   const handleImmunizationChange = (e, index) => {
     const { name, value } = e.target;
-    const updatedImmunizations = [...medicalHistory.immunizations];
+    const updatedImmunizations = [...medicalhistory.immunizations];
     updatedImmunizations[index] = {
       ...updatedImmunizations[index],
       [name]: value,
     };
-    setMedicalHistory({
-      ...medicalHistory,
+    setmedicalhistory({
+      ...medicalhistory,
       immunizations: updatedImmunizations,
     });
   };
 
   const handleAddImmunization = () => {
-    setMedicalHistory({
-      ...medicalHistory,
-      immunizations: [...medicalHistory.immunizations, {}],
+    setmedicalhistory({
+      ...medicalhistory,
+      immunizations: [...medicalhistory.immunizations, {}],
     });
     // Increment the immunization count
     setImmunizationCount(immunizationCount + 1);
   };
 
   const handleRemoveImmunization = (index) => {
-    const updatedImmunizations = [...medicalHistory.immunizations];
+    const updatedImmunizations = [...medicalhistory.immunizations];
     updatedImmunizations.splice(index, 1);
-    setMedicalHistory({
-      ...medicalHistory,
+    setmedicalhistory({
+      ...medicalhistory,
       immunizations: updatedImmunizations,
     });
     // Decrement the immunization count
@@ -183,46 +193,92 @@ const EMR = () => {
       });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = {
-      vitalSigns,
-      medicalHistory,
-      clinicalExaminations,
-      prescriptions,
-    };
-
+  
+    // Store components
+    const component = ["vitalsigns","medicalhistory","ClinicalExaminations","prescriptions"]
+    const data ={
+      'vitalsigns':vitalsigns,
+      'medicalhistory':medicalhistory,
+      'ClinicalExaminations':clinicalexaminations,
+      'prescriptions':prescriptions
+    }
+    
+    component.map((value)=>{
+    try {
+      console.log(data[value])
+      // Create an object with the vital signs data
+      const response =  axios.post(
+        `http://localhost:3100/api/ehr/${value}`,
+        data[value],
+        {
+          headers: {
+            authorization: `Bearer ${token}`, // Replace with your authentication token
+          },
+        }
+      );
+  
+      if (response.status === 201) {
+        toast.success("Vital signs data saved successfully");
+      }
+  
+      // Optionally, you can reset the form fields
+      setvitalsigns({
+        bloodPressure: "",
+        heartRate: "",
+        respiratoryRate: "",
+        temperature: "",
+      });
+      setmedicalhistory({
+          allergies: "",
+          chronicConditions: "",
+          surgeries: "",
+          medications: "",
+          familyHistory: "",
+          immunizations: [{}],
+        });
+        setclinicalexaminations({
+          noteDate: "",
+          healthcareProvider: "",
+          subjectiveNote: "",
+          objectiveNote: "",
+          assessment: "",
+          plan: "",
+        });
+        setPrescriptions({
+          prescribingPhysician: "",
+          instructions: "",
+          medication: "",
+        });
+    } catch (error) {
+      toast.error("Error saving vital signs data");
+      console.error("Error saving vital signs data:", error);
+    }
+  })
     // Send formData to your backend API for storage
 
-    // Optionally, you can reset the form fields
-    setVitalSigns({
-      bloodPressure: "",
-      heartRate: "",
-      respiratoryRate: "",
-      temperature: "",
-    });
-    setMedicalHistory({
-      allergies: "",
-      chronicConditions: "",
-      surgeries: "",
-      medications: "",
-      familyHistory: "",
-      immunizations: [{}],
-    });
-    setClinicalExaminations({
-      noteDate: "",
-      healthcareProvider: "",
-      subjectiveNote: "",
-      objectiveNote: "",
-      assessment: "",
-      plan: "",
-    });
-    setPrescriptions({
-      prescribingPhysician: "",
-      instructions: "",
-      medication: "",
-    });
+    // setmedicalhistory({
+    //   allergies: "",
+    //   chronicConditions: "",
+    //   surgeries: "",
+    //   medications: "",
+    //   familyHistory: "",
+    //   immunizations: [{}],
+    // });
+    // setclinicalexaminations({
+    //   noteDate: "",
+    //   healthcareProvider: "",
+    //   subjectiveNote: "",
+    //   objectiveNote: "",
+    //   assessment: "",
+    //   plan: "",
+    // });
+    // setPrescriptions({
+    //   prescribingPhysician: "",
+    //   instructions: "",
+    //   medication: "",
+    // });
   };
 
   return (
@@ -282,8 +338,8 @@ const EMR = () => {
                       required
                       type="text"
                       name="bloodPressure"
-                      value={vitalSigns.bloodPressure}
-                      onChange={handleVitalSignsChange}
+                      value={vitalsigns.bloodPressure}
+                      onChange={handlevitalsignsChange}
                       className="form-control"
                       id="bloodPressure"
                     />
@@ -296,8 +352,8 @@ const EMR = () => {
                       required
                       type="text"
                       name="heartRate"
-                      value={vitalSigns.heartRate}
-                      onChange={handleVitalSignsChange}
+                      value={vitalsigns.heartRate}
+                      onChange={handlevitalsignsChange}
                       className="form-control"
                       id="heartRate"
                     />
@@ -310,8 +366,8 @@ const EMR = () => {
                       required
                       type="text"
                       name="respiratoryRate"
-                      value={vitalSigns.respiratoryRate}
-                      onChange={handleVitalSignsChange}
+                      value={vitalsigns.respiratoryRate}
+                      onChange={handlevitalsignsChange}
                       className="form-control"
                       id="respiratoryRate"
                     />
@@ -324,8 +380,8 @@ const EMR = () => {
                       required
                       type="text"
                       name="temperature"
-                      value={vitalSigns.temperature}
-                      onChange={handleVitalSignsChange}
+                      value={vitalsigns.temperature}
+                      onChange={handlevitalsignsChange}
                       className="form-control"
                       id="temperature"
                     />
@@ -355,8 +411,8 @@ const EMR = () => {
                       required
                       type="text"
                       name="allergies"
-                      value={medicalHistory.allergies}
-                      onChange={handleMedicalHistoryChange}
+                      value={medicalhistory.allergies}
+                      onChange={handlemedicalhistoryChange}
                       className="form-control"
                       id="allergies"
                     />
@@ -369,8 +425,8 @@ const EMR = () => {
                       required
                       type="text"
                       name="chronicConditions"
-                      value={medicalHistory.chronicConditions}
-                      onChange={handleMedicalHistoryChange}
+                      value={medicalhistory.chronicConditions}
+                      onChange={handlemedicalhistoryChange}
                       className="form-control"
                       id="chronicConditions"
                     />
@@ -383,8 +439,8 @@ const EMR = () => {
                       required
                       type="text"
                       name="surgeries"
-                      value={medicalHistory.surgeries}
-                      onChange={handleMedicalHistoryChange}
+                      value={medicalhistory.surgeries}
+                      onChange={handlemedicalhistoryChange}
                       className="form-control"
                       id="surgeries"
                     />
@@ -396,8 +452,8 @@ const EMR = () => {
                     <input
                       type="text"
                       name="medications"
-                      value={medicalHistory.medications}
-                      onChange={handleMedicalHistoryChange}
+                      value={medicalhistory.medications}
+                      onChange={handlemedicalhistoryChange}
                       className="form-control"
                       id="medications"
                     />
@@ -409,8 +465,8 @@ const EMR = () => {
                     <input
                       type="text"
                       name="familyHistory"
-                      value={medicalHistory.familyHistory}
-                      onChange={handleMedicalHistoryChange}
+                      value={medicalhistory.familyHistory}
+                      onChange={handlemedicalhistoryChange}
                       className="form-control"
                       id="familyHistory"
                     />
@@ -419,7 +475,7 @@ const EMR = () => {
                 {/* Immunizations */}
                 <div className="mt-4">
                   <h6>Immunizations</h6>
-                  {medicalHistory.immunizations.map((immunization, index) => (
+                  {medicalhistory.immunizations.map((immunization, index) => (
   <div key={index}>
     <div className="row g-3 align-items-center">
       <div className="col-md-4">
@@ -464,7 +520,7 @@ const EMR = () => {
         </div>
       )}
     </div>
-    {index === medicalHistory.immunizations.length - 1 && (
+    {index === medicalhistory.immunizations.length - 1 && (
       <div className="d-flex justify-content-between mt-2">
         <button
           type="button"
@@ -564,8 +620,8 @@ const EMR = () => {
                       required
                       type="date"
                       name="noteDate"
-                      value={clinicalExaminations.noteDate}
-                      onChange={handleClinicalExaminationsChange}
+                      value={clinicalexaminations.noteDate}
+                      onChange={handleclinicalexaminationsChange}
                       className="form-control"
                       id="noteDate"
                     />
@@ -578,8 +634,8 @@ const EMR = () => {
                       required
                       type="text"
                       name="healthcareProvider"
-                      value={clinicalExaminations.healthcareProvider}
-                      onChange={handleClinicalExaminationsChange}
+                      value={clinicalexaminations.healthcareProvider}
+                      onChange={handleclinicalexaminationsChange}
                       className="form-control"
                       id="healthcareProvider"
                     />
@@ -591,8 +647,8 @@ const EMR = () => {
                     <textarea
                       required
                       name="subjectiveNote"
-                      value={clinicalExaminations.subjectiveNote}
-                      onChange={handleClinicalExaminationsChange}
+                      value={clinicalexaminations.subjectiveNote}
+                      onChange={handleclinicalexaminationsChange}
                       className="form-control"
                       id="subjectiveNote"
                     ></textarea>
@@ -604,8 +660,8 @@ const EMR = () => {
                     <textarea
                       required
                       name="objectiveNote"
-                      value={clinicalExaminations.objectiveNote}
-                      onChange={handleClinicalExaminationsChange}
+                      value={clinicalexaminations.objectiveNote}
+                      onChange={handleclinicalexaminationsChange}
                       className="form-control"
                       id="objectiveNote"
                     ></textarea>
@@ -617,8 +673,8 @@ const EMR = () => {
                     <textarea
                       required
                       name="assessment"
-                      value={clinicalExaminations.assessment}
-                      onChange={handleClinicalExaminationsChange}
+                      value={clinicalexaminations.assessment}
+                      onChange={handleclinicalexaminationsChange}
                       className="form-control"
                       id="assessment"
                     ></textarea>
@@ -630,8 +686,8 @@ const EMR = () => {
                     <textarea
                       required
                       name="plan"
-                      value={clinicalExaminations.plan}
-                      onChange={handleClinicalExaminationsChange}
+                      value={clinicalexaminations.plan}
+                      onChange={handleclinicalexaminationsChange}
                       className="form-control"
                       id="plan"
                     ></textarea>
@@ -645,6 +701,7 @@ const EMR = () => {
           Submit
         </button>
       </form>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

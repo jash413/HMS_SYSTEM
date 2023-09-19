@@ -2,14 +2,7 @@ const passport = require('../middleware/passport');
 const jwt = require('jsonwebtoken');
 const User = require('../models/Users'); // Import your user model
 const bcrypt = require('bcrypt'); // Import bcrypt for password hashing
-const twilio = require("twilio");
 
-// Initialize Twilio client with your credentials
-const accountSid = "ACbbaa2a14b8f333557ce6bf12d147bae4";
-const authToken = "e20b74904da96c249a8f01a68df3de96";
-const twilioPhoneNumber = "+18184939912";
-
-const client = twilio(accountSid, authToken);
 
 // Function to handle user registration
 exports.register = async (req, res) => {
@@ -31,6 +24,18 @@ exports.register = async (req, res) => {
     await newUser.save();
 
     return res.status(201).json({ message: 'Registration successful.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// Function to get all users
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+
+    return res.status(200).json({ users });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal server error.' });
@@ -60,32 +65,4 @@ exports.login = (req, res) => {
     return res.status(200).json({ token, user });
   })(req, res);
 };
-
-// Function to send OTP via SMS
-exports.sendOTPSMS = async (req, res) => {
-  try {
-    // Generate a random OTP (you can use any OTP generation library)
-    const otp = generateRandomOTP(); // Implement your own OTP generation logic
-
-    // User's phone number to send the OTP
-    const phoneNumber = req.body.phoneNumber; // Assuming you receive the phone number in the request body
-
-    // Send OTP via Twilio
-    await client.messages.create({
-      body: `Your OTP is: ${otp}`,
-      from: twilioPhoneNumber,
-      to: phoneNumber,
-    });
-
-    res.status(200).json({ message: "OTP sent successfully." });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to send OTP." });
-  }
-};
-
-// Function to generate a random OTP (example)
-function generateRandomOTP() {
-  return Math.floor(1000 + Math.random() * 9000).toString();
-}
 

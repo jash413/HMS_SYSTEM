@@ -34,6 +34,8 @@ import Ward from "./Ward";
 
 // User pages
 import UserRegistration from "./UserRegistration";
+import Auth404 from "./Auth-404";
+import axios from "axios";
 
 const myContext = createContext();
 const tokenContext = createContext();
@@ -44,6 +46,7 @@ function Index() {
   const [user, setUser] = useState(null); // Initially no user
   const [userPermissions, setUserPermissions] = useState([]); // Initially no permissions
   const [token, setToken] = useState(null); // Initially no token
+  const [hospitalData, setHospitalData] = useState(null);
 
   // Check if the user is already authenticated
   useEffect(() => {
@@ -52,15 +55,33 @@ function Index() {
       setToken(localStorage.getItem("token"));
       setIsAuthenticated(true);
       setUser(JSON.parse(localStorage.getItem("user")));
-      if(window.location.pathname === "/"){
-        window.location.href = "/dashboard"; 
+      if (window.location.pathname === "/") {
+        window.location.href = "/dashboard";
       }
-    }else{
-      if(window.location.pathname !== "/"){
-        window.location.href = "/"; 
+    } else {
+      if (window.location.pathname !== "/") {
+        window.location.href = "/";
       }
     }
   }, []);
+
+  // Get hospital data
+  useEffect(() => {
+    if (token && user) {
+      axios
+        .get(`http://localhost:3100/api/hospital/${user.hospital_id}`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          setHospitalData(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [token, user]);
 
   // check jwt token expiry
   useEffect(() => {
@@ -72,6 +93,16 @@ function Index() {
       }
     }
   }, [token]);
+
+  // automatic sign out after 1 hour
+  useEffect(() => {
+    if (isAuthenticated) {
+      const timer = setTimeout(() => {
+        handleSignOut();
+      }, 3600000);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated]);
 
   // Handle sign in
   const handleSignIn = () => {
@@ -131,594 +162,655 @@ function Index() {
   return (
     <myContext.Provider value={user}>
       <tokenContext.Provider value={token}>
-      <Router>
-        <div id="ihealth-layout" className="theme-tradewind">
-          {!isAuthenticated && (
-            <Routes>
-              <Route path="/" element={<SignIn onSignIn={handleSignIn} />} />
-            </Routes>
-          )}
-          {isAuthenticated && (
-            <>
-              {/* sidebar */}
-              <div className="sidebar px-4 py-4 py-md-5 me-0">
-                <div className="d-flex flex-column h-100">
-                  <Link to="/dashboard" className="mb-0 brand-icon">
-                    <a className="mb-0 brand-icon">
-                      <span className="logo-icon">
-                        <i className="icofont-heart-beat fs-2" />
-                      </span>
-                      <span className="logo-text">Medisys</span>
-                    </a>
-                  </Link>
-                  {/* Menu: main ul */}
-                  <ul className="menu-list flex-grow-1 mt-3">
-                    <li>
-                      <Link to="/dashboard">
-                        <a className="m-link">
-                          <i className="icofont-ui-home fs-5" />{" "}
-                          <span>Dashboard</span>{" "}
-                        </a>
-                      </Link>
-                    </li>
-                    {userPermissions.includes("create-user") && (
-                      <li className="collapsed">
-                        <a
-                          className="m-link"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#menu-User"
-                          href="#"
-                        >
-                          <i className="icofont-users fs-5" />{" "}
-                          <span>User Management</span>{" "}
-                          <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                        </a>
-                        {/* Menu: Sub menu ul */}
-                        <ul className="sub-menu collapse" id="menu-User">
-                          {userPermissions.includes("create-user") && (
-                            <li>
-                              <Link to="/create-user">
-                                <a className="ms-link">Create User</a>
-                              </Link>
-                            </li>
-                          )}
-                        </ul>
-                      </li>
-                    )}
-                    {(userPermissions.includes("view-doctorlist") ||
-                      userPermissions.includes("add-doctor") ||
-                      userPermissions.includes("add-appointment") ||
-                      userPermissions.includes("view-calendar")) && (
-                      <li className="collapsed">
-                        <a
-                          className="m-link"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#menu-Doctor"
-                          href="#"
-                        >
-                          <i className="icofont-doctor-alt fs-5" />{" "}
-                          <span>Doctor</span>{" "}
-                          <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                        </a>
-                        {/* Menu: Sub menu ul */}
-                        <ul className="sub-menu collapse" id="menu-Doctor">
-                          {userPermissions.includes("view-doctorlist") && (
-                            <li>
-                              <Link to="/doctor-list">
-                                <a className="ms-link">All Doctors</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("add-doctor") && (
-                            <li>
-                              <Link to="/doctor-add">
-                                <a className="ms-link">Add Doctor</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("add-appointment") && (
-                            <li>
-                              <Link to="/doctor-appointment">
-                                <a className="ms-link">Appointment</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("view-calendar") && (
-                            <li>
-                              <Link to="/calendar">
-                                <a className="ms-link">Doctor Schedule</a>
-                              </Link>
-                            </li>
-                          )}
-                        </ul>
-                      </li>
-                    )}
-                    {(userPermissions.includes("view-patientlist") ||
-                      userPermissions.includes("add-patient")) && (
-                      <li className="collapsed">
-                        <a
-                          className="m-link"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#menu-Patient"
-                          href="#"
-                        >
-                          <i className="icofont-blind fs-5" />{" "}
-                          <span>Patient</span>{" "}
-                          <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                        </a>
-                        {/* Menu: Sub menu ul */}
-                        <ul className="sub-menu collapse" id="menu-Patient">
-                          {userPermissions.includes("view-patientlist") && (
-                            <li>
-                              <Link to="/patient-list">
-                                <a className="ms-link">Patient List</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("add-patient") && (
-                            <li>
-                              <Link to="/patient-add">
-                                <a className="ms-link">Add Patient</a>
-                              </Link>
-                            </li>
-                          )}
-                        </ul>
-                      </li>
-                    )}
-                    {(userPermissions.includes("admission") ||
-                      userPermissions.includes("discharge") ||
-                      userPermissions.includes("transfer") ||
-                      userPermissions.includes("view-ward")) && (
-                      <li className="collapsed">
-                        <a
-                          className="m-link"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#menu-ADT"
-                          href="#"
-                        >
-                          <i className="icofont-blind fs-5" />{" "}
-                          <span>A/D/T</span>{" "}
-                          <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                        </a>
-                        {/* Menu: Sub menu ul */}
-                        <ul className="sub-menu collapse" id="menu-ADT">
-                          {userPermissions.includes("admission") && (
-                            <li>
-                              <Link to="/admission">
-                                <a className="ms-link">Admission</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("discharge") && (
-                            <li>
-                              <Link to="/discharge">
-                                <a className="ms-link">Discharge</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("transfer") && (
-                            <li>
-                              <Link to="/transfer">
-                                <a className="ms-link">Transfer</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("view-ward") && (
-                            <li>
-                              <Link to="/room-status">
-                                <a className="ms-link">Room Status</a>
-                              </Link>
-                            </li>
-                          )}
-                        </ul>
-                      </li>
-                    )}
-                    {(userPermissions.includes("view-surgerylist") ||
-                      userPermissions.includes("schedule-surgery")) && (
-                      <li className="collapsed">
-                        <a
-                          className="m-link"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#menu-OT"
-                          href="#"
-                        >
-                          <i className="icofont-operation-theater fs-5" />{" "}
-                          <span>Operation Theatre</span>{" "}
-                          <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                        </a>
-                        {/* Menu: Sub menu ul */}
-                        <ul className="sub-menu collapse" id="menu-OT">
-                          {userPermissions.includes("view-surgerylist") && (
-                            <li>
-                              <Link to="/surgery-list">
-                                <a className="ms-link">Surgery List</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("schedule-surgery") && (
-                            <li>
-                              <Link to="/schedule-surgery">
-                                <a className="ms-link">Schedule Surgery</a>
-                              </Link>
-                            </li>
-                          )}
-                        </ul>
-                      </li>
-                    )}
-                    {(userPermissions.includes("create-report") ||
-                      userPermissions.includes("update-report")) && (
-                      <li className="collapsed">
-                        <a
-                          className="m-link"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#menu-SR"
-                          href="#"
-                        >
-                          <i className="icofont-patient-file fs-5" />{" "}
-                          <span>Surgery Report</span>{" "}
-                          <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                        </a>
-                        {/* Menu: Sub menu ul */}
-                        <ul className="sub-menu collapse" id="menu-SR">
-                          {userPermissions.includes("create-report") && (
-                            <li>
-                              <Link to="/create-report">
-                                <a className="ms-link">Create Report</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("update-report") && (
-                            <li>
-                              <Link to="/update-report">
-                                <a className="ms-link">Update Report</a>
-                              </Link>
-                            </li>
-                          )}
-                        </ul>
-                      </li>
-                    )}
-                  </ul>
-                  {/* Menu: menu collepce btn */}
-                  <button
-                    type="button"
-                    className="btn btn-link sidebar-mini-btn text-light"
-                  >
-                    <span className="ms-2">
-                      <i className="icofont-bubble-right" />
-                    </span>
-                  </button>
-                </div>
-              </div>
-              {/* main body area */}
-              <div className="main px-lg-4 px-md-4">
-                {/* Body: Header */}
-                <div className="header">
-                  <nav className="navbar py-4">
-                    <div className="container-xxl">
-                      {/* header rightbar icon */}
-                      <div className="h-right d-flex align-items-center mr-5 mr-lg-0 order-1">
-                        <div className="dropdown notifications zindex-popover">
-                          <a
-                            className="nav-link dropdown-toggle pulse"
-                            href="#"
-                            role="button"
-                            data-bs-toggle="dropdown"
-                          >
-                            <i className="icofont-alarm fs-5" />
-                            <span className="pulse-ring" />
+        <Router>
+          <div id="ihealth-layout" className="theme-tradewind">
+            {!isAuthenticated && (
+              <Routes>
+                <Route path="/" element={<SignIn onSignIn={handleSignIn} />} />
+              </Routes>
+            )}
+            {isAuthenticated && (
+              <>
+                {/* sidebar */}
+                <div className="sidebar px-4 py-4 py-md-5 me-0">
+                  <div className="d-flex flex-column h-100">
+                    <Link to="/dashboard" className="mb-0 brand-icon">
+                      <a className="mb-0 brand-icon">
+                        <span className="logo-icon">
+                          <i className="icofont-heart-beat fs-2" />
+                        </span>
+                        <span className="logo-text">Medisys</span>
+                      </a>
+                    </Link>
+                    {/* Menu: main ul */}
+                    <ul className="menu-list flex-grow-1 mt-3">
+                      <li>
+                        <Link to="/dashboard">
+                          <a className="m-link">
+                            <i className="icofont-ui-home fs-5" />{" "}
+                            <span>Dashboard</span>{" "}
                           </a>
-                          <div
-                            id="NotificationsDiv"
-                            className="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-sm-end p-0 m-0"
+                        </Link>
+                      </li>
+                      {userPermissions.includes("create-user") && (
+                        <li className="collapsed">
+                          <a
+                            className="m-link"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menu-User"
+                            href="#"
                           >
-                            <div className="card border-0 w380">
-                              <div className="card-header border-0 p-3">
-                                <h5 className="mb-0 font-weight-light d-flex justify-content-between">
-                                  <span>Notifications</span>
-                                  <span className="badge text-white">06</span>
-                                </h5>
-                              </div>
-                              <div className="tab-content card-body">
-                                <div className="tab-pane fade show active">
-                                  <ul className="list-unstyled list mb-0">
-                                    <li className="py-2 mb-1 border-bottom">
-                                      <a
-                                        href="javascript:void(0);"
-                                        className="d-flex"
-                                      >
-                                        <img
-                                          className="avatar rounded-circle"
-                                          src="assets/images/xs/avatar1.jpg"
-                                          alt=""
-                                        />
-                                        <div className="flex-fill ms-2">
-                                          <p className="d-flex justify-content-between mb-0 ">
-                                            <span className="font-weight-bold">
-                                              Chloe Walkerr
-                                            </span>{" "}
-                                            <small>2MIN</small>
-                                          </p>
-                                          <span className>
-                                            Added Appointment 2021-06-19{" "}
-                                            <span className="badge bg-success">
-                                              Book
-                                            </span>
-                                          </span>
-                                        </div>
-                                      </a>
-                                    </li>
-                                    <li className="py-2 mb-1 border-bottom">
-                                      <a
-                                        href="javascript:void(0);"
-                                        className="d-flex"
-                                      >
-                                        <div className="avatar rounded-circle no-thumbnail">
-                                          AH
-                                        </div>
-                                        <div className="flex-fill ms-2">
-                                          <p className="d-flex justify-content-between mb-0 ">
-                                            <span className="font-weight-bold">
-                                              Alan Hill
-                                            </span>{" "}
-                                            <small>13MIN</small>
-                                          </p>
-                                          <span className>
-                                            Lab sample collection
-                                          </span>
-                                        </div>
-                                      </a>
-                                    </li>
-                                    <li className="py-2 mb-1 border-bottom">
-                                      <a
-                                        href="javascript:void(0);"
-                                        className="d-flex"
-                                      >
-                                        <img
-                                          className="avatar rounded-circle"
-                                          src="assets/images/xs/avatar3.jpg"
-                                          alt=""
-                                        />
-                                        <div className="flex-fill ms-2">
-                                          <p className="d-flex justify-content-between mb-0 ">
-                                            <span className="font-weight-bold">
-                                              Melanie Oliver
-                                            </span>{" "}
-                                            <small>1HR</small>
-                                          </p>
-                                          <span className>
-                                            Invoice Create Patient Room A-803
-                                          </span>
-                                        </div>
-                                      </a>
-                                    </li>
-                                    <li className="py-2 mb-1 border-bottom">
-                                      <a
-                                        href="javascript:void(0);"
-                                        className="d-flex"
-                                      >
-                                        <img
-                                          className="avatar rounded-circle"
-                                          src="assets/images/xs/avatar5.jpg"
-                                          alt=""
-                                        />
-                                        <div className="flex-fill ms-2">
-                                          <p className="d-flex justify-content-between mb-0 ">
-                                            <span className="font-weight-bold">
-                                              Boris Hart
-                                            </span>{" "}
-                                            <small>13MIN</small>
-                                          </p>
-                                          <span className>
-                                            Medicine Order to Medical
-                                          </span>
-                                        </div>
-                                      </a>
-                                    </li>
-                                    <li className="py-2 mb-1 border-bottom">
-                                      <a
-                                        href="javascript:void(0);"
-                                        className="d-flex"
-                                      >
-                                        <img
-                                          className="avatar rounded-circle"
-                                          src="assets/images/xs/avatar6.jpg"
-                                          alt=""
-                                        />
-                                        <div className="flex-fill ms-2">
-                                          <p className="d-flex justify-content-between mb-0 ">
-                                            <span className="font-weight-bold">
-                                              Alan Lambert
-                                            </span>{" "}
-                                            <small>1HR</small>
-                                          </p>
-                                          <span className>Leave Apply</span>
-                                        </div>
-                                      </a>
-                                    </li>
-                                    <li className="py-2">
-                                      <a
-                                        href="javascript:void(0);"
-                                        className="d-flex"
-                                      >
-                                        <img
-                                          className="avatar rounded-circle"
-                                          src="assets/images/xs/avatar7.jpg"
-                                          alt=""
-                                        />
-                                        <div className="flex-fill ms-2">
-                                          <p className="d-flex justify-content-between mb-0 ">
-                                            <span className="font-weight-bold">
-                                              Zoe Wright
-                                            </span>{" "}
-                                            <small className>1DAY</small>
-                                          </p>
-                                          <span className>
-                                            Patient Food Order Room A-809
-                                          </span>
-                                        </div>
-                                      </a>
-                                    </li>
-                                  </ul>
+                            <i className="icofont-users fs-5" />{" "}
+                            <span>User Management</span>{" "}
+                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                          </a>
+                          {/* Menu: Sub menu ul */}
+                          <ul className="sub-menu collapse" id="menu-User">
+                            {userPermissions.includes("create-user") && (
+                              <li>
+                                <Link to="/create-user">
+                                  <a className="ms-link">Create User</a>
+                                </Link>
+                              </li>
+                            )}
+                          </ul>
+                        </li>
+                      )}
+                      {(userPermissions.includes("view-doctorlist") ||
+                        userPermissions.includes("add-doctor") ||
+                        userPermissions.includes("add-appointment") ||
+                        userPermissions.includes("view-calendar")) && (
+                        <li className="collapsed">
+                          <a
+                            className="m-link"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menu-Doctor"
+                            href="#"
+                          >
+                            <i className="icofont-doctor-alt fs-5" />{" "}
+                            <span>Doctor</span>{" "}
+                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                          </a>
+                          {/* Menu: Sub menu ul */}
+                          <ul className="sub-menu collapse" id="menu-Doctor">
+                            {userPermissions.includes("view-doctorlist") && (
+                              <li>
+                                <Link to="/doctor-list">
+                                  <a className="ms-link">All Doctors</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("add-doctor") && (
+                              <li>
+                                <Link to="/doctor-add">
+                                  <a className="ms-link">Add Doctor</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("add-appointment") && (
+                              <li>
+                                <Link to="/doctor-appointment">
+                                  <a className="ms-link">Appointment</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("view-calendar") && (
+                              <li>
+                                <Link to="/calendar">
+                                  <a className="ms-link">Doctor Schedule</a>
+                                </Link>
+                              </li>
+                            )}
+                          </ul>
+                        </li>
+                      )}
+                      {(userPermissions.includes("view-patientlist") ||
+                        userPermissions.includes("add-patient")) && (
+                        <li className="collapsed">
+                          <a
+                            className="m-link"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menu-Patient"
+                            href="#"
+                          >
+                            <i className="icofont-blind fs-5" />{" "}
+                            <span>Patient</span>{" "}
+                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                          </a>
+                          {/* Menu: Sub menu ul */}
+                          <ul className="sub-menu collapse" id="menu-Patient">
+                            {userPermissions.includes("view-patientlist") && (
+                              <li>
+                                <Link to="/patient-list">
+                                  <a className="ms-link">Patient List</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("add-patient") && (
+                              <li>
+                                <Link to="/patient-add">
+                                  <a className="ms-link">Add Patient</a>
+                                </Link>
+                              </li>
+                            )}
+                          </ul>
+                        </li>
+                      )}
+                      {(userPermissions.includes("admission") ||
+                        userPermissions.includes("discharge") ||
+                        userPermissions.includes("transfer") ||
+                        userPermissions.includes("view-ward")) && (
+                        <li className="collapsed">
+                          <a
+                            className="m-link"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menu-ADT"
+                            href="#"
+                          >
+                            <i className="icofont-blind fs-5" />{" "}
+                            <span>A/D/T</span>{" "}
+                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                          </a>
+                          {/* Menu: Sub menu ul */}
+                          <ul className="sub-menu collapse" id="menu-ADT">
+                            {userPermissions.includes("admission") && (
+                              <li>
+                                <Link to="/admission">
+                                  <a className="ms-link">Admission</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("discharge") && (
+                              <li>
+                                <Link to="/discharge">
+                                  <a className="ms-link">Discharge</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("transfer") && (
+                              <li>
+                                <Link to="/transfer">
+                                  <a className="ms-link">Transfer</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("view-ward") && (
+                              <li>
+                                <Link to="/room-status">
+                                  <a className="ms-link">Room Status</a>
+                                </Link>
+                              </li>
+                            )}
+                          </ul>
+                        </li>
+                      )}
+                      {(userPermissions.includes("view-surgerylist") ||
+                        userPermissions.includes("schedule-surgery")) && (
+                        <li className="collapsed">
+                          <a
+                            className="m-link"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menu-OT"
+                            href="#"
+                          >
+                            <i className="icofont-operation-theater fs-5" />{" "}
+                            <span>Operation Theatre</span>{" "}
+                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                          </a>
+                          {/* Menu: Sub menu ul */}
+                          <ul className="sub-menu collapse" id="menu-OT">
+                            {userPermissions.includes("view-surgerylist") && (
+                              <li>
+                                <Link to="/surgery-list">
+                                  <a className="ms-link">Surgery List</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("schedule-surgery") && (
+                              <li>
+                                <Link to="/schedule-surgery">
+                                  <a className="ms-link">Schedule Surgery</a>
+                                </Link>
+                              </li>
+                            )}
+                          </ul>
+                        </li>
+                      )}
+                      {(userPermissions.includes("create-report") ||
+                        userPermissions.includes("update-report")) && (
+                        <li className="collapsed">
+                          <a
+                            className="m-link"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menu-SR"
+                            href="#"
+                          >
+                            <i className="icofont-patient-file fs-5" />{" "}
+                            <span>Surgery Report</span>{" "}
+                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                          </a>
+                          {/* Menu: Sub menu ul */}
+                          <ul className="sub-menu collapse" id="menu-SR">
+                            {userPermissions.includes("create-report") && (
+                              <li>
+                                <Link to="/create-report">
+                                  <a className="ms-link">Create Report</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("update-report") && (
+                              <li>
+                                <Link to="/update-report">
+                                  <a className="ms-link">Update Report</a>
+                                </Link>
+                              </li>
+                            )}
+                          </ul>
+                        </li>
+                      )}
+                    </ul>
+                    {/* Menu: menu collepce btn */}
+                    <button
+                      type="button"
+                      className="btn btn-link sidebar-mini-btn text-light"
+                    >
+                      <span className="ms-2">
+                        <i className="icofont-bubble-right" />
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                {/* main body area */}
+                <div className="main px-lg-4 px-md-4">
+                  {/* Body: Header */}
+                  <div className="header">
+                    <nav className="navbar py-4">
+                      <div className="container-xxl">
+                        {/* header rightbar icon */}
+                        <div className="h-right d-flex align-items-center mr-5 mr-lg-0 order-1">
+                          <div className="dropdown notifications zindex-popover">
+                            <a
+                              className="nav-link dropdown-toggle pulse"
+                              href="#"
+                              role="button"
+                              data-bs-toggle="dropdown"
+                            >
+                              <i className="icofont-alarm fs-5" />
+                              <span className="pulse-ring" />
+                            </a>
+                            <div
+                              id="NotificationsDiv"
+                              className="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-sm-end p-0 m-0"
+                            >
+                              <div className="card border-0 w380">
+                                <div className="card-header border-0 p-3">
+                                  <h5 className="mb-0 font-weight-light d-flex justify-content-between">
+                                    <span>Notifications</span>
+                                    <span className="badge text-white">06</span>
+                                  </h5>
                                 </div>
+                                <div className="tab-content card-body">
+                                  <div className="tab-pane fade show active">
+                                    <ul className="list-unstyled list mb-0">
+                                      <li className="py-2 mb-1 border-bottom">
+                                        <a
+                                          href="javascript:void(0);"
+                                          className="d-flex"
+                                        >
+                                          <img
+                                            className="avatar rounded-circle"
+                                            src="assets/images/xs/avatar1.jpg"
+                                            alt=""
+                                          />
+                                          <div className="flex-fill ms-2">
+                                            <p className="d-flex justify-content-between mb-0 ">
+                                              <span className="font-weight-bold">
+                                                Chloe Walkerr
+                                              </span>{" "}
+                                              <small>2MIN</small>
+                                            </p>
+                                            <span className>
+                                              Added Appointment 2021-06-19{" "}
+                                              <span className="badge bg-success">
+                                                Book
+                                              </span>
+                                            </span>
+                                          </div>
+                                        </a>
+                                      </li>
+                                      <li className="py-2 mb-1 border-bottom">
+                                        <a
+                                          href="javascript:void(0);"
+                                          className="d-flex"
+                                        >
+                                          <div className="avatar rounded-circle no-thumbnail">
+                                            AH
+                                          </div>
+                                          <div className="flex-fill ms-2">
+                                            <p className="d-flex justify-content-between mb-0 ">
+                                              <span className="font-weight-bold">
+                                                Alan Hill
+                                              </span>{" "}
+                                              <small>13MIN</small>
+                                            </p>
+                                            <span className>
+                                              Lab sample collection
+                                            </span>
+                                          </div>
+                                        </a>
+                                      </li>
+                                      <li className="py-2 mb-1 border-bottom">
+                                        <a
+                                          href="javascript:void(0);"
+                                          className="d-flex"
+                                        >
+                                          <img
+                                            className="avatar rounded-circle"
+                                            src="assets/images/xs/avatar3.jpg"
+                                            alt=""
+                                          />
+                                          <div className="flex-fill ms-2">
+                                            <p className="d-flex justify-content-between mb-0 ">
+                                              <span className="font-weight-bold">
+                                                Melanie Oliver
+                                              </span>{" "}
+                                              <small>1HR</small>
+                                            </p>
+                                            <span className>
+                                              Invoice Create Patient Room A-803
+                                            </span>
+                                          </div>
+                                        </a>
+                                      </li>
+                                      <li className="py-2 mb-1 border-bottom">
+                                        <a
+                                          href="javascript:void(0);"
+                                          className="d-flex"
+                                        >
+                                          <img
+                                            className="avatar rounded-circle"
+                                            src="assets/images/xs/avatar5.jpg"
+                                            alt=""
+                                          />
+                                          <div className="flex-fill ms-2">
+                                            <p className="d-flex justify-content-between mb-0 ">
+                                              <span className="font-weight-bold">
+                                                Boris Hart
+                                              </span>{" "}
+                                              <small>13MIN</small>
+                                            </p>
+                                            <span className>
+                                              Medicine Order to Medical
+                                            </span>
+                                          </div>
+                                        </a>
+                                      </li>
+                                      <li className="py-2 mb-1 border-bottom">
+                                        <a
+                                          href="javascript:void(0);"
+                                          className="d-flex"
+                                        >
+                                          <img
+                                            className="avatar rounded-circle"
+                                            src="assets/images/xs/avatar6.jpg"
+                                            alt=""
+                                          />
+                                          <div className="flex-fill ms-2">
+                                            <p className="d-flex justify-content-between mb-0 ">
+                                              <span className="font-weight-bold">
+                                                Alan Lambert
+                                              </span>{" "}
+                                              <small>1HR</small>
+                                            </p>
+                                            <span className>Leave Apply</span>
+                                          </div>
+                                        </a>
+                                      </li>
+                                      <li className="py-2">
+                                        <a
+                                          href="javascript:void(0);"
+                                          className="d-flex"
+                                        >
+                                          <img
+                                            className="avatar rounded-circle"
+                                            src="assets/images/xs/avatar7.jpg"
+                                            alt=""
+                                          />
+                                          <div className="flex-fill ms-2">
+                                            <p className="d-flex justify-content-between mb-0 ">
+                                              <span className="font-weight-bold">
+                                                Zoe Wright
+                                              </span>{" "}
+                                              <small className>1DAY</small>
+                                            </p>
+                                            <span className>
+                                              Patient Food Order Room A-809
+                                            </span>
+                                          </div>
+                                        </a>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </div>
+                                <a
+                                  className="card-footer text-center border-top-0"
+                                  href="#"
+                                >
+                                  {" "}
+                                  View all notifications
+                                </a>
                               </div>
-                              <a
-                                className="card-footer text-center border-top-0"
-                                href="#"
-                              >
-                                {" "}
-                                View all notifications
-                              </a>
                             </div>
                           </div>
-                        </div>
-                        <div className="dropdown user-profile ml-2 ml-sm-3 d-flex align-items-center zindex-popover">
-                          <div className="u-info me-2">
-                            <p className="mb-0 text-end line-height-sm ">
-                              <span className="font-weight-bold">
-                                {user.name}
-                              </span>
-                            </p>
-                            <small>{user.role} Profile</small>
-                          </div>
-                          <a
-                            className="nav-link dropdown-toggle pulse p-0"
-                            href="#"
-                            role="button"
-                            data-bs-toggle="dropdown"
-                            data-bs-display="static"
-                          >
-                            <img
+                          <div className="dropdown user-profile ml-2 ml-sm-3 d-flex align-items-center zindex-popover">
+                            <a
+                              className="dropdown-toggle pulse p-0"
+                              href="#"
+                              role="button"
+                              data-bs-toggle="dropdown"
+                              data-bs-display="static"
+                            >
+                              {/* <img
                               className="avatar lg rounded-circle img-thumbnail"
                               src="assets/images/profile_av.png"
                               alt="profile"
-                            />
-                          </a>
-                          <div className="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-end p-0 m-0">
-                            <div className="card border-0 w280">
-                              <div className="card-body pb-0">
-                                <div className="d-flex py-1">
-                                  <img
+                            /> */}
+                              {/* <div className="avatar lg rounded-circle img-thumbnail text-center">
+                              <h1>{user.name.charAt(0)}</h1>
+                            </div> */}
+                              <div className="u-info me-2">
+                                <p className="mb-0 text-end line-height-sm ">
+                                  <span className="font-weight-bold">
+                                    {user.name}
+                                  </span>
+                                </p>
+                                <small>{user.role} Profile</small>
+                              </div>
+                            </a>
+                            <div className="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-end p-0 m-0">
+                              <div className="card border-0 w280">
+                                <div className="card-body pb-0">
+                                  <div className="d-flex py-1">
+                                    {/* <img
                                     className="avatar rounded-circle"
                                     src="assets/images/profile_av.png"
                                     alt="profile"
-                                  />
-                                  <div className="flex-fill ms-3">
-                                    <p className="mb-0">
-                                      <span className="font-weight-bold">
-                                        {user.name}
-                                      </span>
-                                    </p>
-                                    <small className>{user.email}</small>
+                                  /> */}
+                                    <div className="flex-fill ms-3">
+                                      <p className="mb-0">
+                                        <span className="font-weight-bold">
+                                          {user.name}
+                                        </span>
+                                      </p>
+                                      <small className>{user.email}</small>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <hr className="dropdown-divider border-dark" />
                                   </div>
                                 </div>
-                                <div>
-                                  <hr className="dropdown-divider border-dark" />
+                                <div className="list-group m-2 ">
+                                  <a
+                                    href="virtual.html"
+                                    className="list-group-item list-group-item-action border-0 "
+                                  >
+                                    <i className="icofont-ui-video-chat fs-5 me-3" />
+                                    I-Health Virtual
+                                  </a>
+                                  <a
+                                    href="patient-invoices.html"
+                                    className="list-group-item list-group-item-action border-0 "
+                                  >
+                                    <i className="icofont-dollar fs-5 me-3" />
+                                    Patient Invoices
+                                  </a>
+                                  <a
+                                    href="/"
+                                    onClick={handleSignOut}
+                                    className="list-group-item list-group-item-action border-0 "
+                                  >
+                                    <i className="icofont-logout fs-6 me-3" />
+                                    Signout
+                                  </a>
+                                  <div>
+                                    <hr className="dropdown-divider border-dark" />
+                                  </div>
+                                  <a
+                                    href="ui-elements/auth-signup.html"
+                                    className="list-group-item list-group-item-action border-0 "
+                                  >
+                                    <i className="icofont-contact-add fs-5 me-3" />
+                                    Add personal account
+                                  </a>
                                 </div>
-                              </div>
-                              <div className="list-group m-2 ">
-                                <a
-                                  href="virtual.html"
-                                  className="list-group-item list-group-item-action border-0 "
-                                >
-                                  <i className="icofont-ui-video-chat fs-5 me-3" />
-                                  I-Health Virtual
-                                </a>
-                                <a
-                                  href="patient-invoices.html"
-                                  className="list-group-item list-group-item-action border-0 "
-                                >
-                                  <i className="icofont-dollar fs-5 me-3" />
-                                  Patient Invoices
-                                </a>
-                                <a
-                                  href="/"
-                                  onClick={handleSignOut}
-                                  className="list-group-item list-group-item-action border-0 "
-                                >
-                                  <i className="icofont-logout fs-6 me-3" />
-                                  Signout
-                                </a>
-                                <div>
-                                  <hr className="dropdown-divider border-dark" />
-                                </div>
-                                <a
-                                  href="ui-elements/auth-signup.html"
-                                  className="list-group-item list-group-item-action border-0 "
-                                >
-                                  <i className="icofont-contact-add fs-5 me-3" />
-                                  Add personal account
-                                </a>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      {/* menu toggler */}
-                      <button
-                        className="navbar-toggler p-0 border-0 menu-toggle order-3"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#mainHeader"
-                      >
-                        <span className="fa fa-bars" />
-                      </button>
-                      {/* main menu Search*/}
-                      <div className="order-0 col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mb-md-0 ">
-                        <div className="input-group flex-nowrap input-group-lg">
-                          <input
-                            type="search"
-                            className="form-control"
-                            placeholder="Search"
-                            aria-label="search"
-                            aria-describedby="addon-wrapping"
-                          />
-                          <button
-                            type="button"
-                            className="input-group-text"
-                            id="addon-wrapping"
-                          >
-                            <i className="fa fa-search" />
-                          </button>
+                        {/* menu toggler */}
+                        <button
+                          className="navbar-toggler p-0 border-0 menu-toggle order-3"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#mainHeader"
+                        >
+                          <span className="fa fa-bars" />
+                        </button>
+                        {/* main menu Search*/}
+                        <div className="order-0 col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mb-md-0 ">
+                          {hospitalData && (
+                            <div className=" py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-betweenflex-wrap">
+                              <h4 className=" mb-0">
+                                Welcome,{" "}
+                                <strong>{hospitalData.hospital_name}</strong>
+                              </h4>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  </nav>
+                    </nav>
+                  </div>
+                  {/* Body: Body */}
+                  <div className="body d-flex py-3">
+                    <Routes>
+                      <Route path="/dashboard" element={<Dashboard />} />
+
+                      {userPermissions.includes("view-doctorlist") ? (
+                        <Route path="/doctor-list" element={<DoctorList />} />
+                      ): (
+                        <Route path="/doctor-list" element={<Auth404 />} />
+                      )}
+
+                      {userPermissions.includes("add-doctor") ? (
+                      <Route path="/doctor-add" element={<DoctorAdd />} />
+                      ): (
+                        <Route path="/doctor-add" element={<Auth404 />} />
+                      )}
+
+                      {userPermissions.includes("add-appointment") ? (
+                      <Route
+                        path="/doctor-appointment"
+                        element={<DoctorAppointment />}
+                      />
+                      ): (
+                        <Route path="/doctor-appointment" element={<Auth404 />} /> 
+                      )}
+
+                      {userPermissions.includes("view-calendar") ? (
+                      <Route path="/calendar" element={<Calendar />} />
+                      ): (
+                        <Route path="/view-calendar" element={<Auth404 />} />  
+                      )}
+
+                      {userPermissions.includes("view-patientlist") ? (
+                      <Route path="/patient-list" element={<Patientlist />} />
+                      ): (
+                        <Route path="/view-patientlist" element={<Auth404 />} /> 
+                      )}
+
+                      {userPermissions.includes("add-patient") ? (
+                      <Route path="/patient-add" element={<PatientForm />} />
+                      ): (
+                        <Route path="/add-patient" element={<Auth404 />} /> 
+                      )}
+
+                      {userPermissions.includes("admission") ? (
+                      <Route
+                        path="/admission"
+                        element={<AdmissionComponent />}
+                      />
+                      ): (
+                      <Route path="/admission" element={<Auth404 />} />
+                      )}
+
+                      {userPermissions.includes("schedule-surgery") ? (
+                      <Route
+                        path="/schedule-surgery"
+                        element={<SurgerySchedulingForm />}
+                      />
+                      ): (
+                        <Route path="/schedule-surgery" element={<Auth404 />} /> 
+                      )}
+
+                      {userPermissions.includes("create-report") ? (
+                      <Route
+                        path="/create-report"
+                        element={<PostSurgeryForm />}
+                      />
+                      ): (
+                        <Route path="/create-report" element={<Auth404 />} /> 
+                      )}
+
+                      {userPermissions.includes("update-report") ? (
+                      <Route
+                        path="/update-report"
+                        element={<PostSurgeryUpdate />}
+                      />
+                      ): (
+                        <Route path="/update-report" element={<Auth404 />} /> 
+                      )}
+
+                      {userPermissions.includes("view-ward") ? (
+                      <Route path="/room-status" element={<Ward />} />
+                      ): (
+                        <Route path="/room-status" element={<Auth404 />} /> 
+                      )}
+
+                      {userPermissions.includes("create-user") ? (
+                      <Route
+                        path="/create-user"
+                        element={<UserRegistration />}
+                      />
+                      ): (
+                        <Route path="/create-user" element={<Auth404 />} /> 
+                      )}
+                    </Routes>
+                  </div>
                 </div>
-                {/* Body: Body */}
-                <div className="body d-flex py-3">
-                  <Routes>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/doctor-list" element={<DoctorList />} />
-                    <Route path="/doctor-add" element={<DoctorAdd />} />
-                    <Route
-                      path="/doctor-appointment"
-                      element={<DoctorAppointment />}
-                    />
-                    <Route path="/calendar" element={<Calendar />} />
-                    <Route path="/patient-list" element={<Patientlist />} />
-                    <Route path="/patient-add" element={<PatientForm />} />
-                    <Route path="/admission" element={<AdmissionComponent />} />
-                    <Route
-                      path="/schedule-surgery"
-                      element={<SurgerySchedulingForm />}
-                    />
-                    <Route
-                      path="/create-report"
-                      element={<PostSurgeryForm />}
-                    />
-                    <Route
-                      path="/update-report"
-                      element={<PostSurgeryUpdate />}
-                    />
-                    <Route path="/room-status" element={<Ward />} />
-                    <Route path="/create-user" element={<UserRegistration />} />
-                  </Routes>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      </Router>
+              </>
+            )}
+          </div>
+        </Router>
       </tokenContext.Provider>
     </myContext.Provider>
   );

@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/userController');
-const passport = require('passport');
-// const passportConfig = require('../config/passport'); // Passport.js configuration file
+const authenticateToken = require('../middleware/authMiddleware');
 
+ 
 // User registration route
-router.post('/register', UserController.register);
+router.post('/register',authenticateToken,UserController.register);
 
 // User login route
-router.post('/login', UserController.login);
+router.post('/login',UserController.login);
 
-// Route to send OTP via SMS
-router.post("/send-otp", UserController.sendOTPSMS);
+// Route to get all users
+router.get('/users', authenticateToken, UserController.getAllUsers);
+
 
 module.exports = router;

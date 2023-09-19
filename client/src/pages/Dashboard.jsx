@@ -3,7 +3,7 @@ import React from "react";
 function Dashboard() {
   return (
     <div className="container-xxl">
-      <div className="row g-3 mb-3">
+      {/* <div className="row g-3 mb-3">
         <div className="col-md-12 col-lg-4 col-xl-4 d-none d-lg-block">
           <svg
             id="b142c218-c3ca-487e-979b-dffd11e3a76c"
@@ -219,7 +219,7 @@ function Dashboard() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className="row g-3 mb-3 row-deck">
         <div className="col-lg-12 col-xl-6">
           <div className="card">
@@ -858,7 +858,7 @@ function Dashboard() {
               </div>
             </div>
           </div>
-          <div className="card bg-secondary position-relative">
+          {/* <div className="card bg-secondary position-relative">
             <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
               <h6 className="mb-0 fw-bold text-white ">Doctor Of the Month</h6>
             </div>
@@ -909,7 +909,7 @@ function Dashboard() {
                 <i className="icofont-award" />
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       {/* .row end */}

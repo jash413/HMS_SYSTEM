@@ -837,11 +837,11 @@ function Index() {
                         path="/create-user"
                         element={<UserRegistration />}
                       />
-                    <Route path="/create-ehr" element={<EMR />} />'
-                    <Route path="/update-ehr"  />'
                       ): (
                         <Route path="/create-user" element={<Auth404 />} /> 
                       )}
+                    <Route path="/create-ehr" element={<EMR />} />'
+                    <Route path="/update-ehr"  />
                     </Routes>
                   </div>
                 </div>

@@ -1,8 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import $ from "jquery";
 import "datatables.net";
+import { myContext, tokenContext } from "./Main";
+
+
 function Patientlist() {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
   const tableRef = useRef(null);
   const [patients, setPatients] = useState([]);
 
@@ -16,12 +21,21 @@ function Patientlist() {
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get("http://localhost:3100/api/patients");
-      setPatients(response.data);
+      const response = await axios.get("http://localhost:3100/api/patients",{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      const patients = response.data.filter((patient)=> {
+        return patient.hospital_id === userData.
+        hospital_id
+      })
+      setPatients(patients);
     } catch (error) {
       console.error(error);
     }
   };
+
   return (
     <div className="container-xxl">
       <div className="row align-items-center">
@@ -47,8 +61,6 @@ function Patientlist() {
                   <th>Name</th>
                   <th>Phone Number</th>
                   <th>Email-Address</th>
-                  <th>Date</th>
-                  <th>Time</th>
                   <th>Doctor</th>
                   <th>Ward-Num</th>
                 </tr>
@@ -62,10 +74,8 @@ function Patientlist() {
                     </td>
                     <td>{patient.phoneNumber}</td>
                     <td>{patient.emailAddress}</td>
-                    <td>{patient.admitDate}</td>
-                    <td>{patient.admitTime}</td>
                     <td>{patient.selectedDoctor}</td>
-                    <td>{patient.wardNumber}</td>
+                    <td>{patient.ward}</td>
                   </tr>
                 ))}
               </tbody>

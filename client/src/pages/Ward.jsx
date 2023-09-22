@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import PopoverComponent from "../components/PopoverComponent";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS
+import { myContext, tokenContext } from "./Main";
 
 const Ward = () => {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
   const [wards, setWards] = useState([]);
-  const [patientDetails, setPatientDetails] = useState({});
-  const [patient, setPatient] = useState([]);
   const [formData, setFormData] = useState({
     newWard: {
       wardNumber: "",
@@ -20,8 +21,15 @@ const Ward = () => {
 
   useEffect(() => {
     // Fetch ward data from the backend
-    axios.get("http://localhost:3100/api/ward").then((response) => {
-      setWards(response.data);
+    axios.get("http://localhost:3100/api/ward",{
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    }).then((response) => {
+      const wards = response.data.filter((ward)=> {
+        return ward.hospital_id === userData.hospital_id
+      })
+      setWards(wards);
     });
   }, []);
 
@@ -39,7 +47,11 @@ const Ward = () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `http://localhost:3100/api/patients/${patientId}`
+          `http://localhost:3100/api/patients/${patientId}`,{
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          }
         );
         setPatientDetails(response.data);
       } catch (error) {
@@ -106,8 +118,15 @@ const Ward = () => {
 
   const fetchWards = async () => {
     try {
-      const response = await axios.get("http://localhost:3100/api/ward");
-      setWards(response.data);
+      const response = await axios.get("http://localhost:3100/api/ward",{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      const wards = response.data.filter((ward)=> {
+        return ward.hospital_id === userData.hospital_id
+      })
+      setWards(wards);
     } catch (error) {
       console.error("Error fetching ward data:", error);
     }
@@ -136,7 +155,11 @@ const Ward = () => {
     e.preventDefault();
     try {
       await axios.delete(
-        `http://localhost:3100/api/ward?wardNumber=${wardData.wardNumber}`
+        `http://localhost:3100/api/ward?wardNumber=${wardData.wardNumber}`,{
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
       );
       fetchWards();
       toast.success("Room removed successfully");

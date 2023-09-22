@@ -43,6 +43,10 @@ import ViewEHR from "./ViewEHR";
 import Staff from "./Staff";
 import StaffList from "./StaffList"
 
+// Billing pages
+import CreateInvoice from "./CreateInvoice";
+import ViewInvoice from "./ViewInvoice";
+
 const myContext = createContext();
 const tokenContext = createContext();
 
@@ -414,8 +418,7 @@ function Index() {
                            
                           </ul>
                         </li>
-                        
-                    )}
+                      )}
                       {(userPermissions.includes("create-ehr") ||
                       userPermissions.includes("update-ehr")) && (
                       <li className="collapsed">
@@ -484,6 +487,68 @@ function Index() {
                     )}
                     
                   </ul>
+                        userPermissions.includes("update-ehr")) && (
+                        <li className="collapsed">
+                          <a
+                            className="m-link"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menu-SR1"
+                            href="#"
+                          >
+                            <i className="icofont-patient-file fs-5" />{" "}
+                            <span>EHR</span>{" "}
+                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                          </a>
+                          {/* Menu: Sub menu ul */}
+                          <ul className="sub-menu collapse" id="menu-SR1">
+                            {userPermissions.includes("create-ehr") && (
+                              <li>
+                                <Link to="/create-ehr">
+                                  <a className="ms-link">Create EHR</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("update-ehr") && (
+                              <li>
+                                <Link to="/update-ehr">
+                                  <a className="ms-link">Update EHR</a>
+                                </Link>
+                              </li>
+                            )}
+                          </ul>
+                        </li>
+                      )}
+                        <li className="collapsed">
+                          <a
+                            className="m-link"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menu-invoice"
+                            href="#"
+                          >
+                            <i className="icofont-blind fs-5" />{" "}
+                            <span>Invoice Management</span>{" "}
+                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                          </a>
+                          {/* Menu: Sub menu ul */}
+                          <ul className="sub-menu collapse" id="menu-invoice">
+                              <li>
+                                <Link to="/create-invoice">
+                                  <a className="ms-link">Create Invoice</a>
+                                </Link>
+                              </li>
+                              <li>
+                                <Link to="/view-invoice">
+                                  <a className="ms-link">View Invoice</a>
+                                </Link>
+                              </li>
+                              <li>
+                                <Link to="/update-invoice">
+                                  <a className="ms-link">Update Invoice</a>
+                                </Link>
+                              </li>
+                          </ul>
+                        </li>
+                    </ul>
                     {/* Menu: menu collepce btn */}
                     <button
                       type="button"
@@ -789,102 +854,89 @@ function Index() {
                   <div className="body d-flex py-3">
                     <Routes>
                       <Route path="/dashboard" element={<Dashboard />} />
-
                       {userPermissions.includes("view-doctorlist") ? (
                         <Route path="/doctor-list" element={<DoctorList />} />
-                      ): (
+                      ) : (
                         <Route path="/doctor-list" element={<Auth404 />} />
                       )}
-
                       {userPermissions.includes("add-doctor") ? (
-                      <Route path="/doctor-add" element={<DoctorAdd />} />
-                      ): (
+                        <Route path="/doctor-add" element={<DoctorAdd />} />
+                      ) : (
                         <Route path="/doctor-add" element={<Auth404 />} />
                       )}
-
                       {userPermissions.includes("add-appointment") ? (
-                      <Route
-                        path="/doctor-appointment"
-                        element={<DoctorAppointment />}
-                      />
-                      ): (
-                        <Route path="/doctor-appointment" element={<Auth404 />} /> 
+                        <Route
+                          path="/doctor-appointment"
+                          element={<DoctorAppointment />}
+                        />
+                      ) : (
+                        <Route
+                          path="/doctor-appointment"
+                          element={<Auth404 />}
+                        />
                       )}
-
                       {userPermissions.includes("view-calendar") ? (
-                      <Route path="/calendar" element={<Calendar />} />
-                      ): (
-                        <Route path="/view-calendar" element={<Auth404 />} />  
+                        <Route path="/calendar" element={<Calendar />} />
+                      ) : (
+                        <Route path="/view-calendar" element={<Auth404 />} />
                       )}
-
                       {userPermissions.includes("view-patientlist") ? (
-                      <Route path="/patient-list" element={<Patientlist />} />
-                      ): (
-                        <Route path="/view-patientlist" element={<Auth404 />} /> 
+                        <Route path="/patient-list" element={<Patientlist />} />
+                      ) : (
+                        <Route path="/view-patientlist" element={<Auth404 />} />
                       )}
-
                       {userPermissions.includes("add-patient") ? (
-                      <Route path="/patient-add" element={<PatientForm />} />
-                      ): (
-                        <Route path="/add-patient" element={<Auth404 />} /> 
+                        <Route path="/patient-add" element={<PatientForm />} />
+                      ) : (
+                        <Route path="/add-patient" element={<Auth404 />} />
                       )}
-
                       {userPermissions.includes("admission") ? (
-                      <Route
-                        path="/admission"
-                        element={<AdmissionComponent />}
-                      />
-                      ): (
-                      <Route path="/admission" element={<Auth404 />} />
+                        <Route
+                          path="/admission"
+                          element={<AdmissionComponent />}
+                        />
+                      ) : (
+                        <Route path="/admission" element={<Auth404 />} />
                       )}
-
                       {userPermissions.includes("schedule-surgery") ? (
-                      <Route
-                        path="/schedule-surgery"
-                        element={<SurgerySchedulingForm />}
-                      />
-                      ): (
-                        <Route path="/schedule-surgery" element={<Auth404 />} /> 
+                        <Route
+                          path="/schedule-surgery"
+                          element={<SurgerySchedulingForm />}
+                        />
+                      ) : (
+                        <Route path="/schedule-surgery" element={<Auth404 />} />
                       )}
-
                       {userPermissions.includes("create-report") ? (
-                      <Route
-                        path="/create-report"
-                        element={<PostSurgeryForm />}
-                      />
-                      ): (
-                        <Route path="/create-report" element={<Auth404 />} /> 
+                        <Route
+                          path="/create-report"
+                          element={<PostSurgeryForm />}
+                        />
+                      ) : (
+                        <Route path="/create-report" element={<Auth404 />} />
                       )}
-
                       {userPermissions.includes("update-report") ? (
-                      <Route
-                        path="/update-report"
-                        element={<PostSurgeryUpdate />}
-                      />
-                      ): (
-                        <Route path="/update-report" element={<Auth404 />} /> 
+                        <Route
+                          path="/update-report"
+                          element={<PostSurgeryUpdate />}
+                        />
+                      ) : (
+                        <Route path="/update-report" element={<Auth404 />} />
                       )}
-
                       {userPermissions.includes("view-ward") ? (
-                      <Route path="/room-status" element={<Ward />} />
-                      ): (
-                        <Route path="/room-status" element={<Auth404 />} /> 
+                        <Route path="/room-status" element={<Ward />} />
+                      ) : (
+                        <Route path="/room-status" element={<Auth404 />} />
                       )}
-
                       {userPermissions.includes("create-user") ? (
-                      <Route
-                        path="/create-user"
-                        element={<UserRegistration />}
-                      />
-                      ): (
-                        <Route path="/create-user" element={<Auth404 />} /> 
+                        <Route
+                          path="/create-user"
+                          element={<UserRegistration />}
+                        />
+                      ) : (
+                        <Route path="/create-user" element={<Auth404 />} />
                       )}
-                    
-                    
-                    <Route path="/create-ehr" element={<EMR />} />
-                    <Route path="/update-ehr" element={<ViewEHR />}  />
-                    <Route path="/add-staff" element={<Staff />} />
-                    <Route path="/staff-list" element={<StaffList />} />
+                    <Route path="/create-ehr" element={<EMR />} />'
+                    <Route path="/update-ehr"  />
                     </Routes>
                   </div>
                 </div>

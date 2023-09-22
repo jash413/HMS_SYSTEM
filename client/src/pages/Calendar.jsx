@@ -103,7 +103,7 @@ function Calendar() {
   useEffect(() => {
     axios.get("http://localhost:3100/doctors",{
       headers: {
-        Authorization: `Bearer ${token}`,
+        authorization: `Bearer ${token}`,
       },
     }).then((response) => {
       const doctor = response.data.filter((doctor) => {
@@ -117,7 +117,11 @@ function Calendar() {
   useEffect(() => {
     if (selectedDoctor) {
       axios
-        .get(`http://localhost:3100/doctors/${selectedDoctor}`)
+        .get(`http://localhost:3100/doctors/${selectedDoctor}`,{
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           setSelectedDoctorData(response.data);
         });
@@ -127,7 +131,11 @@ function Calendar() {
   useEffect(() => {
     if (userData.role==="Doctor") {
       axios
-        .get(`http://localhost:3100/doctors/${userData.doctor_id}`)
+        .get(`http://localhost:3100/doctors/${userData.doctor_id}`,{
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           setSelectedDoctorData(response.data);
         });

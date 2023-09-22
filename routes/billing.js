@@ -1,20 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const billingController = require('../controllers/billing');
+const billingController = require('../controllers/billingController');
 
-// Route to get all billing records
-router.get('/billing', billingController.getAllBillingRecords);
 
-// Route to create a new billing record
+// Create a new billing record
 router.post('/billing', billingController.createBillingRecord);
 
-// Route to get a specific billing record by id
+// Get all billing records
+router.get('/billing', billingController.getAllBillingRecords);
+
+// Get a single billing record by ID
 router.get('/billing/:id', billingController.getBillingRecordById);
 
-// Route to update a billing record by id
-router.patch('/billing/:id', billingController.updateBillingRecordById);
+// Get a single billing record by Patient ID
+router.get('/billing/patient/:id', billingController.getBillingRecordByPatientId);
 
-// Route to delete a billing record by id
-router.delete('/billing/:id', billingController.deleteBillingRecordById);
+// Update a billing record
+router.patch('/billing/:id', billingController.updateBillingRecord);
+
+// Update a billing record by Patient ID
+router.patch('/billing/patient/:id', billingController.updateBillingRecordByPatientId);
+
+// Delete a billing record
+router.delete('/billing/:id', billingController.deleteBillingRecord);
 
 module.exports = router;

@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import AsyncSelect from "react-select/async";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Import the CSS
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS 
+import { myContext, tokenContext } from "./Main";
 
 const PostSurgeryUpdate = () => {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
   const [formData, setFormData] = useState({
     surgeon_notes: "",
     anaesthetist_notes: "",
@@ -19,7 +22,11 @@ const PostSurgeryUpdate = () => {
 
     const loadOptions = (inputValue) => {
       return axios
-        .get(`http://localhost:3100/surgeries/search?surgeryID=${inputValue}`)
+        .get(`http://localhost:3100/surgeries/search?surgeryID=${inputValue}`,{
+          headers: {
+            authorization: `Bearer ${token}`,
+          }, 
+        })
         .then((response) => {
           const allSurgeries = response.data;
           return allSurgeries.filter((surgery) => (surgery.record_generated === true)).map((surgery) => ({
@@ -37,7 +44,11 @@ const PostSurgeryUpdate = () => {
 
     // Get the selected patient's details
     axios
-      .get(`http://localhost:3100/surgery-records/search?surgeryId=${selectedOption.value}`)
+      .get(`http://localhost:3100/surgery-records/search?surgeryId=${selectedOption.value}`,{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         setSelectedFormDetails(response.data[0]);
       })
@@ -63,7 +74,11 @@ const PostSurgeryUpdate = () => {
             anaesthetist_notes: formData.anaesthetist_notes,
             patient_condition: formData.patient_condition,
         }
-      );
+      ,{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
       console.log(response.data);
       if (response.status === 200) {
         toast.success("Record updated successfully");

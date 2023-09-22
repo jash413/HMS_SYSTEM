@@ -41,7 +41,11 @@ const AppointmentForm = () => {
 
   useEffect(() => {
     if (formData.doctor) {
-      axios.get(`http://localhost:3100/api/patients`).then((response) => {
+      axios.get(`http://localhost:3100/api/patients`,{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }).then((response) => {
         const allPatients = response.data;
         // Filter patients based on the selected doctor
         const doctorPatients = allPatients.filter(
@@ -66,7 +70,11 @@ const AppointmentForm = () => {
   const fetchAvailableSlots = async (doctorId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/api/doctor?selectedDate=${formData.selectedDate}&id=${formData.doctor}`
+        `http://localhost:3100/api/doctor?selectedDate=${formData.selectedDate}&id=${formData.doctor}`,{
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (response.status === 200) {
         console.log(response.data.availableSlots);
@@ -90,7 +98,11 @@ const AppointmentForm = () => {
     }));
     setSelectedPatientDetails(null); // Clear patient details
     axios
-      .get(`http://localhost:3100/doctors/${selectedDoctor}`)
+      .get(`http://localhost:3100/doctors/${selectedDoctor}`,{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         setDoctorData(response.data);
       })
@@ -107,7 +119,11 @@ const AppointmentForm = () => {
       }));
       setSelectedPatientDetails(null); // Clear patient details
       axios
-        .get(`http://localhost:3100/doctors/${userData.doctor_id}`)
+        .get(`http://localhost:3100/doctors/${userData.doctor_id}`,{
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           setDoctorData(response.data);
         })
@@ -125,7 +141,11 @@ const AppointmentForm = () => {
     }));
 
     axios
-      .get(`http://localhost:3100/api/patients/${selectedOption}`)
+      .get(`http://localhost:3100/api/patients/${selectedOption}`,{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         setSelectedPatientDetails(response.data);
       })
@@ -152,6 +172,7 @@ const AppointmentForm = () => {
         {
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
           },
         }
       );
@@ -169,6 +190,10 @@ const AppointmentForm = () => {
               endTime: formData.endingTime,
             },
           ],
+        },{
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
         });
       }
 

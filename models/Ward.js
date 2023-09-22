@@ -20,7 +20,11 @@ const wardSchema = new mongoose.Schema({
     type: String,
     enum: ['Vacant', 'Occupied', 'Blocked'],
     default: 'Vacant',
-  }
+  },
+  roomRate: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Ward = mongoose.model('Ward', wardSchema);

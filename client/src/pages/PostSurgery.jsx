@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import AsyncSelect from "react-select/async";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS
-import moment from "moment";
+import moment from "moment"; 
+import { myContext, tokenContext } from "./Main";
 
 const PostSurgeryForm = () => {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
   const [formData, setFormData] = useState({
     surgery_id: "",
     surgeon_notes: "",
@@ -26,7 +29,11 @@ const PostSurgeryForm = () => {
       axios
         .get(
           `http://localhost:3100/api/patients/${selectedSurgeryDetails.patient_id}`
-        )
+        ,{
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           setSelectedPatientDetails(response.data);
         });
@@ -39,7 +46,11 @@ const PostSurgeryForm = () => {
       axios
         .get(
           `http://localhost:3100/doctors/${selectedSurgeryDetails.doctor_id}`
-        )
+        ,{
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           setSelectedSurgeonDetails(response.data);
         });
@@ -52,7 +63,11 @@ const PostSurgeryForm = () => {
       axios
         .get(
           `http://localhost:3100/anaesthetists/${selectedSurgeryDetails.anaesthetist_id}`
-        )
+        ,{
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           setSelectedAnaesthetistDetails(response.data);
         });
@@ -65,7 +80,11 @@ const PostSurgeryForm = () => {
       axios
         .get(
           `http://localhost:3100/operation-theatres/${selectedSurgeryDetails.theatre_id}`
-        )
+        ,{
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
         .then((response) => {
           setselectedTheatreDetails(response.data);
         });
@@ -74,7 +93,11 @@ const PostSurgeryForm = () => {
 
   const loadOptions = (inputValue) => {
     return axios
-      .get(`http://localhost:3100/surgeries/search?surgeryID=${inputValue}`)
+      .get(`http://localhost:3100/surgeries/search?surgeryID=${inputValue}`,{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         const allSurgeries = response.data;
         return allSurgeries.filter((surgery) => (surgery.record_generated === false)).map((surgery) => ({
@@ -92,7 +115,11 @@ const PostSurgeryForm = () => {
 
     // Get the selected patient's details
     axios
-      .get(`http://localhost:3100/surgeries/${selectedOption.value}`)
+      .get(`http://localhost:3100/surgeries/${selectedOption.value}`,{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         const SelectedDate = moment(response.data.date).format("YYYY-MM-DD");
         setSelectedSurgeryDetails({
@@ -127,7 +154,11 @@ const PostSurgeryForm = () => {
       const response = await axios.post(
         "http://localhost:3100/surgery-records",
         formData
-      );
+      ,{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
       console.log(response);
       if (response.status === 201) {
         toast.success("Record created successfully");
@@ -137,7 +168,11 @@ const PostSurgeryForm = () => {
       const updateResponse = await axios.patch(
         `http://localhost:3100/surgeries/${formData.surgery_id}`,
         { record_generated: true }
-      );
+      ,{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
       console.log(updateResponse);
       
 

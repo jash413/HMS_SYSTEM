@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS
+import { myContext, tokenContext } from "./Main";
 
 const PatientForm = () => {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
   const [patientData, setPatientData] = useState({
     // Initialize state for patient data fields
     firstName: "",
@@ -21,15 +24,25 @@ const PatientForm = () => {
     wardNumber: "",
     doctor: "",
     advanceAmount: "",
+    hospital_id: userData.hospital_id,
   });
 
   const [insurance, setInsurance] = useState(true);
   const [doctors, setDoctors] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3100/doctors").then((response) => {
-      setDoctors(response.data);
-    });
+    axios
+      .get("http://localhost:3100/doctors", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const doctors = response.data.filter((doctor) => {
+          return doctor.hospital_id === userData.hospital_id;
+        });
+        setDoctors(doctors);
+      });
   }, []);
 
   const handleInsurance = (event) => {
@@ -63,32 +76,50 @@ const PatientForm = () => {
         {
           headers: {
             "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
           },
         }
       );
+
       if (response.status === 201) {
         toast.success("Patient created successfully");
+        // Reset the form after successful submission
+        setPatientData({
+          // Reset patient data fields
+          firstName: "",
+          lastName: "",
+          phoneNumber: "",
+          emailAddress: "",
+          admitDate: "",
+          admitTime: "",
+          gender: "",
+          addNote: "",
+          paymentOption: "",
+          insuranceInformation: "false",
+          insuranceNumber: "",
+          wardNumber: "",
+          doctor: "",
+          advanceAmount: "",
+          hospital_id: userData.hospital_id,
+        });
+        // Create bill for the patient
+        try {
+          const billResponse = await axios.post(
+            "http://localhost:3100/billing",
+            {
+              patient: response.data._id,
+              doctor: patientData.doctor,
+              visitDate: patientData.admitDate,
+              hospital_id: userData.hospital_id,
+            }
+          );
+          console.log(billResponse);
+        } catch (error) {
+          console.error(error);
+        }
       }
 
       console.log("Patient created:", response.data);
-      // Reset the form after successful submission
-      setPatientData({
-        // Reset patient data fields
-        firstName: "",
-        lastName: "",
-        phoneNumber: "",
-        emailAddress: "",
-        admitDate: "",
-        admitTime: "",
-        gender: "",
-        addNote: "",
-        paymentOption: "",
-        insuranceInformation: "false",
-        insuranceNumber: "",
-        wardNumber: "",
-        doctor: "",
-        advanceAmount: "",
-      });
     } catch (error) {
       toast.error(error.response.data.message);
       console.error("Error creating patient:", error.response.data);

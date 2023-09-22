@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import AsyncSelect from "react-select/async";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS
+import { myContext, tokenContext } from "./Main";
 
 const AdmissionForm = () => {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
   const [formData, setFormData] = useState({
     patient: "",
     admissionDate: new Date().toISOString().split("T")[0],
@@ -12,34 +15,46 @@ const AdmissionForm = () => {
     notes: "",
     admissionTime: "",
   });
-
+ 
   const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
   const [vacantWards, setVacantWards] = useState([]);
 
   useEffect(() => {
     // Fetch the list of vacant wards from the API
-    axios.get("http://localhost:3100/api/ward").then((response) => {
+    axios.get("http://localhost:3100/api/ward",{
+      headers: {
+        authorization : `Bearer ${token}`
+      }
+    }).then((response) => {
       const allWards = response.data;
-      const vacantWards = allWards.filter((wards) => wards.status === "Vacant");
+      const vacantWards = allWards.filter((wards) => wards.status === "Vacant" && wards.hospital_id === userData.hospital_id);
       setVacantWards(vacantWards);
     });
   }, []);
 
   const wards = () => {
-    axios.get("http://localhost:3100/api/ward").then((response) => {
+    axios.get("http://localhost:3100/api/ward",{
+      headers: {
+        authorization : `Bearer ${token}`
+      }
+    }).then((response) => {
       const allWards = response.data;
-      const vacantWards = allWards.filter((wards) => wards.status === "Vacant");
+      const vacantWards = allWards.filter((wards) => wards.status === "Vacant" && wards.hospital_id === userData.hospital_id);
       setVacantWards(vacantWards);
     });
   };
 
   const loadOptions = (inputValue) => {
     return axios
-      .get(`http://localhost:3100/api/patients/search?name=${inputValue}`)
+      .get(`http://localhost:3100/api/patients/search?name=${inputValue}`,{
+        headers: {
+          authorization : `Bearer ${token}`
+        }
+      })
       .then((response) => {
         const allPatients = response.data;
         const admittedPatients = allPatients.filter(
-          (patient) => patient.admitted === false
+          (patient) => patient.admitted === false && patient.hospital_id === userData.hospital_id
         );
         console.log(admittedPatients);
         return admittedPatients.map((patient) => ({
@@ -57,7 +72,11 @@ const AdmissionForm = () => {
 
     // Get the selected patient's details
     axios
-      .get(`http://localhost:3100/api/patients/${selectedOption.value}`)
+      .get(`http://localhost:3100/api/patients/${selectedOption.value}`,{
+        headers: {
+          authorization : `Bearer ${token}`
+        }
+      })
       .then((response) => {
         setSelectedPatientDetails(response.data);
       })
@@ -79,17 +98,32 @@ const AdmissionForm = () => {
     try {
       const response = await axios.post(
         "http://localhost:3100/api/admission",
-        formData
+        formData,
+        {
+          headers: {
+            authorization : `Bearer ${token}`
+        }
+        }
       );
       // Update the patient's admission status & ward number
       await axios.patch(
         `http://localhost:3100/api/patients/${formData.patient}`,
-        { admitted: true, ward: `${formData.wardNumber}` }
+        { admitted: true, ward: `${formData.wardNumber}` },
+        {
+          headers: {
+            authorization : `Bearer ${token}`
+        }
+      }
       );
       // Update the selected ward's status to "Occupied" and associate the patient
       await axios.patch(
         `http://localhost:3100/api/ward/${formData.wardNumber}`,
-        { status: "Occupied", patient: formData.patient }
+        { status: "Occupied", patient: formData.patient },
+        {
+          headers: {
+            authorization : `Bearer ${token}`
+        }
+      }
       );
       console.log(response.data);
       if (response.status === 201) {

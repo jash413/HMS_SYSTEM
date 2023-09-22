@@ -441,6 +441,13 @@ function Index() {
                               </Link>
                             </li>
                           )}
+                          {userPermissions.includes("view-ehr") && (
+                            <li>
+                              <Link to="/view-ehr">
+                                <a className="ms-link">View EHR</a>
+                              </Link>
+                            </li>
+                          )}
                           {userPermissions.includes("update-ehr") && (
                             <li>
                               <Link to="/update-ehr">
@@ -485,70 +492,49 @@ function Index() {
                       </li>
                       
                     )}
+                     {(userPermissions.includes("create-invoice") ||
+                      userPermissions.includes("update-invoice")||
+                      userPermissions.includes("view-invoice")) && (
+                      <li className="collapsed">
+                        <a
+                          className="m-link"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#menu-invoice"
+                          href="#"
+                        >
+                          <i className="icofont-patient-file fs-5" />{" "}
+                          <span>Invoice Management</span>{" "}
+                          <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                        </a>
+                        {/* Menu: Sub menu ul */}
+                        <ul className="sub-menu collapse" id="menu-invoice">
+                          {userPermissions.includes("create-invoice") && (
+                            <li>
+                              <Link to="/create-invoice">
+                                <a className="ms-link">Create Invoice</a>
+                              </Link>
+                            </li>
+                          )}
+                          {userPermissions.includes("view-invoice") && (
+                            <li>
+                              <Link to="/view-invoice">
+                                <a className="ms-link">View Invoice</a>
+                              </Link>
+                            </li>
+                          )}
+                           {userPermissions.includes("update-invoice") && (
+                            <li>
+                              <Link to="/update-invoice">
+                                <a className="ms-link">Update Invoice</a>
+                              </Link>
+                            </li>
+                          )}
+                        </ul>
+                      </li>
+                      
+                    )}
                     
                   </ul>
-                        userPermissions.includes("update-ehr")) && (
-                        <li className="collapsed">
-                          <a
-                            className="m-link"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#menu-SR1"
-                            href="#"
-                          >
-                            <i className="icofont-patient-file fs-5" />{" "}
-                            <span>EHR</span>{" "}
-                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                          </a>
-                          {/* Menu: Sub menu ul */}
-                          <ul className="sub-menu collapse" id="menu-SR1">
-                            {userPermissions.includes("create-ehr") && (
-                              <li>
-                                <Link to="/create-ehr">
-                                  <a className="ms-link">Create EHR</a>
-                                </Link>
-                              </li>
-                            )}
-                            {userPermissions.includes("update-ehr") && (
-                              <li>
-                                <Link to="/update-ehr">
-                                  <a className="ms-link">Update EHR</a>
-                                </Link>
-                              </li>
-                            )}
-                          </ul>
-                        </li>
-                      )}
-                        <li className="collapsed">
-                          <a
-                            className="m-link"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#menu-invoice"
-                            href="#"
-                          >
-                            <i className="icofont-blind fs-5" />{" "}
-                            <span>Invoice Management</span>{" "}
-                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                          </a>
-                          {/* Menu: Sub menu ul */}
-                          <ul className="sub-menu collapse" id="menu-invoice">
-                              <li>
-                                <Link to="/create-invoice">
-                                  <a className="ms-link">Create Invoice</a>
-                                </Link>
-                              </li>
-                              <li>
-                                <Link to="/view-invoice">
-                                  <a className="ms-link">View Invoice</a>
-                                </Link>
-                              </li>
-                              <li>
-                                <Link to="/update-invoice">
-                                  <a className="ms-link">Update Invoice</a>
-                                </Link>
-                              </li>
-                          </ul>
-                        </li>
-                    </ul>
                     {/* Menu: menu collepce btn */}
                     <button
                       type="button"
@@ -937,6 +923,11 @@ function Index() {
                       )}
                     <Route path="/create-ehr" element={<EMR />} />'
                     <Route path="/update-ehr"  />
+                    <Route path="/create-invoice" element={<CreateInvoice />} />
+                    <Route path="/view-invoice" element={<ViewInvoice />} />
+                    <Route path="/view-ehr" element={<ViewEHR />} />
+                    <Route path="/add-staff" element={<Staff />} />
+                    <Route path="/staff-list" element={<StaffList />} />
                     </Routes>
                   </div>
                 </div>

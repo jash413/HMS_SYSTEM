@@ -420,7 +420,7 @@ function Index() {
                         </li>
                       )}
                       {(userPermissions.includes("create-ehr") ||
-                      userPermissions.includes("update-ehr")) && (
+                      userPermissions.includes("view-ehr")) && (
                       <li className="collapsed">
                         <a
                           className="m-link"
@@ -448,10 +448,10 @@ function Index() {
                               </Link>
                             </li>
                           )}
-                          {userPermissions.includes("update-ehr") && (
+                          {userPermissions.includes("view-ehr") && (
                             <li>
-                              <Link to="/update-ehr">
-                                <a className="ms-link">Update EHR</a>
+                              <Link to="/view-ehr">
+                                <a className="ms-link">View EHR</a>
                               </Link>
                             </li>
                           )}

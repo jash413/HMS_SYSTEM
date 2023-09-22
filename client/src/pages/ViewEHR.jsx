@@ -159,135 +159,211 @@ function ViewEHR() {
   console.log(patients)
   return (
 
- <div className="container-xxl">
-<div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-  <h3 className="fw-bold mb-0">View-EHR</h3>
-  <div className="dropdown">
-    <select
-      className="btn btn-primary form-control"
-      id="dropdownMenuButton2"
-      name="doctor"
-      onChange={handleDoctorChange}
-    >
-      <option style={{ backgroundColor: "white", color: "black" }} value="">
-        Select Doctor
-      </option>
-      {doctors.map((doctor) => (
+<div className="container-xxl">
+  <div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+    <h3 className="fw-bold mb-0">View-EHR</h3>
+    <div className="dropdown">
+      <select
+        className="btn btn-primary form-control"
+        id="dropdownMenuButton2"
+        name="doctor"
+        onChange={handleDoctorChange}
+      >
         <option
           style={{ backgroundColor: "white", color: "black" }}
-          key={doctor._id}
-          value={doctor._id}
+          value=""
         >
-          {doctor.first_name} {doctor.last_name}
+          Select Doctor
         </option>
-      ))}
-    </select>
+        {doctors.map((doctor) => (
+          <option
+            style={{ backgroundColor: "white", color: "black" }}
+            key={doctor._id}
+            value={doctor._id}
+          >
+            {doctor.first_name} {doctor.last_name}
+          </option>
+        ))}
+      </select>
+    </div>
+    <div className="col-md-6">
+      <select className="form-control" onChange={handleSelectChange}>
+        <option value="">Select patient</option>
+        {patients.map((patient) => (
+          <option key={patient._id} value={patient._id}>
+            {patient.firstName} {patient.lastName}
+          </option>
+        ))}
+      </select>
+    </div>
   </div>
-  <div className="col-md-6">
-    <select className="form-control" onChange={handleSelectChange}>
-      <option value="">Select patient</option>
-      {patients.map((patient) => (
-        <option key={patient._id} value={patient._id}>
-          {patient.firstName} {patient.lastName}
-        </option>
-      ))}
-    </select>
-  </div>
-</div>
-
-<div className="row">
-  <div className="col-md-4">
-    <div className="card mb-3">
-      <div className="card-body">
-        <h6 className="card-title">Vital Signs</h6>
-        <ul className="list-group list-group-flush">
-          <li className="list-group-item">
-            <strong>Blood Pressure:</strong> {vitalsigns?.bloodPressure || "N/A"}
-          </li>
-          <li className="list-group-item">
-            <strong>Heart Rate:</strong> {vitalsigns?.heartRate || "N/A"}
-          </li>
-          <li className="list-group-item">
-            <strong>Respiratory Rate:</strong> {vitalsigns?.respiratoryRate || "N/A"}
-          </li>
-          <li className="list-group-item">
-            <strong>Temperature:</strong> {vitalsigns?.temperature || "N/A"}
-          </li>
-        </ul>
+  {/* Vital Signs section */}
+  <div className="row mb-3">
+    <div className="col-sm-12">
+      <div className="card mb-3">
+        <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+          <h6 className="mb-0 fw-bold">Vital Signs of Patient</h6>
+        </div>
+        <div className="card-body">
+          <div className="row g-3 align-items-center">
+            <div className="col-md-6">
+              <label htmlFor="bloodPressure" className="form-label">
+                <strong>Blood Pressure</strong>
+              </label>
+              <div className="ellipsis-text">{vitalsigns?.bloodPressure || "N/A"}</div>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="heartRate" className="form-label">
+                Heart Rate
+              </label>
+              <div className="ellipsis-text">{vitalsigns?.heartRate || "N/A"}</div>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="respiratoryRate" className="form-label">
+                Respiratory Rate
+              </label>
+              <div className="ellipsis-text">{vitalsigns?.respiratoryRate || "N/A"}</div>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="temperature" className="form-label">
+                Temperature
+              </label>
+              <div className="ellipsis-text">{vitalsigns?.temperature || "N/A"}</div>
+            </div>
+          </div>
+          <br />
+          {/* ... */}
+        </div>
       </div>
     </div>
   </div>
-
-  <div className="col-md-4">
-    <div className="card mb-3">
-      <div className="card-body">
-        <h6 className="card-title">Medical History</h6>
-        <ul className="list-group list-group-flush">
-          <li className="list-group-item">
-            <strong>Allergies:</strong> {medicalhistory?.allergies || "N/A"}
-          </li>
-          <li className="list-group-item">
-            <strong>Chronic Conditions:</strong> {medicalhistory?.conditions || "N/A"}
-          </li>
-          <li className="list-group-item">
-            <strong>Surgeries:</strong> {medicalhistory?.surgeries || "N/A"}
-          </li>
-          <li className="list-group-item">
-            <strong>Medications:</strong> {medicalhistory?.medications || "N/A"}
-          </li>
-          <li className="list-group-item">
-            <strong>Family History:</strong> {medicalhistory?.familyHistory || "N/A"}
-          </li>
-        </ul>
+  {/* Medical History section */}
+  <div className="row mb-3">
+    <div className="col-sm-12">
+      <div className="card mb-3">
+        <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+          <h6 className="mb-0 fw-bold">Medical History</h6>
+        </div>
+        <div className="card-body">
+          <div className="row g-3 align-items-center">
+            <div className="col-md-6">
+              <label htmlFor="allergies" className="form-label">
+                Allergies
+              </label>
+              <div className="ellipsis-text">{medicalhistory?.allergies || "N/A"}</div>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="chronicConditions" className="form-label">
+                Chronic Conditions
+              </label>
+              <div className="ellipsis-text">{medicalhistory?.conditions || "N/A"}</div>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="surgeries" className="form-label">
+                Surgeries
+              </label>
+              <div className="ellipsis-text">{medicalhistory?.surgeries || "N/A"}</div>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="medications" className="form-label">
+                Medications
+              </label>
+              <div className="ellipsis-text">{medicalhistory?.medications || "N/A"}</div>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="familyHistory" className="form-label">
+                Family History
+              </label>
+              <div className="ellipsis-text">{medicalhistory?.familyHistory || "N/A"}</div>
+            </div>
+          </div>
+          {/* Immunizations */}
+          <div className="mt-4">
+            <h6>Immunizations</h6>
+          </div>
+          {/* End Immunizations */}
+        </div>
       </div>
     </div>
   </div>
-
-  <div className="col-md-4">
-    <div className="card mb-3">
-      <div className="card-body">
-        <h6 className="card-title">Clinical Examinations</h6>
-        <ul className="list-group list-group-flush">
-          <li className="list-group-item">
-            <strong>Note Date:</strong> {clinicalexaminations?.noteDate || "N/A"}
-          </li>
-          <li className="list-group-item">
-            <strong>Healthcare Provider:</strong> {clinicalexaminations?.healthcareProvider || "N/A"}
-          </li>
-          <li className="list-group-item">
-            <strong>Subjective Note:</strong> {clinicalexaminations?.subjectiveNote || "N/A"}
-          </li>
-          <li className="list-group-item">
-            <strong>Objective Note:</strong> {clinicalexaminations?.objectiveNote || "N/A"}
-          </li>
-          <li className="list-group-item">
-            <strong>Assessment:</strong> {clinicalexaminations?.assessment || "N/A"}
-          </li>
-          <li className="list-group-item">
-            <strong>Plan:</strong> {clinicalexaminations?.plan || "N/A"}
-          </li>
-        </ul>
+  {/* Prescriptions section */}
+  <div className="row mb-3">
+    <div className="col-sm-12">
+      <div className="card mb-3">
+        <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+          <h6 className="mb-0 fw-bold">Prescriptions</h6>
+        </div>
+        <div className="card-body">
+          <div className="row g-3 align-items-center">
+            <div className="col-md-6">
+              <label htmlFor="instructions" className="form-label">
+                Instructions
+              </label>
+              <div className="ellipsis-text">'N/A'</div>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="medication" className="form-label">
+                Medication
+              </label>
+              <div className="ellipsis-text">'N/A'</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <div className="col-md-4">
-  <div className="card mb-3">
-    <div className="card-body">
-      <h6 className="card-title">Prescriptions</h6>
-      <ul className="list-group list-group-flush">
-        <li className="list-group-item">
-          <strong>Instructions:</strong> {prescriptions?.instructions || "N/A"}
-        </li>
-        <li className="list-group-item">
-          <strong>Medication:</strong> {prescriptions?.medication || "N/A"}
-        </li>
-      </ul>
+  {/* Clinical Examinations section */}
+  <div className="row mb-3">
+    <div className="col-sm-12">
+      <div className="card mb-3">
+        <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+          <h6 className="mb-0 fw-bold">Clinical Examinations</h6>
+        </div>
+        <div className="card-body">
+          <div className="row g-3 align-items-center">
+            <div className="col-md-6">
+              <label htmlFor="noteDate" className="form-label">
+                Note Date
+              </label>
+              <div className="ellipsis-text">{clinicalexaminations?.noteDate || "N/A"}</div>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="healthcareProvider" className="form-label">
+                Healthcare Provider
+              </label>
+              <div className="ellipsis-text">{clinicalexaminations?.healthcareProvider || "N/A"}</div>
+            </div>
+            <div className="col-12">
+              <label htmlFor="subjectiveNote" className="form-label">
+                Subjective Note
+              </label>
+              <div className="ellipsis-text">{clinicalexaminations?.subjectiveNote || "N/A"}</div>
+            </div>
+            <div className="col-12">
+              <label htmlFor="objectiveNote" className="form-label">
+                Objective Note
+              </label>
+              <div className="ellipsis-text">{clinicalexaminations?.objectiveNote || "N/A"}</div>
+            </div>
+            <div className="col-12">
+              <label htmlFor="assessment" className="form-label">
+                Assessment
+              </label>
+              <div className="ellipsis-text">{clinicalexaminations?.assessment || "N/A"}</div>
+            </div>
+            <div className="col-12">
+              <label htmlFor="plan" className="form-label">
+                Plan
+              </label>
+              <div className="ellipsis-text">{clinicalexaminations?.plan || "N/A"}</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-</div>
-</div> 
 
   );
 }

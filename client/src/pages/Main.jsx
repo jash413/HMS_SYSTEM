@@ -37,6 +37,11 @@ import UserRegistration from "./UserRegistration";
 import Auth404 from "./Auth-404";
 import axios from "axios";
 import EMR from "./EMR";
+import ViewEHR from "./ViewEHR";
+
+// Staff Pages
+import Staff from "./Staff";
+import StaffList from "./StaffList"
 
 const myContext = createContext();
 const tokenContext = createContext();
@@ -406,6 +411,7 @@ function Index() {
                                 </Link>
                               </li>
                             )}
+                           
                           </ul>
                         </li>
                         
@@ -436,6 +442,39 @@ function Index() {
                             <li>
                               <Link to="/update-ehr">
                                 <a className="ms-link">Update EHR</a>
+                              </Link>
+                            </li>
+                          )}
+                        </ul>
+                      </li>
+                      
+                    )}
+                    {(userPermissions.includes("add-staff") ||
+                      userPermissions.includes("staff-list")) && (
+                      <li className="collapsed">
+                        <a
+                          className="m-link"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#menu-SR2"
+                          href="#"
+                        >
+                          <i className="icofont-patient-file fs-5" />{" "}
+                          <span>Staff Management</span>{" "}
+                          <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                        </a>
+                        {/* Menu: Sub menu ul */}
+                        <ul className="sub-menu collapse" id="menu-SR2">
+                          {userPermissions.includes("add-staff") && (
+                            <li>
+                              <Link to="/add-staff">
+                                <a className="ms-link">Add Staff</a>
+                              </Link>
+                            </li>
+                          )}
+                          {userPermissions.includes("staff-list") && (
+                            <li>
+                              <Link to="/staff-list">
+                                <a className="ms-link">Staff Members</a>
                               </Link>
                             </li>
                           )}
@@ -840,8 +879,12 @@ function Index() {
                       ): (
                         <Route path="/create-user" element={<Auth404 />} /> 
                       )}
-                    <Route path="/create-ehr" element={<EMR />} />'
-                    <Route path="/update-ehr"  />
+                    
+                    
+                    <Route path="/create-ehr" element={<EMR />} />
+                    <Route path="/update-ehr" element={<ViewEHR />}  />
+                    <Route path="/add-staff" element={<Staff />} />
+                    <Route path="/staff-list" element={<StaffList />} />
                     </Routes>
                   </div>
                 </div>

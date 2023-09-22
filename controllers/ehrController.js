@@ -40,9 +40,8 @@ exports.createRecord = async (req, res) => {
       default:
         return res.status(400).json({ error: "Invalid component" });
     }
-
     const savedRecord = await newRecord.save();
-    res.status(201).json(savedRecord);
+    await res.status(201).json(savedRecord);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
     console.error(error)
@@ -179,5 +178,60 @@ exports.deleteRecord = async (req, res) => {
     res.status(204).send();
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
+  }
+};
+// Get a single billing record by Patient ID
+exports.getvitalsignsByPatientId = async (req, res) => {
+  try {
+    const vitalsigns = await VitalSigns.findOne({patient: req.params.id});
+
+    if (!vitalsigns) {
+      return res.status(404).json({ error: 'Billing record not found' });
+    }
+
+    return res.status(200).json(vitalsigns);
+  } catch (error) {
+    console.error('Error getting vital signs record:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+exports.getclinicalexaminationsByPatientId = async (req, res) => {
+  try {
+    const clinicalexaminationsigns = await ClinicalExaminations.findOne({patient: req.params.id});
+
+    if (!clinicalexaminationsigns) {
+      return res.status(404).json({ error: 'examination record not found' });
+    }
+
+    return res.status(200).json(clinicalexaminationsigns);
+  } catch (error) {
+    console.error('Error getting vital signs record:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};exports.getprescriptionsByPatientId = async (req, res) => {
+  try {
+    const prescription = await Prescriptions.findOne({patient: req.params.id});
+
+    if (!prescription) {
+      return res.status(404).json({ error: 'prescription not found' });
+    }
+
+    return res.status(200).json(prescription);
+  } catch (error) {
+    console.error('Error getting prescription record:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};exports.getmedicalhistoryByPatientId = async (req, res) => {
+  try {
+    const history = await MedicalHistory.findOne({patient: req.params.id});
+
+    if (!history) {
+      return res.status(404).json({ error: 'History not found' });
+    }
+
+    return res.status(200).json(history);
+  } catch (error) {
+    console.error('Error getting history:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };

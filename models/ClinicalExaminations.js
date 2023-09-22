@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 
 const clinicalExaminationsSchema = new mongoose.Schema({
-  
+  patient: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Patient',
+    default: null,
+  },
   noteDate: {
     type: Date,
   },
@@ -20,7 +24,6 @@ const clinicalExaminationsSchema = new mongoose.Schema({
   plan: {
     type: String,
   },
-  // Add other fields as needed
 });
 
 const ClinicalExaminations = mongoose.model("ClinicalExaminations", clinicalExaminationsSchema);

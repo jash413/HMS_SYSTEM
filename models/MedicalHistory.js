@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 
 const medicalHistorySchema = new mongoose.Schema({
+  patient: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Patient',
+    default: null,
+  },
   conditions: {
     type: String,
   },
@@ -23,8 +28,8 @@ const medicalHistorySchema = new mongoose.Schema({
       vaccineDate: Date,
       administeredBy: String,
     },
-  ],
-  // Add other fields as needed
+  ]
+
 });
 
 const MedicalHistory = mongoose.model("MedicalHistory", medicalHistorySchema);

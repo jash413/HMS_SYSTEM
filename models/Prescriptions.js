@@ -1,17 +1,25 @@
 const mongoose = require("mongoose");
 
 const prescriptionsSchema = new mongoose.Schema({
-
-  medication: {
-   type: String,
+  patient:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Patient",
+    default:null,
+    // required: true,
   },
-  prescribingPhysician: {
-    type: String,
+  
+  doctor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Doctor", // Replace with the actual name of your Medications model
+    // required: true,
   },
-  instructions: {
-    type: String,
+  
+  medicines:[
+    {
+    medication:String,
+    instructions:String
   },
-  // Add other fields as needed
+]
 });
 
 const Prescriptions = mongoose.model("Prescriptions", prescriptionsSchema);

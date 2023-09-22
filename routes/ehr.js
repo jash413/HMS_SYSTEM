@@ -4,10 +4,16 @@ const ehrController = require("../controllers/ehrController");
 const authenticateToken = require('../middleware/authMiddleware');
 
 // Create a new record for a specific component
-router.post("/api/ehr/:component",authenticateToken,ehrController.createRecord);
+router.post("/api/ehr/:component",ehrController.createRecord);
 
 // Retrieve records for a specific component
 router.get("/api/ehr/:component/:id", ehrController.getRecordsForComponent);
+
+// Retrieve a record for a specific component
+router.get("/ehr/vitalsigns/:id", ehrController.getvitalsignsByPatientId);
+router.get("/ehr/ClinicalExaminations/:id", ehrController.getclinicalexaminationsByPatientId);
+router.get("/ehr/prescriptions/:id", ehrController.getprescriptionsByPatientId);
+router.get("/ehr/medicalhistory/:id", ehrController.getmedicalhistoryByPatientId);
 
 // Update a record for a specific component
 router.put("/api/ehr/:component/:id", ehrController.updateRecord);

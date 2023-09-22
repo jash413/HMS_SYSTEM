@@ -29,6 +29,7 @@ const wardRouter = require('./routes/ward');
 const admissionRouter = require('./routes/admission');
 const otRouter = require('./routes/ot');
 const medicinesRouter = require('./routes/medicines');
+const staffRouter=require("./routes/staff")
 
 
 // Use routes
@@ -50,6 +51,7 @@ app.use(medicinesRouter)
 app.use(hospitalRouter); // Use hospital route
 app.use(admissionRouter);
 app.use(wardRouter);
+app.use(staffRouter);
 
 
 // Error handling middleware

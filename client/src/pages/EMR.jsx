@@ -8,6 +8,8 @@ const EMR = () => {
   const userData = useContext(myContext);
   const token = useContext(tokenContext);
 
+  const [toastVal, setToastVal] = useState(false);
+
   // ID of patient and doctor
   const [formData, setFormData] = useState({
     patient: "",
@@ -16,6 +18,7 @@ const EMR = () => {
 
   // Form data
   const [vitalsigns, setvitalsigns] = useState({
+    patient: "",
     bloodPressure: "",
     heartRate: "",
     respiratoryRate: "",
@@ -23,8 +26,9 @@ const EMR = () => {
   });
 
   const [medicalhistory, setmedicalhistory] = useState({
+    patient: "",
     allergies: "",
-    chronicConditions: "",
+    conditions: "",
     surgeries: "",
     medications: "",
     familyHistory: "",
@@ -32,12 +36,13 @@ const EMR = () => {
   });
 
   const [prescriptions, setPrescriptions] = useState({
-    prescribingPhysician: "",
-    instructions: "",
-    medication: "",
+    patient: "",
+    doctor:"",
+    medicines: [{}],
   });
 
   const [clinicalexaminations, setclinicalexaminations] = useState({
+    patient: "",
     noteDate: "",
     healthcareProvider: "",
     subjectiveNote: "",
@@ -50,28 +55,30 @@ const EMR = () => {
   const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
   const [doctorData, setDoctorData] = useState({});
 
-// dropdown
+  // dropdown
   const [patients, setPatients] = useState([]);
   const [doctors, setDoctors] = useState([]);
 
   const [immunizationCount, setImmunizationCount] = useState(1); // Added immunization count
-
+  const [medicinecount,setmedicinecount]=useState(1);
 
   // fetch patients
   useEffect(() => {
     if (formData.doctor) {
-      axios.get(`http://localhost:3100/api/patients`,{
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      }).then((response) => {
-        const allPatients = response.data;
-        // Filter patients based on the selected doctor
-        const doctorPatients = allPatients.filter(
-          (patient) => patient.doctor === formData.doctor
-        );
-        setPatients(doctorPatients);
-      });
+      axios
+        .get(`http://localhost:3100/api/patients`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          const allPatients = response.data;
+          // Filter patients based on the selected doctor
+          const doctorPatients = allPatients.filter(
+            (patient) => patient.doctor === formData.doctor
+          );
+          setPatients(doctorPatients);
+        });
     } else {
       setPatients([]); // Reset patients when no doctor is selected
     }
@@ -85,7 +92,7 @@ const EMR = () => {
     }));
 
     axios
-      .get(`http://localhost:3100/api/patients/${selectedOption}`,{
+      .get(`http://localhost:3100/api/patients/${selectedOption}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -100,13 +107,15 @@ const EMR = () => {
 
   // fetch doctors
   useEffect(() => {
-    axios.get("http://localhost:3100/doctors",{
+    axios
+      .get("http://localhost:3100/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
-      }).then((response) => {
-      setDoctors(response.data);
-    });
+      })
+      .then((response) => {
+        setDoctors(response.data);
+      });
   }, []);
 
   const handlevitalsignsChange = (e) => {
@@ -114,6 +123,7 @@ const EMR = () => {
     setvitalsigns({
       ...vitalsigns,
       [name]: value,
+      patient: formData.patient,
     });
   };
 
@@ -122,6 +132,7 @@ const EMR = () => {
     setmedicalhistory({
       ...medicalhistory,
       [name]: value,
+      patient: formData.patient,
     });
   };
 
@@ -130,6 +141,8 @@ const EMR = () => {
     setPrescriptions({
       ...prescriptions,
       [name]: value,
+      patient: formData.patient,
+      doctor:formData.doctor
     });
   };
 
@@ -138,6 +151,7 @@ const EMR = () => {
     setclinicalexaminations({
       ...clinicalexaminations,
       [name]: value,
+      patient: formData.patient,
     });
   };
 
@@ -173,6 +187,44 @@ const EMR = () => {
     // Decrement the immunization count
     setImmunizationCount(immunizationCount - 1);
   };
+  // Handle changes in the medications array
+  const handleMedicineChange = (e, index) => {
+  const { name, value } = e.target;
+  const updatedMedicines = [...prescriptions.medicines];
+  updatedMedicines[index] = {
+    ...updatedMedicines[index],
+    [name]: value,
+  };
+  setPrescriptions({
+    ...prescriptions,
+    medicines: updatedMedicines,
+    patient: formData.patient,
+    doctor:formData.doctor
+  });
+};
+
+const handleAddMedicine = () => {
+  setPrescriptions({
+    ...prescriptions,
+    medicines: [...prescriptions.medicines, { medication: "", instruction: "" }],
+    patient: formData.patient,
+    doctor:formData.doctor
+  });
+  setmedicinecount(medicinecount + 1)
+};
+
+const handleRemoveMedicine = (index) => {
+  const updatedMedicines = [...prescriptions.medicines];
+  updatedMedicines.splice(index, 1);
+  setPrescriptions({
+    ...prescriptions,
+    medicines: updatedMedicines,
+    patient: formData.patient,
+    doctor:formData.doctor
+  });
+  setmedicinecount(medicinecount - 1);
+};
+
 
   const handleDoctorChange = (e) => {
     const selectedDoctor = e.target.value;
@@ -184,7 +236,11 @@ const EMR = () => {
     }));
     setSelectedPatientDetails(null); // Clear patient details
     axios
-      .get(`http://localhost:3100/doctors/${selectedDoctor}`)
+      .get(`http://localhost:3100/doctors/${selectedDoctor}`, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         setDoctorData(response.data);
       })
@@ -195,96 +251,84 @@ const EMR = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Store components
-    const component = ["vitalsigns","medicalhistory","ClinicalExaminations","prescriptions"]
-    const data ={
-      'vitalsigns':vitalsigns,
-      'medicalhistory':medicalhistory,
-      'ClinicalExaminations':clinicalexaminations,
-      'prescriptions':prescriptions
-    }
-    
-    component.map((value)=>{
-    try {
-      console.log(data[value])
-      // Create an object with the vital signs data
-      const response =  axios.post(
-        `http://localhost:3100/api/ehr/${value}`,
-        data[value],
-        {
-          headers: {
-            authorization: `Bearer ${token}`, // Replace with your authentication token
-          },
-        }
-      );
-  
-      if (response.status === 201) {
-        toast.success("Vital signs data saved successfully");
-      }
-  
-      // Optionally, you can reset the form fields
-      setvitalsigns({
-        bloodPressure: "",
-        heartRate: "",
-        respiratoryRate: "",
-        temperature: "",
-      });
-      setmedicalhistory({
-          allergies: "",
-          chronicConditions: "",
-          surgeries: "",
-          medications: "",
-          familyHistory: "",
-          immunizations: [{}],
-        });
-        setclinicalexaminations({
-          noteDate: "",
-          healthcareProvider: "",
-          subjectiveNote: "",
-          objectiveNote: "",
-          assessment: "",
-          plan: "",
-        });
-        setPrescriptions({
-          prescribingPhysician: "",
-          instructions: "",
-          medication: "",
-        });
-    } catch (error) {
-      toast.error("Error saving vital signs data");
-      console.error("Error saving vital signs data:", error);
-    }
-  })
-    // Send formData to your backend API for storage
 
-    // setmedicalhistory({
-    //   allergies: "",
-    //   chronicConditions: "",
-    //   surgeries: "",
-    //   medications: "",
-    //   familyHistory: "",
-    //   immunizations: [{}],
-    // });
-    // setclinicalexaminations({
-    //   noteDate: "",
-    //   healthcareProvider: "",
-    //   subjectiveNote: "",
-    //   objectiveNote: "",
-    //   assessment: "",
-    //   plan: "",
-    // });
-    // setPrescriptions({
-    //   prescribingPhysician: "",
-    //   instructions: "",
-    //   medication: "",
-    // });
+    // Store components
+    const component = [
+      "vitalsigns",
+      "medicalhistory",
+      "ClinicalExaminations",
+      "prescriptions",
+    ];
+    const data = {
+      vitalsigns: vitalsigns,
+      medicalhistory: medicalhistory,
+      ClinicalExaminations: clinicalexaminations,
+      prescriptions: prescriptions,
+    };
+
+    component.map((value) => {
+      try {
+        // Create an object with the vital signs data
+        axios
+          .post(`http://localhost:3100/api/ehr/${value}`, data[value], {
+            headers: {
+              authorization: `Bearer ${token}`, // Replace with your authentication token
+            },
+          })
+          .then((response) => {
+            // toast.success("EHR created Successfully");
+            setToastVal(true);
+            // Reset the form fields
+            setvitalsigns({
+              patient: "",
+              bloodPressure: "",
+              heartRate: "",
+              respiratoryRate: "",
+              temperature: "",
+            });
+            setmedicalhistory({
+              allergies: "",
+              patient:"",
+              conditions: "",
+              surgeries: "",
+              medications: "",
+              familyHistory: "",
+              immunizations: [{vaccineName:"",vaccineDate:"",administeredBy:""}],
+            });
+            setclinicalexaminations({
+              patient: "",
+              noteDate: "",
+              healthcareProvider: "",
+              subjectiveNote: "",
+              objectiveNote: "",
+              assessment: "",
+              plan: "",
+            });
+            setPrescriptions({
+              patient: "",
+              prescribingPhysician: "",
+              instructions: "",
+             medicines:[{medication: "", instructions: ""}]
+            });
+            setImmunizationCount(1);
+            setmedicinecount(1);
+           
+          });
+      } catch (error) {
+        toast.error(error.message);
+        console.error("Error saving vital signs data:", error);
+      }
+    });
+    if (toastVal === true) {
+      toast.success("EHR created Successfully");
+      setToastVal(false);
+    }
   };
 
   return (
     <div className="container-xxl">
       <div className="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
-        <h3 className="fw-bold mb-0">Appointment</h3>
+        <h3 className="fw-bold mb-0">EHR</h3>
         <div className="dropdown">
           <select
             className="btn btn-primary form-control"
@@ -407,134 +451,127 @@ const EMR = () => {
                     <label htmlFor="allergies" className="form-label">
                       Allergies
                     </label>
-                    <input
+                    <textarea
                       required
-                      type="text"
                       name="allergies"
                       value={medicalhistory.allergies}
                       onChange={handlemedicalhistoryChange}
                       className="form-control"
                       id="allergies"
-                    />
+                    ></textarea>
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="chronicConditions" className="form-label">
+                    <label htmlFor="conditions" className="form-label">
                       Chronic Conditions
                     </label>
-                    <input
+                    <textarea
                       required
-                      type="text"
-                      name="chronicConditions"
-                      value={medicalhistory.chronicConditions}
+                      name="conditions"
+                      value={medicalhistory.conditions}
                       onChange={handlemedicalhistoryChange}
                       className="form-control"
-                      id="chronicConditions"
-                    />
+                      id="conditions"
+                    ></textarea>
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="surgeries" className="form-label">
                       Surgeries
                     </label>
-                    <input
+                    <textarea
                       required
-                      type="text"
                       name="surgeries"
                       value={medicalhistory.surgeries}
                       onChange={handlemedicalhistoryChange}
                       className="form-control"
                       id="surgeries"
-                    />
+                    ></textarea>
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="medications" className="form-label">
                       Medications
                     </label>
-                    <input
-                      type="text"
+                    <textarea
                       name="medications"
                       value={medicalhistory.medications}
                       onChange={handlemedicalhistoryChange}
                       className="form-control"
                       id="medications"
-                    />
+                    ></textarea>
                   </div>
                   <div className="col-md-6">
                     <label htmlFor="familyHistory" className="form-label">
                       Family History
                     </label>
-                    <input
-                      type="text"
+                    <textarea
                       name="familyHistory"
                       value={medicalhistory.familyHistory}
                       onChange={handlemedicalhistoryChange}
                       className="form-control"
                       id="familyHistory"
-                    />
+                    ></textarea>
                   </div>
                 </div>
                 {/* Immunizations */}
                 <div className="mt-4">
                   <h6>Immunizations</h6>
                   {medicalhistory.immunizations.map((immunization, index) => (
-  <div key={index}>
-    <div className="row g-3 align-items-center">
-      <div className="col-md-4">
-        <label className="form-label">Vaccine Name</label>
-        <input
-          type="text"
-          name="vaccineName"
-          value={immunization.vaccineName}
-          onChange={(e) => handleImmunizationChange(e, index)}
-          className="form-control"
-        />
-      </div>
-      <div className="col-md-4">
-        <label className="form-label">Vaccine Date</label>
-        <input
-          type="date"
-          name="vaccineDate"
-          value={immunization.vaccineDate}
-          onChange={(e) => handleImmunizationChange(e, index)}
-          className="form-control"
-        />
-      </div>
-      <div className="col-md-3">
-        <label className="form-label">Administered By</label>
-        <input
-          type="text"
-          name="administeredBy"
-          value={immunization.administeredBy}
-          onChange={(e) => handleImmunizationChange(e, index)}
-          className="form-control"
-        />
-      </div>
-      {index > 0 && (
-        <div className="col-md-1">
-          <button
-            type="button"
-            className="btn btn-danger custom-button"
-            onClick={() => handleRemoveImmunization(index)}
-          >
-            <span aria-hidden="true">×</span>
-          </button>
-        </div>
-      )}
-    </div>
-    {index === medicalhistory.immunizations.length - 1 && (
-      <div className="d-flex justify-content-between mt-2">
-        <button
-          type="button"
-          className="btn btn-primary custom-button"
-          onClick={handleAddImmunization}
-        >
-          Add Another Immunization
-        </button>
-      </div>
-    )}
-  </div>
-))}
-
-
+                    <div key={index}>
+                      <div className="row g-3 align-items-center">
+                        <div className="col-md-4">
+                          <label className="form-label">Vaccine Name</label>
+                          <input
+                            type="text"
+                            name="vaccineName"
+                            value={immunization.vaccineName}
+                            onChange={(e) => handleImmunizationChange(e, index)}
+                            className="form-control"
+                          />
+                        </div>
+                        <div className="col-md-4">
+                          <label className="form-label">Vaccine Date</label>
+                          <input
+                            type="date"
+                            name="vaccineDate"
+                            value={immunization.vaccineDate}
+                            onChange={(e) => handleImmunizationChange(e, index)}
+                            className="form-control"
+                          />
+                        </div>
+                        <div className="col-md-3">
+                          <label className="form-label">Administered By</label>
+                          <input
+                            type="text"
+                            name="administeredBy"
+                            value={immunization.administeredBy}
+                            onChange={(e) => handleImmunizationChange(e, index)}
+                            className="form-control"
+                          />
+                        </div>
+                        {index > 0 && (
+                          <div className="col-md-1">
+                            <button
+                              type="button"
+                              className="btn btn-danger mt-4"
+                              onClick={() => handleRemoveImmunization(index)}
+                            >
+                              <i class="icofont-minus"></i>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      {index === medicalhistory.immunizations.length - 1 && (
+                        <div className="d-flex justify-content-between mt-2">
+                          <button
+                            type="button"
+                            className="btn btn-primary custom-button"
+                            onClick={handleAddImmunization}
+                          >
+                            Add Another Immunization
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
                 {/* End Immunizations */}
               </div>
@@ -551,24 +588,7 @@ const EMR = () => {
               </div>
               <div className="card-body">
                 <div className="row g-3 align-items-center">
-                  <div className="col-md-6">
-                    <label
-                      htmlFor="prescribingPhysician"
-                      className="form-label"
-                    >
-                      Prescribing Physician
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      name="prescribingPhysician"
-                      value={prescriptions.prescribingPhysician}
-                      onChange={handlePrescriptionsChange}
-                      className="form-control"
-                      id="prescribingPhysician"
-                    />
-                  </div>
-                  <div className="col-md-6">
+                  {/* <div className="col-md-6">
                     <label htmlFor="instructions" className="form-label">
                       Instructions
                     </label>
@@ -595,8 +615,55 @@ const EMR = () => {
                       className="form-control"
                       id="medication"
                     />
-                  </div>
-                  {/* Add more prescription-related fields here */}
+                  </div> */}
+                  {prescriptions.medicines.map((medicine, index) => (
+                    <div key={index}>
+                      <div className="row g-3 align-items-center">
+                        <div className="col-md-4">
+                          <label className="form-label">Medication</label>
+                          <input
+                            type="text"
+                            name="medication"
+                            value={medicine.medication}
+                            onChange={(e) => handleMedicineChange(e, index)}
+                            className="form-control"
+                          />
+                        </div>
+                        <div className="col-md-4">
+                          <label className="form-label">Instruction</label>
+                          <input
+                            type="text"
+                            name="instructions"
+                            value={medicine.instructions}
+                            onChange={(e) => handleMedicineChange(e, index)}
+                            className="form-control"
+                          />
+                        </div>
+                        {index > 0 && (
+                          <div className="col-md-1">
+                            <button
+                              type="button"
+                              className="btn btn-danger custom-button"
+                              onClick={() => handleRemoveMedicine(index)}
+                            >
+                            <i class="icofont-minus"></i>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      {index === prescriptions.medicines.length - 1 && (
+                        <div className="d-flex justify-content-between mt-2">
+                          <button
+                            type="button"
+                            className="btn btn-primary custom-button"
+                            onClick={handleAddMedicine}
+                          >
+                            Add Medicine
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

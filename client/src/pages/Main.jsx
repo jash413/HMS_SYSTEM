@@ -417,7 +417,7 @@ function Index() {
                         
                     )}
                       {(userPermissions.includes("create-ehr") ||
-                      userPermissions.includes("update-ehr")) && (
+                      userPermissions.includes("view-ehr")) && (
                       <li className="collapsed">
                         <a
                           className="m-link"
@@ -438,10 +438,10 @@ function Index() {
                               </Link>
                             </li>
                           )}
-                          {userPermissions.includes("update-ehr") && (
+                          {userPermissions.includes("view-ehr") && (
                             <li>
-                              <Link to="/update-ehr">
-                                <a className="ms-link">Update EHR</a>
+                              <Link to="/view-ehr">
+                                <a className="ms-link">View EHR</a>
                               </Link>
                             </li>
                           )}
@@ -882,7 +882,7 @@ function Index() {
                     
                     
                     <Route path="/create-ehr" element={<EMR />} />
-                    <Route path="/update-ehr" element={<ViewEHR />}  />
+                    <Route path="/view-ehr" element={<ViewEHR />}  />
                     <Route path="/add-staff" element={<Staff />} />
                     <Route path="/staff-list" element={<StaffList />} />
                     </Routes>

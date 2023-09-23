@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const wardSchema = new mongoose.Schema({
+  hospital_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Hospital',
+    required: true,
+  },
   patient: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Patient',
@@ -21,7 +26,7 @@ const wardSchema = new mongoose.Schema({
     enum: ['Vacant', 'Occupied', 'Blocked'],
     default: 'Vacant',
   },
-  roomRate: {
+  dailyRoomRate: {
     type: Number,
     required: true,
   },

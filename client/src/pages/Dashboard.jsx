@@ -1,6 +1,248 @@
-import React from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import axios from "axios";
+import AsyncSelect from "react-select/async";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS
+import { myContext, tokenContext } from "./Main";
+import $ from "jquery";
+import "datatables.net";
+import PopoverComponent from "../components/PopoverComponent";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  BarElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Filler,
+  Legend,
+} from 'chart.js';
+
+
+ChartJS.register(
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Filler,
+  Legend
+);
 
 function Dashboard() {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
+
+  const [hospitalityData, setHospitalityData] = useState({
+    totalAppointment: "",
+    totalPatients: "",
+    patientsPerDoctor: "",
+    totalDoctor: "",
+    totalNurse: "",
+  });
+  const [wards, setWards] = useState([]);
+  const tableRef = useRef(null);
+  const [patients, setPatients] = useState([]);
+
+  const [patientData, setPatientData] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+
+  // useEffect to calculate patient counts
+  useEffect(() => {
+    // Initialize an array to store counts for each month
+    const monthlyCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+    // Loop through the patients and count them by month
+    patients.forEach((patient) => {
+      const admitDate = new Date(patient.admitDate);
+      const month = admitDate.getMonth();
+      monthlyCounts[month]++;
+    });
+
+    // Update the state with the counts
+    setPatientData(monthlyCounts);
+  }, [patients]);
+
+
+
+  // Data for bar chart
+  const data = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov","Dec"],
+    datasets: [
+      {
+        label: "Patients",
+        data: patientData,
+        fill: true,
+        backgroundColor: [
+          "#8dbfb3",
+          // "rgba(54, 162, 235, 0.2)",
+        ],
+        borderColor: ["#8dbfb3"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    indexAxis: "x",
+    // Elements options apply to all of the options unless overridden in a dataset
+    // In this case, we are setting the border of each horizontal bar to be 2px wide
+    elements: {
+      bar: {
+        borderWidth: 2,
+      },
+    },
+    responsive: true,
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        grid: {
+          display: false,
+        },
+      },
+    },
+  };
+
+
+  useEffect(() => {
+    // Fetch the list of patients from the backend
+    fetchPatients();
+    // setTimeout(() => {
+    //   $(tableRef.current).DataTable();
+    // }, 500);
+  }, []);
+
+  const fetchPatients = async () => {
+    try {
+      const response = await axios.get("http://localhost:3100/api/patients", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      const patients = response.data.filter((patient) => {
+        return patient.hospital_id === userData.hospital_id;
+      });
+      setPatients(patients);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Get hospitality status data
+  useEffect(() => {
+    axios
+      .post("http://localhost:3100/dashboard/hospitalityStatus", {
+        hospital_id: userData.hospital_id,
+      })
+      .then((res) => {
+        setHospitalityData({
+          totalAppointment: res.data.appointments,
+          totalPatients: res.data.patients,
+          patientsPerDoctor: res.data.patientPerDoctor,
+          totalDoctor: res.data.doctors,
+          totalNurse: res.data.nurse,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  const PatientDetailsComponent = ({ ward }) => {
+    const [patientDetails, setPatientDetails] = useState({});
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+      if (ward.patient) {
+        fetchPatientDetails(ward.patient);
+      }
+    }, [ward.patient]);
+
+    const fetchPatientDetails = async (patientId) => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `http://localhost:3100/api/patients/${patientId}`,
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setPatientDetails(response.data);
+      } catch (error) {
+        console.error("Error fetching patient details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!ward.patient) {
+      return null;
+    }
+
+    if (loading) {
+      return <p>Loading patient details...</p>;
+    }
+
+    return (
+      <div>
+        <p>
+          <b>Patient Name:</b> {patientDetails.firstName}{" "}
+          {patientDetails.lastName}
+        </p>
+        <p>
+          <b>Patient Gender:</b> {patientDetails.gender}
+        </p>
+        <p>
+          <b>Patient Doctor:</b> {patientDetails.selectedDoctor}
+        </p>
+        <p>
+          <b>Patient Phone Number:</b> {patientDetails.phoneNumber}
+        </p>
+        {/* <p><b>Admission Date:</b> {patientDetails.admitDate}</p> */}
+        {/* Add more patient details here */}
+      </div>
+    );
+  };
+
+  useEffect(() => {
+    // Fetch ward data from the backend
+    axios
+      .get("http://localhost:3100/api/ward", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const wards = response.data.filter((ward) => {
+          return ward.hospital_id === userData.hospital_id;
+        });
+        setWards(wards);
+      });
+  }, []);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Vacant":
+        return "#8dbfb3"; // Green color for vacant wards
+      case "Occupied":
+        return "#fca903"; // Orange color for occupied wards
+      case "Blocked":
+        return "#f13c5c"; // Red color for blocked wards
+      default:
+        return "#000"; // Default color for unknown status
+    }
+  };
+
   return (
     <div className="container-xxl">
       {/* <div className="row g-3 mb-3">
@@ -221,6 +463,28 @@ function Dashboard() {
         </div>
       </div> */}
       <div className="row g-3 mb-3 row-deck">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+              <h6 className="mb-0 fw-bold ">Patient Statistics</h6>
+            </div>
+            <div className="card-body">
+              <Line data={data} options={options} />
+            </div>
+          </div>
+        </div>
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+              <h6 className="mb-0 fw-bold ">Patient Statistics</h6>
+            </div>
+            <div className="card-body">
+              <Line data={data} options={options} />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="row g-3 mb-3 row-deck">
         <div className="col-lg-12 col-xl-6">
           <div className="card">
             <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
@@ -235,7 +499,9 @@ function Dashboard() {
                       <h6 className="mt-3 mb-0 fw-bold small-14">
                         Total Appointment
                       </h6>
-                      <span className="text-muted">400</span>
+                      <span className="text-muted">
+                        {hospitalityData.totalAppointment}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -246,7 +512,9 @@ function Dashboard() {
                       <h6 className="mt-3 mb-0 fw-bold small-14">
                         Total Patients
                       </h6>
-                      <span className="text-muted">117</span>
+                      <span className="text-muted">
+                        {hospitalityData.totalPatients}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -257,18 +525,9 @@ function Dashboard() {
                       <h6 className="mt-3 mb-0 fw-bold small-14">
                         Patients per Doctor
                       </h6>
-                      <span className="text-muted">16</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-md-4 col-sm-6">
-                  <div className="card">
-                    <div className="card-body ">
-                      <i className="icofont-king-monster fs-3 color-careys-pink" />
-                      <h6 className="mt-3 mb-0 fw-bold small-14">
-                        Covid Patients{" "}
-                      </h6>
-                      <span className="text-muted">144</span>
+                      <span className="text-muted">
+                        {hospitalityData.patientsPerDoctor}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -279,7 +538,9 @@ function Dashboard() {
                       <h6 className="mt-3 mb-0 fw-bold small-14">
                         Total Doctor
                       </h6>
-                      <span className="text-muted">200</span>
+                      <span className="text-muted">
+                        {hospitalityData.totalDoctor}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -290,7 +551,9 @@ function Dashboard() {
                       <h6 className="mt-3 mb-0 fw-bold small-14">
                         Total Nurse{" "}
                       </h6>
-                      <span className="text-muted">84</span>
+                      <span className="text-muted">
+                        {hospitalityData.totalNurse}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -300,138 +563,43 @@ function Dashboard() {
         </div>
         <div className="col-lg-12 col-xl-6">
           <div className="card">
-            <div className="card-header py-3 d-flex  bg-transparent border-bottom-0">
-              <h6 className="mb-0 fw-bold ">Hospital Room Booking Status</h6>
+            <div className="card-header py-3 d-flex bg-transparent border-bottom-0">
+              <h6 className="mb-0 fw-bold">Hospital Room Booking Status</h6>
             </div>
             <div className="card-body">
               <div className="room_book">
                 <div className="row row-cols-2 row-cols-sm-4 row-cols-md-6 row-cols-lg-6 g-3">
-                  <div className="room col">
-                    <input type="checkbox" id="1A" defaultChecked="" />
-                    <label htmlFor="1A">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room A-101</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="1B" />
-                    <label htmlFor="1B">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room B-102</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="1C" />
-                    <label htmlFor="1C">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room C-103</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" disabled id="1D" />
-                    <label htmlFor="1D">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Occupied</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="1E" />
-                    <label htmlFor="1E">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room D-104</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="1F" defaultChecked="" />
-                    <label htmlFor="1F">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room E-105</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="2A" />
-                    <label htmlFor="2A">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room F-106</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="2B" />
-                    <label htmlFor="2B">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room G-107</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="2C" defaultChecked="" />
-                    <label htmlFor="2C">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room H-108</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="2D" />
-                    <label htmlFor="2D">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room I-109</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="2E" defaultChecked="" />
-                    <label htmlFor="2E">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room J-110</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="2F" />
-                    <label htmlFor="2F">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room K-111</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="3A" defaultChecked="" />
-                    <label htmlFor="3A">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room L-112</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="3B" />
-                    <label htmlFor="3B">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room M-113</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="3C" />
-                    <label htmlFor="3C">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room N-114</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="3D" />
-                    <label htmlFor="3D">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room O-115</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="3E" defaultChecked="" />
-                    <label htmlFor="3E">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room P-116</span>
-                    </label>
-                  </div>
-                  <div className="room col">
-                    <input type="checkbox" id="3F" />
-                    <label htmlFor="3F">
-                      <i className="icofont-patient-bed fs-2" />
-                      <span className="text-muted">Room Q-117</span>
-                    </label>
-                  </div>
+                  {wards.map((ward) => (
+                    <div className="room col" key={ward.wardNumber}>
+                      <label htmlFor={ward.wardNumber}>
+                        <PopoverComponent
+                          target={
+                            <i
+                              style={{
+                                color: getStatusColor(ward.status),
+                              }}
+                              className="icofont-patient-bed fs-2"
+                            />
+                          }
+                          content={
+                            <>
+                              <p>
+                                <b>Room No:</b> {ward.wardNumber}
+                              </p>
+                              <p>
+                                <b>Room Type:</b> {ward.type}
+                              </p>
+                              <p>
+                                <b>Room Status:</b> {ward.status}
+                              </p>
+                              <PatientDetailsComponent ward={ward} />
+                            </>
+                          }
+                        />
+                        <span className="text-muted">{ward.wardNumber}</span>
+                      </label>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -440,345 +608,48 @@ function Dashboard() {
       </div>
       <div className="row g-3 mb-3">
         <div className="col-xl-8 col-lg-12 flex-column">
-          <div className="card mb-3">
+          {/* <div className="card mb-3">
             <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
               <h6 className="mb-0 fw-bold ">Addmission by Division</h6>
             </div>
             <div className="card-body">
               <div id="hiringsources" />
             </div>
-          </div>
+          </div> */}
           <div className="card">
             <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
               <h6 className="mb-0 fw-bold ">Patients Information</h6>
             </div>
             <div className="card-body">
               <table
-                id="myDataTable"
+                id="patient-table"
                 className="table table-hover align-middle mb-0"
                 style={{ width: "100%" }}
+                ref={tableRef}
               >
                 <thead>
                   <tr>
-                    <th>Patients</th>
-                    <th>Adress</th>
-                    <th>Admited</th>
-                    <th>Discharge</th>
-                    <th>Progress</th>
-                    <th>Status</th>
+                    <th>Patients Id</th>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Email-Address</th>
+                    <th>Doctor</th>
+                    <th>Ward-Num</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>
-                      <img
-                        src="assets/images/xs/avatar3.jpg"
-                        className="avatar sm rounded-circle me-2"
-                        alt="profile-image"
-                      />
-                      <span>Molly </span>
-                    </td>
-                    <td>70 Bowman St. South Windsor, CT 06074</td>
-                    <td>May 13, 2021</td>
-                    <td>May 16, 2021</td>
-                    <td>
-                      <div className="progress" style={{ height: "3px" }}>
-                        <div
-                          className="progress-bar progress-bar-warning"
-                          role="progressbar"
-                          aria-valuenow={40}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          style={{ width: "40%" }}
-                        >
-                          {" "}
-                          <span className="sr-only">40% Complete</span>{" "}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge bg-info">Admit</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img
-                        src="assets/images/xs/avatar1.jpg"
-                        className="avatar sm rounded-circle me-2"
-                        alt="profile-image"
-                      />
-                      <span>Brian</span>
-                    </td>
-                    <td>123 6th St. Melbourne, FL 32904</td>
-                    <td>May 13, 2021</td>
-                    <td>May 22, 2021</td>
-                    <td>
-                      <div className="progress" style={{ height: "3px" }}>
-                        <div
-                          className="progress-bar bg-success"
-                          role="progressbar"
-                          aria-valuenow={100}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          style={{ width: "100%" }}
-                        >
-                          {" "}
-                          <span className="sr-only">100% Complete</span>{" "}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge bg-success">Discharge</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img
-                        src="assets/images/xs/avatar2.jpg"
-                        className="avatar sm rounded-circle me-2"
-                        alt="profile-image"
-                      />
-                      <span>Julia</span>
-                    </td>
-                    <td>4 Shirley Ave. West Chicago, IL 60185</td>
-                    <td>May 17, 2021</td>
-                    <td>May 16, 2021</td>
-                    <td>
-                      <div className="progress" style={{ height: "3px" }}>
-                        <div
-                          className="progress-bar bg-success"
-                          role="progressbar"
-                          aria-valuenow={100}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          style={{ width: "100%" }}
-                        >
-                          {" "}
-                          <span className="sr-only">100% Complete</span>{" "}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge bg-success">Discharge</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img
-                        src="assets/images/xs/avatar4.jpg"
-                        className="avatar sm rounded-circle me-2"
-                        alt="profile-image"
-                      />
-                      <span>Sonia</span>
-                    </td>
-                    <td>123 6th St. Melbourne, FL 32904</td>
-                    <td>May 13, 2021</td>
-                    <td>May 23, 2021</td>
-                    <td>
-                      <div className="progress" style={{ height: "3px" }}>
-                        <div
-                          className="progress-bar bg-info"
-                          role="progressbar"
-                          aria-valuenow={15}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          style={{ width: "15%" }}
-                        >
-                          {" "}
-                          <span className="sr-only">15% Complete</span>{" "}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge bg-info">Admit</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img
-                        src="assets/images/xs/avatar5.jpg"
-                        className="avatar sm rounded-circle me-2"
-                        alt="profile-image"
-                      />
-                      <span>Adam H</span>
-                    </td>
-                    <td>4 Shirley Ave. West Chicago, IL 60185</td>
-                    <td>May 18, 2021</td>
-                    <td>May 18, 2021</td>
-                    <td>
-                      <div className="progress" style={{ height: "3px" }}>
-                        <div
-                          className="progress-bar bg-danger"
-                          role="progressbar"
-                          aria-valuenow={85}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          style={{ width: "85%" }}
-                        >
-                          {" "}
-                          <span className="sr-only">85% Complete</span>{" "}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge bg-info">Admit</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img
-                        src="assets/images/xs/avatar9.jpg"
-                        className="avatar sm rounded-circle me-2"
-                        alt="profile-image"
-                      />
-                      <span>Alexander</span>
-                    </td>
-                    <td>123 6th St. Melbourne, FL 32904</td>
-                    <td>May 13, 2021</td>
-                    <td>May 22, 2021</td>
-                    <td>
-                      <div className="progress" style={{ height: "3px" }}>
-                        <div
-                          className="progress-bar bg-success"
-                          role="progressbar"
-                          aria-valuenow={100}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          style={{ width: "100%" }}
-                        >
-                          {" "}
-                          <span className="sr-only">100% Complete</span>{" "}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge bg-success">Discharge</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img
-                        src="assets/images/xs/avatar11.jpg"
-                        className="avatar sm rounded-circle me-2"
-                        alt="profile-image"
-                      />
-                      <span>Gabrielle</span>
-                    </td>
-                    <td>4 Shirley Ave. West Chicago, IL 60185</td>
-                    <td>May 17, 2021</td>
-                    <td>May 16, 2021</td>
-                    <td>
-                      <div className="progress" style={{ height: "3px" }}>
-                        <div
-                          className="progress-bar bg-success"
-                          role="progressbar"
-                          aria-valuenow={100}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          style={{ width: "100%" }}
-                        >
-                          {" "}
-                          <span className="sr-only">100% Complete</span>{" "}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge bg-success">Discharge</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img
-                        src="assets/images/xs/avatar12.jpg"
-                        className="avatar sm rounded-circle me-2"
-                        alt="profile-image"
-                      />
-                      <span>Grace</span>
-                    </td>
-                    <td>4 Shirley Ave. West Chicago, IL 60185</td>
-                    <td>May 17, 2021</td>
-                    <td>May 16, 2021</td>
-                    <td>
-                      <div className="progress" style={{ height: "3px" }}>
-                        <div
-                          className="progress-bar bg-success"
-                          role="progressbar"
-                          aria-valuenow={100}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          style={{ width: "100%" }}
-                        >
-                          {" "}
-                          <span className="sr-only">100% Complete</span>{" "}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge bg-success">Discharge</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img
-                        src="assets/images/xs/avatar8.jpg"
-                        className="avatar sm rounded-circle me-2"
-                        alt="profile-image"
-                      />
-                      <span>Ryan </span>
-                    </td>
-                    <td>70 Bowman St. South Windsor, CT 06074</td>
-                    <td>May 13, 2021</td>
-                    <td>May 16, 2021</td>
-                    <td>
-                      <div className="progress" style={{ height: "3px" }}>
-                        <div
-                          className="progress-bar progress-bar-warning"
-                          role="progressbar"
-                          aria-valuenow={40}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          style={{ width: "40%" }}
-                        >
-                          {" "}
-                          <span className="sr-only">40% Complete</span>{" "}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge bg-info">Admit</span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <img
-                        src="assets/images/xs/avatar7.jpg"
-                        className="avatar sm rounded-circle me-2"
-                        alt="profile-image"
-                      />
-                      <span>Christian</span>
-                    </td>
-                    <td>123 6th St. Melbourne, FL 32904</td>
-                    <td>May 13, 2021</td>
-                    <td>May 22, 2021</td>
-                    <td>
-                      <div className="progress" style={{ height: "3px" }}>
-                        <div
-                          className="progress-bar bg-success"
-                          role="progressbar"
-                          aria-valuenow={100}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          style={{ width: "100%" }}
-                        >
-                          {" "}
-                          <span className="sr-only">100% Complete</span>{" "}
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge bg-success">Discharge</span>
-                    </td>
-                  </tr>
+                  {patients.map((patient) => (
+                    <tr>
+                      <td>{patient.patient_id}</td>
+                      <td>
+                        {patient.firstName} {patient.lastName}
+                      </td>
+                      <td>{patient.phoneNumber}</td>
+                      <td>{patient.emailAddress}</td>
+                      <td>{patient.selectedDoctor}</td>
+                      <td>{patient.ward}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

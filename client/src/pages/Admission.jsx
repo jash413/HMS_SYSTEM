@@ -14,6 +14,7 @@ const AdmissionForm = () => {
     wardNumber: "",
     notes: "",
     admissionTime: "",
+    ward_id: "",
   });
  
   const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
@@ -64,6 +65,24 @@ const AdmissionForm = () => {
       });
   };
 
+  // selected ward details
+  useEffect(() => {
+    if (formData.wardNumber) {
+      axios.get(`http://localhost:3100/api/ward/${formData.wardNumber}`,{
+        headers: {
+          authorization : `Bearer ${token}`
+        }
+      }).then((response) => {
+        const wardDetails = response.data;
+        setFormData((prevData) => ({
+          ...prevData,
+          ward_id: wardDetails._id,
+        }));
+      });
+    }
+  }, [formData.wardNumber]);
+
+
   const handleSelectChange = (selectedOption) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -105,6 +124,16 @@ const AdmissionForm = () => {
         }
         }
       );
+        // Update the billing details
+        await axios.patch(`http://localhost:3100/billing/patient/${formData.patient}`, {
+          admissionDate: formData.admissionDate,
+          ward: formData.ward_id,
+          isOutpatient: false,
+        },{
+          headers: {
+            authorization : `Bearer ${token}`
+        }
+      });
       // Update the patient's admission status & ward number
       await axios.patch(
         `http://localhost:3100/api/patients/${formData.patient}`,

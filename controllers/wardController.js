@@ -13,10 +13,10 @@ exports.getAllWards = async (req, res) => {
   }
 };
 
-// Controller for getting a specific ward by wardNumber
-exports.getWardByNumber = async (req, res) => {
+//  Controller for getting a ward by id
+exports.getWardById = async (req, res) => {
   try {
-    const ward = await Ward.findOne({ wardNumber: req.params.wardNumber });
+    const ward = await Ward.findById(req.params.id);
     if (!ward) {
       return res.status(404).json({ message: "Ward not found" });
     }
@@ -26,11 +26,28 @@ exports.getWardByNumber = async (req, res) => {
       .status(500)
       .json({ message: "Error fetching ward", error: error.message });
   }
+}; 
+
+// Controller for getting a specific ward by wardNumber
+exports.getWardByNumber = async (req, res) => {
+  try {
+    const ward = await Ward.findOne({ wardNumber: req.params.wardNumber });
+    if (!ward) {
+      return res.status(404).json({ message: "Ward not found" });
+    }
+    res.status(200).json(ward);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ message: "Error fetching ward", error: error.message });
+  }
 };
 
 // Controller for updating the status of a ward by wardNumber
 exports.updateWardStatus = async (req, res) => {
   try {
+    const { data } = req.body;
     const updatedWard = await Ward.findOneAndUpdate(
       { wardNumber: req.params.wardNumber },
       { status: req.body.status, patient: req.body.patient },

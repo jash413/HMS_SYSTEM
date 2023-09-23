@@ -1,8 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import $ from "jquery";
 import "datatables.net";
+import { myContext, tokenContext } from "./Main";
+
+
 function StaffList() {
+  const userData = useContext(myContext);
+  const token = useContext(tokenContext);
     const tableRef = useRef(null);
     const [staffMembers, setStaffMembers] = useState([]);
     useEffect(() => {
@@ -15,7 +20,11 @@ function StaffList() {
     
       const fetchStaffMembers = async () => {
         try {
-          const response = await axios.get("http://localhost:3100/api/staff");
+          const response = await axios.get("http://localhost:3100/api/staff",{
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          });
           setStaffMembers(response.data);
         } catch (error) {
           console.error(error);

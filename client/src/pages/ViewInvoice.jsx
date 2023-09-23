@@ -8,6 +8,7 @@ import moment from "moment";
 function ViewInvoice() {
   const userData = useContext(myContext);
   const token = useContext(tokenContext);
+  const [loading, setLoading] = useState(false);
   // ID of patient and doctor
   const [formData, setFormData] = useState({
     patient: "",
@@ -68,42 +69,41 @@ function ViewInvoice() {
 
   // fetch doctors
   useEffect(() => {
-    if(userData.role === "Admin"){
-    axios
-      .get("http://localhost:3100/doctors", {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        const allDoctors = response.data.filter(
-          (doctor) => doctor.hospital_id === userData.hospital_id
-        );
-        setDoctors(allDoctors);
-      });
+    if (userData.role === "Admin") {
+      axios
+        .get("http://localhost:3100/doctors", {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          const allDoctors = response.data.filter(
+            (doctor) => doctor.hospital_id === userData.hospital_id
+          );
+          setDoctors(allDoctors);
+        });
     }
-  }, [userData.role=== "Admin"]);
+  }, [userData.role === "Admin"]);
 
-//   loggin in as doctor
-    useEffect(() => {
-        if(userData.role === "Doctor"){
-            setFormData((prevData) => ({
-                ...prevData,
-                doctor: userData.doctor_id,
-            }));
-        axios
-            .get(`http://localhost:3100/doctors/${userData.doctor_id}`, {
-            headers: {
-                authorization: `Bearer ${token}`,
-            },
-            })
-            .then((response) => {
-            const allDoctors = response.data;
-            setDoctors(allDoctors);
-            });
-        }
-    }, [userData.role=== "Doctor"]);
-
+  //   loggin in as doctor
+  useEffect(() => {
+    if (userData.role === "Doctor") {
+      setFormData((prevData) => ({
+        ...prevData,
+        doctor: userData.doctor_id,
+      }));
+      axios
+        .get(`http://localhost:3100/doctors/${userData.doctor_id}`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          const allDoctors = response.data;
+          setDoctors(allDoctors);
+        });
+    }
+  }, [userData.role === "Doctor"]);
 
   const handleDoctorChange = (e) => {
     const selectedDoctor = e.target.value;
@@ -164,6 +164,59 @@ function ViewInvoice() {
       setInvoiceDetails(null); // Reset invoice details when no patient is selected
     }
   }, [formData.patient]);
+
+  //  Handle print
+  const handlePrint = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `http://localhost:3100/billing/printInvoice`,
+        {
+          invoiceDetails,
+          selectedPatientDetails,
+          hospitals,
+        },
+        { responseType: "blob" }
+      );
+      setLoading(false);
+      const pdfBlob = new Blob([response.data], { type: "application/pdf" });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      const iframe = document.createElement("iframe");
+      iframe.src = pdfUrl;
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+      iframe.contentWindow.print();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  //  Handle download
+  const handleDownload = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3100/billing/generateInvoice`,
+        {
+          invoiceDetails,
+          selectedPatientDetails,
+          hospitals,
+        },
+        { responseType: "blob" }
+      );
+
+      // Create a Blob object from the response data
+      const pdfBlob = new Blob([response.data], { type: "application/pdf" });
+
+      // Create a URL for the Blob and trigger a download
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      const link = document.createElement("a");
+      link.href = pdfUrl;
+      link.download = "Invoice.pdf";
+      link.click();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="container-xxl">
@@ -263,7 +316,7 @@ function ViewInvoice() {
                               <th className="text-end">Total</th>
                             </tr>
                           </thead>
-                          <tbody>
+                          <tbody> 
                             <tr>
                               <td className="text-center">1</td>
                               <td>Registration Fee</td>
@@ -276,9 +329,21 @@ function ViewInvoice() {
                                 {invoiceDetails.registrationFee}
                               </td>
                             </tr>
+                              <tr>
+                                <td className="text-center">2</td>
+                                <td>Room Charges</td>
+                                <td className="text-end">
+                                  <i class="icofont-rupee" />
+                                  {invoiceDetails.roomCharges}
+                                </td>
+                                <td className="text-end">
+                                  <i class="icofont-rupee" />
+                                  {invoiceDetails.roomCharges}
+                                </td>
+                              </tr>
                             {invoiceDetails.services.map((service, index) => (
                               <tr key={service._id}>
-                                <td className="text-center">{index + 2}</td>
+                                <td className="text-center">{index + 3}</td>
                                 <td>{service.serviceName}</td>
                                 <td className="text-end">
                                   <i class="icofont-rupee" />
@@ -345,14 +410,28 @@ function ViewInvoice() {
                           <button
                             type="button"
                             className="btn btn-outline-secondary btn-lg my-1"
+                            onClick={handlePrint}
                           >
-                            <i className="fa fa-print" /> Print
-                          </button>
+                            {!loading ? (
+                              <>
+                                <i className="icofont-print" />
+                                Print
+                              </>
+                            ) : (
+                              <div
+                                class="spinner-border spinner-border-sm"
+                                role="status"
+                              >
+                                <span class="visually-hidden">Loading...</span>
+                              </div>
+                            )}
+                          </button>{" "}
                           <button
                             type="button"
                             className="btn btn-primary btn-lg my-1"
+                            onClick={handleDownload}
                           >
-                            <i className="fa fa-paper-plane-o" /> Send Invoice
+                            <i className="icofont-download" /> Download Invoice
                           </button>
                         </div>
                       </div>{" "}
@@ -465,12 +544,12 @@ function ViewInvoice() {
                             className="btn btn-outline-secondary btn-lg my-1"
                           >
                             <i className="fa fa-print" /> Print
-                          </button>
+                          </button>{" "}
                           <button
                             type="button"
                             className="btn btn-primary btn-lg my-1"
                           >
-                            <i className="fa fa-paper-plane-o" /> Send Invoice
+                            <i className="icofont-download" /> Download Invoice
                           </button>
                         </div>
                       </div>{" "}

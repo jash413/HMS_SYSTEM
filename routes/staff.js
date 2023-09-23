@@ -4,7 +4,7 @@ const staffController = require('../controllers/staffController');
 const authenticateToken = require('../middleware/authMiddleware');
 
 // Route to get all staff members
-router.get('/api/staff', staffController.getAllStaff);
+router.get('/api/staff', authenticateToken,staffController.getAllStaff);
 
 // Route to create a new staff member
 router.post('/api/staff', staffController.createStaff);

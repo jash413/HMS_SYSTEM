@@ -24,6 +24,10 @@ const billingSchema = new mongoose.Schema({
   admissionDate: {
     type: Date,
   },
+  ward: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Ward', // Reference to the ward where the patient was admitted
+  },
   dischargeDate: {
     type: Date,
   },

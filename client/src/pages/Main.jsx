@@ -19,8 +19,9 @@ import DoctorList from "./DoctorList";
 import DoctorAppointment from "./DoctorAppointment";
 import Calendar from "./Calendar";
 
-// Admission pages
+// Admission, Discharge pages
 import AdmissionComponent from "./Admission";
+import DischargeForm from "./Discharge";
 
 // Operation Theatre pages
 import SurgerySchedulingForm from "./ScheduleSurgery";
@@ -41,9 +42,10 @@ import ViewEHR from "./ViewEHR";
 
 // Staff Pages
 import Staff from "./Staff";
-import StaffList from "./StaffList"
+import StaffList from "./StaffList";
 
 // Billing pages
+import PatientInvoices from "./PatientInvoices";
 import CreateInvoice from "./CreateInvoice";
 import ViewInvoice from "./ViewInvoice";
 
@@ -104,14 +106,13 @@ function Index() {
     }
   }, [token]);
 
-  // automatic sign out after 1 hour
+// forced logout after 55 minutes
   useEffect(() => {
     if (isAuthenticated) {
-      const timer = setTimeout(() => {
+      setTimeout(() => {
         handleSignOut();
-      }, 3600000);
-      return () => clearTimeout(timer);
-    }
+      }, 3300000);
+    } 
   }, [isAuthenticated]);
 
   // Handle sign in
@@ -283,7 +284,7 @@ function Index() {
                             data-bs-target="#menu-Patient"
                             href="#"
                           >
-                            <i className="icofont-blind fs-5" />{" "}
+                            <i className="icofont-users-alt-4 fs-5" />{" "}
                             <span>Patient</span>{" "}
                             <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
                           </a>
@@ -317,7 +318,7 @@ function Index() {
                             data-bs-target="#menu-ADT"
                             href="#"
                           >
-                            <i className="icofont-blind fs-5" />{" "}
+                            <i className="icofont-hospital fs-5" />{" "}
                             <span>A/D/T</span>{" "}
                             <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
                           </a>
@@ -415,126 +416,128 @@ function Index() {
                                 </Link>
                               </li>
                             )}
-                           
                           </ul>
                         </li>
                       )}
                       {(userPermissions.includes("create-ehr") ||
-                      userPermissions.includes("update-ehr")) && (
-                      <li className="collapsed">
-                        <a
-                          className="m-link"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#menu-SR1"
-                          href="#"
-                        >
-                          <i className="icofont-patient-file fs-5" />{" "}
-                          <span>EHR</span>{" "}
-                          <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                        </a>
-                        {/* Menu: Sub menu ul */}
-                        <ul className="sub-menu collapse" id="menu-SR1">
-                          {userPermissions.includes("create-ehr") && (
-                            <li>
-                              <Link to="/create-ehr">
-                                <a className="ms-link">Create EHR</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("view-ehr") && (
-                            <li>
-                              <Link to="/view-ehr">
-                                <a className="ms-link">View EHR</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("update-ehr") && (
-                            <li>
-                              <Link to="/update-ehr">
-                                <a className="ms-link">Update EHR</a>
-                              </Link>
-                            </li>
-                          )}
-                        </ul>
-                      </li>
-                      
-                    )}
-                    {(userPermissions.includes("add-staff") ||
-                      userPermissions.includes("staff-list")) && (
-                      <li className="collapsed">
-                        <a
-                          className="m-link"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#menu-SR2"
-                          href="#"
-                        >
-                          <i className="icofont-patient-file fs-5" />{" "}
-                          <span>Staff Management</span>{" "}
-                          <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                        </a>
-                        {/* Menu: Sub menu ul */}
-                        <ul className="sub-menu collapse" id="menu-SR2">
-                          {userPermissions.includes("add-staff") && (
-                            <li>
-                              <Link to="/add-staff">
-                                <a className="ms-link">Add Staff</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("staff-list") && (
-                            <li>
-                              <Link to="/staff-list">
-                                <a className="ms-link">Staff Members</a>
-                              </Link>
-                            </li>
-                          )}
-                        </ul>
-                      </li>
-                      
-                    )}
-                     {(userPermissions.includes("create-invoice") ||
-                      userPermissions.includes("update-invoice")||
-                      userPermissions.includes("view-invoice")) && (
-                      <li className="collapsed">
-                        <a
-                          className="m-link"
-                          data-bs-toggle="collapse"
-                          data-bs-target="#menu-invoice"
-                          href="#"
-                        >
-                          <i className="icofont-patient-file fs-5" />{" "}
-                          <span>Invoice Management</span>{" "}
-                          <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
-                        </a>
-                        {/* Menu: Sub menu ul */}
-                        <ul className="sub-menu collapse" id="menu-invoice">
-                          {userPermissions.includes("create-invoice") && (
-                            <li>
-                              <Link to="/create-invoice">
-                                <a className="ms-link">Create Invoice</a>
-                              </Link>
-                            </li>
-                          )}
-                          {userPermissions.includes("view-invoice") && (
-                            <li>
-                              <Link to="/view-invoice">
-                                <a className="ms-link">View Invoice</a>
-                              </Link>
-                            </li>
-                          )}
-                           {userPermissions.includes("update-invoice") && (
-                            <li>
-                              <Link to="/update-invoice">
-                                <a className="ms-link">Update Invoice</a>
-                              </Link>
-                            </li>
-                          )}
-                        </ul>
-                      </li>
-                      
-                    )}
-                    
-                  </ul>
+                        userPermissions.includes("update-ehr")) && (
+                        <li className="collapsed">
+                          <a
+                            className="m-link"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menu-SR1"
+                            href="#"
+                          >
+                            <i className="icofont-papers fs-5" />{" "}
+                            <span>EHR</span>{" "}
+                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                          </a>
+                          {/* Menu: Sub menu ul */}
+                          <ul className="sub-menu collapse" id="menu-SR1">
+                            {userPermissions.includes("create-ehr") && (
+                              <li>
+                                <Link to="/create-ehr">
+                                  <a className="ms-link">Create EHR</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("view-ehr") && (
+                              <li>
+                                <Link to="/view-ehr">
+                                  <a className="ms-link">View EHR</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("update-ehr") && (
+                              <li>
+                                <Link to="/update-ehr">
+                                  <a className="ms-link">Update EHR</a>
+                                </Link>
+                              </li>
+                            )}
+                          </ul>
+                        </li>
+                      )}
+                      {(userPermissions.includes("add-staff") ||
+                        userPermissions.includes("staff-list")) && (
+                        <li className="collapsed">
+                          <a
+                            className="m-link"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menu-SR2"
+                            href="#"
+                          >
+                            <i className="icofont-users-alt-5 fs-5" />{" "}
+                            <span>Staff Management</span>{" "}
+                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                          </a>
+                          {/* Menu: Sub menu ul */}
+                          <ul className="sub-menu collapse" id="menu-SR2">
+                            {userPermissions.includes("add-staff") && (
+                              <li>
+                                <Link to="/add-staff">
+                                  <a className="ms-link">Add Staff</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("staff-list") && (
+                              <li>
+                                <Link to="/staff-list">
+                                  <a className="ms-link">Staff Members</a>
+                                </Link>
+                              </li>
+                            )}
+                          </ul>
+                        </li>
+                      )}
+                      {(userPermissions.includes("create-invoice") ||
+                        userPermissions.includes("update-invoice") ||
+                        userPermissions.includes("view-invoice")) && (
+                        <li className="collapsed">
+                          <a
+                            className="m-link"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menu-invoice"
+                            href="#"
+                          >
+                            <i className="icofont-rupee fs-5" />{" "}
+                            <span>Invoice Management</span>{" "}
+                            <span className="arrow icofont-rounded-down ms-auto text-end fs-5" />
+                          </a>
+                          {/* Menu: Sub menu ul */}
+                          <ul className="sub-menu collapse" id="menu-invoice">
+                            {userPermissions.includes("patient-invoices") && (
+                              <li>
+                                <Link to="/patient-invoices">
+                                  <a className="ms-link">Patient Invoices</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("create-invoice") && (
+                              <li>
+                                <Link to="/create-invoice">
+                                  <a className="ms-link">Create Invoice</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("view-invoice") && (
+                              <li>
+                                <Link to="/view-invoice">
+                                  <a className="ms-link">View Invoice</a>
+                                </Link>
+                              </li>
+                            )}
+                            {userPermissions.includes("update-invoice") && (
+                              <li>
+                                <Link to="/update-invoice">
+                                  <a className="ms-link">Update Invoice</a>
+                                </Link>
+                              </li>
+                            )}
+                          </ul>
+                        </li>
+                      )}
+                    </ul>
                     {/* Menu: menu collepce btn */}
                     <button
                       type="button"
@@ -776,38 +779,26 @@ function Index() {
                                   </div>
                                 </div>
                                 <div className="list-group m-2 ">
-                                  <a
-                                    href="virtual.html"
-                                    className="list-group-item list-group-item-action border-0 "
-                                  >
-                                    <i className="icofont-ui-video-chat fs-5 me-3" />
-                                    I-Health Virtual
-                                  </a>
-                                  <a
-                                    href="patient-invoices.html"
-                                    className="list-group-item list-group-item-action border-0 "
-                                  >
-                                    <i className="icofont-dollar fs-5 me-3" />
-                                    Patient Invoices
-                                  </a>
-                                  <a
-                                    href="/"
-                                    onClick={handleSignOut}
-                                    className="list-group-item list-group-item-action border-0 "
-                                  >
-                                    <i className="icofont-logout fs-6 me-3" />
-                                    Signout
-                                  </a>
+                                  {userPermissions.includes("patient-invoices") && (
+                                    <Link to="/patient-invoices">
+                                      <a className="list-group-item list-group-item-action border-0 ">
+                                        <i className="icofont-dollar fs-5 me-3" />
+                                        Patient Invoices
+                                      </a>
+                                    </Link>
+                                  )}
+                                  <Link to="/">
+                                    <a
+                                      onClick={handleSignOut}
+                                      className="list-group-item list-group-item-action border-0 "
+                                    >
+                                      <i className="icofont-logout fs-6 me-3" />
+                                      Signout
+                                    </a>
+                                  </Link>
                                   <div>
                                     <hr className="dropdown-divider border-dark" />
                                   </div>
-                                  <a
-                                    href="ui-elements/auth-signup.html"
-                                    className="list-group-item list-group-item-action border-0 "
-                                  >
-                                    <i className="icofont-contact-add fs-5 me-3" />
-                                    Add personal account
-                                  </a>
                                 </div>
                               </div>
                             </div>
@@ -921,13 +912,21 @@ function Index() {
                       ) : (
                         <Route path="/create-user" element={<Auth404 />} />
                       )}
-                    <Route path="/create-ehr" element={<EMR />} />'
-                    <Route path="/update-ehr"  />
-                    <Route path="/create-invoice" element={<CreateInvoice />} />
-                    <Route path="/view-invoice" element={<ViewInvoice />} />
-                    <Route path="/view-ehr" element={<ViewEHR />} />
-                    <Route path="/add-staff" element={<Staff />} />
-                    <Route path="/staff-list" element={<StaffList />} />
+                      <Route path="/create-ehr" element={<EMR />} />'
+                      <Route path="/update-ehr" />
+                      <Route
+                        path="/patient-invoices"
+                        element={<PatientInvoices />}
+                      />
+                      <Route
+                        path="/create-invoice"
+                        element={<CreateInvoice />}
+                      />
+                      <Route path="/view-invoice" element={<ViewInvoice />} />
+                      <Route path="/view-ehr" element={<ViewEHR />} />
+                      <Route path="/add-staff" element={<Staff />} />
+                      <Route path="/staff-list" element={<StaffList />} />
+                      <Route path="/discharge" element={<DischargeForm />} />
                     </Routes>
                   </div>
                 </div>

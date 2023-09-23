@@ -13,6 +13,8 @@ const Ward = () => {
     newWard: {
       wardNumber: "",
       type: "",
+      dailyRoomRate: "",
+      hospital_id: userData.hospital_id,
     },
   });
   const [wardData, setWardData] = useState({
@@ -96,7 +98,11 @@ const Ward = () => {
       const response = await axios.post(
         "http://localhost:3100/api/ward",
         formData.newWard
-      );
+      ,{
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
       setWards([...wards, response.data]);
       toast.success("Room added successfully");
     } catch (error) {
@@ -112,6 +118,8 @@ const Ward = () => {
       newWard: {
         wardNumber: "",
         type: "",
+        dailyRoomRate: "",
+        hospital_id: userData.hospital_id,
       },
     });
   };
@@ -257,6 +265,25 @@ const Ward = () => {
                   }
                 />
               </div>
+              <div className="col-md-4">
+                <label htmlFor="admittime" className="form-label">
+                  Room Rate Per Night:
+                </label>
+                <input
+                  type="number"
+                  id="newWardType"
+                  value={formData.newWard.dailyRoomRate}
+                  onChange={(e) =>
+                    setFormData({
+                      newWard: {
+                        ...formData.newWard,
+                        dailyRoomRate: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </div>
+
             </div>
             <button type="submit" className="btn btn-primary mt-4">
               Add

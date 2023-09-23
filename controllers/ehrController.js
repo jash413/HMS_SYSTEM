@@ -99,7 +99,7 @@ exports.updateRecord = async (req, res) => {
     switch (component) {
       case "vitalsigns":
         updatedRecord = await VitalSigns.findByIdAndUpdate(id, updatedRecordData, {
-          new: true,
+        new: true,
         });
         break;
       case "labresults":
@@ -142,7 +142,79 @@ exports.updateRecord = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+exports.updateRecordByPatientId = async (req, res) => {
+  try {
+    const { component, patient } = req.params;
+    const updatedData = req.body;
 
+    let updatedRecord;
+
+    switch (component) {
+      case "vitalsigns":
+        updatedRecord = await VitalSigns.findOneAndUpdate(
+          { patient: patient },
+          updatedData,
+          { new: true }
+        );
+        break;
+      case "labresults":
+        updatedRecord = await LabResults.findOneAndUpdate(
+          { patient: patient },
+          updatedData,
+          { new: true }
+        );
+        break;
+      case "medications":
+        updatedRecord = await Medications.findOneAndUpdate(
+          { patient: patient },
+          updatedData,
+          { new: true }
+        );
+        break;
+      case "ClinicalExaminations":
+        updatedRecord = await ClinicalExaminations.findOneAndUpdate(
+          { patient: patient },
+          updatedData,
+          { new: true }
+        );
+        break;
+      case "diagnosticimaging":
+        updatedRecord = await DiagnosticImaging.findOneAndUpdate(
+          { patient: patient },
+          updatedData,
+          { new: true }
+        );
+        break;
+      case "prescriptions":
+        updatedRecord = await Prescriptions.findOneAndUpdate(
+          { patient: patient },
+          updatedData,
+          { new: true }
+        );
+        break;
+      case "medicalhistory":
+        updatedRecord = await MedicalHistory.findOneAndUpdate(
+          { patient: patient },
+          updatedData,
+          { new: true }
+        );
+        break;
+      // Add more cases for other components
+      default:
+        return res.status(400).json({ error: "Invalid component" });
+    }
+
+    if (!updatedRecord) {
+      return res.status(404).json({ error: "Record not found" });
+    }
+
+    // Return the updated record as a JSON response
+    res.status(200).json(updatedRecord);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 // Delete a record for a specific component
 exports.deleteRecord = async (req, res) => {
   try {

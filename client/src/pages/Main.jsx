@@ -38,6 +38,7 @@ import Auth404 from "./Auth-404";
 import axios from "axios";
 import EMR from "./EMR";
 import ViewEHR from "./ViewEHR";
+import UpdateEHR from "./UpdateEHR";
 
 // Staff Pages
 import Staff from "./Staff";
@@ -420,7 +421,8 @@ function Index() {
                         </li>
                       )}
                       {(userPermissions.includes("create-ehr") ||
-                      userPermissions.includes("view-ehr")) && (
+                      userPermissions.includes("view-ehr") ||
+                      userPermissions.includes("update-ehr") )  && (
                       <li className="collapsed">
                         <a
                           className="m-link"
@@ -448,10 +450,10 @@ function Index() {
                               </Link>
                             </li>
                           )}
-                          {userPermissions.includes("view-ehr") && (
+                          {userPermissions.includes("update-ehr") && (
                             <li>
-                              <Link to="/view-ehr">
-                                <a className="ms-link">View EHR</a>
+                              <Link to="/update-ehr">
+                                <a className="ms-link">Update EHR</a>
                               </Link>
                             </li>
                           )}
@@ -921,13 +923,20 @@ function Index() {
                       ) : (
                         <Route path="/create-user" element={<Auth404 />} />
                       )}
-                    <Route path="/create-ehr" element={<EMR />} />'
-                    <Route path="/update-ehr"  />
+                      {userPermissions.includes("create-ehr") ? (
+                        <Route
+                          path="/create-ehr"
+                          element={<EMR />}
+                        />
+                      ) : (
+                        <Route path="/create-user" element={<Auth404 />} />
+                      )}
                     <Route path="/create-invoice" element={<CreateInvoice />} />
                     <Route path="/view-invoice" element={<ViewInvoice />} />
                     <Route path="/view-ehr" element={<ViewEHR />} />
                     <Route path="/add-staff" element={<Staff />} />
                     <Route path="/staff-list" element={<StaffList />} />
+                    <Route path="/update-ehr" element={<UpdateEHR />}/>
                     </Routes>
                   </div>
                 </div>

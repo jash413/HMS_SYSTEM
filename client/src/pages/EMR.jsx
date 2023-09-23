@@ -136,15 +136,15 @@ const EMR = () => {
     });
   };
 
-  const handlePrescriptionsChange = (e) => {
-    const { name, value } = e.target;
-    setPrescriptions({
-      ...prescriptions,
-      [name]: value,
-      patient: formData.patient,
-      doctor:formData.doctor
-    });
-  };
+  // const handlePrescriptionsChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setPrescriptions({
+  //     ...prescriptions,
+  //     [name]: value,
+  //     patient: formData.patient,
+  //     doctor:formData.doctor
+  //   });
+  // };
 
   const handleclinicalexaminationsChange = (e) => {
     const { name, value } = e.target;

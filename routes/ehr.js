@@ -16,7 +16,8 @@ router.get("/ehr/prescriptions/:id", ehrController.getprescriptionsByPatientId);
 router.get("/ehr/medicalhistory/:id", ehrController.getmedicalhistoryByPatientId);
 
 // Update a record for a specific component
-router.put("/api/ehr/:component/:id", authenticateToken,ehrController.updateRecord);
+router.patch("/api/update/ehr/:component/:patient",ehrController.updateRecordByPatientId);
+// router.patch("/update/ehr/:component/:patient",ehrController.updateRecordByPatientId)
 
 // Delete a record for a specific component
 router.delete("/api/ehr/:component/:id", authenticateToken,ehrController.deleteRecord);

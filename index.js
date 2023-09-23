@@ -42,6 +42,7 @@ app.use(doctorsRouter);
 app.use(wardRouter);
 app.use(appointmentsRouter);
 
+app.use(billingRouter);
 app.use(ehrRouter);
 app.use(uploadsRouter);
 app.use(pdfRouter);

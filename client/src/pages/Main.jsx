@@ -109,12 +109,10 @@ function Index() {
 
 // forced logout after 55 minutes
   useEffect(() => {
-    if (isAuthenticated) {
       setTimeout(() => {
         handleSignOut();
       }, 3300000);
-    } 
-  }, [isAuthenticated]);
+  }, []);
 
   // Handle sign in
   const handleSignIn = () => {
@@ -914,13 +912,15 @@ function Index() {
                       ) : (
                         <Route path="/create-user" element={<Auth404 />} />
                       )}
-                    <Route path="/create-ehr" element={<EMR />} />'
-                    <Route path="/update-ehr"  />
+                    <Route path="/create-ehr" element={<EMR />} />
+                    <Route path="/update-ehr" element={<UpdateEHR/>}  />
                     <Route path="/create-invoice" element={<CreateInvoice />} />
                     <Route path="/view-invoice" element={<ViewInvoice />} />
                     <Route path="/view-ehr" element={<ViewEHR />} />
                     <Route path="/add-staff" element={<Staff />} />
                     <Route path="/staff-list" element={<StaffList />} />
+                    <Route path="/discharge" element={<DischargeForm />} />
+                    <Route path="/patient-invoices" element={<PatientInvoices />} />
                     </Routes>
                   </div>
                 </div>

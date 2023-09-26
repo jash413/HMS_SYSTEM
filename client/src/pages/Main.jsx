@@ -39,7 +39,6 @@ import Auth404 from "./Auth-404";
 import axios from "axios";
 import EMR from "./EMR";
 import ViewEHR from "./ViewEHR";
-import UpdateEHR from "./UpdateEHR";
 
 // Staff Pages
 import Staff from "./Staff";
@@ -49,6 +48,7 @@ import StaffList from "./StaffList";
 import PatientInvoices from "./PatientInvoices";
 import CreateInvoice from "./CreateInvoice";
 import ViewInvoice from "./ViewInvoice";
+import { each } from "jquery";
 
 const myContext = createContext();
 const tokenContext = createContext();
@@ -421,8 +421,7 @@ function Index() {
                         </li>
                       )}
                       {(userPermissions.includes("create-ehr") ||
-                      userPermissions.includes("view-ehr") ||
-                        userPermissions.includes("update-ehr") )  && (
+                      userPermissions.includes("view-ehr") )  && (
                         <li className="collapsed">
                           <a
                             className="m-link"
@@ -450,13 +449,7 @@ function Index() {
                                 </Link>
                               </li>
                             )}
-                            {userPermissions.includes("update-ehr") && (
-                              <li>
-                                <Link to="/update-ehr">
-                                  <a className="ms-link">Update EHR</a>
-                                </Link>
-                              </li>
-                            )}
+                        
                           </ul>
                         </li>
                       )}
@@ -914,13 +907,14 @@ function Index() {
                       ) : (
                         <Route path="/create-user" element={<Auth404 />} />
                       )}
-                    <Route path="/create-ehr" element={<EMR />} />'
-                    <Route path="/update-ehr"  />
+                    <Route path="/create-ehr" element={<EMR />} />
                     <Route path="/create-invoice" element={<CreateInvoice />} />
                     <Route path="/view-invoice" element={<ViewInvoice />} />
                     <Route path="/view-ehr" element={<ViewEHR />} />
                     <Route path="/add-staff" element={<Staff />} />
                     <Route path="/staff-list" element={<StaffList />} />
+                    <Route  path="/patient-invoices" element={<PatientInvoices />}/>
+                    <Route path="/discharge" element={<DischargeForm />}/>
                     </Routes>
                   </div>
                 </div>

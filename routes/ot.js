@@ -49,7 +49,7 @@ router.patch('/surgery-records/:id', authenticateToken,operationTheatreControlle
 router.delete('/surgery-records/:id', authenticateToken,operationTheatreController.deleteSurgeryRecord);
 
 // Generate Consent Form
-router.post('/generate-consent-form', authenticateToken,operationTheatreController.generateConsentForm);
+router.post('/generate-consent-form', operationTheatreController.generateConsentForm);
 
 // Get Common Available Slots
 router.get('/common-available-slots', authenticateToken,operationTheatreController.getCommonAvailableSlots);

@@ -20,6 +20,35 @@ const Ward = () => {
   const [wardData, setWardData] = useState({
     wardNumber: "",
   });
+  const [doctors, setDoctors] = useState([]); // List of doctors
+
+  // useEffect to get all doctors
+  useEffect(() => {
+    axios
+      .get("http://localhost:3100/doctors", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        const doctors = res.data.filter((doctor) => {
+          return doctor.hospital_id === userData.hospital_id;
+        });
+        setDoctors(doctors);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  // patient's table doctor name
+  const getDoctorName = (doctorId) => {
+    const doctor = doctors.find((doc) => doc._id === doctorId);
+    if (doctor) {
+      return doctor.first_name + " " + doctor.last_name;
+    }
+    return "";
+  };
 
   useEffect(() => {
     // Fetch ward data from the backend
@@ -81,7 +110,7 @@ const Ward = () => {
           <b>Patient Gender:</b> {patientDetails.gender}
         </p>
         <p>
-          <b>Patient Doctor:</b> {patientDetails.selectedDoctor}
+          <b>Primary Consultant:</b> {getDoctorName(patientDetails.doctor)}
         </p>
         <p>
           <b>Patient Phone Number:</b> {patientDetails.phoneNumber}

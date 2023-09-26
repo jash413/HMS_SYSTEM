@@ -51,7 +51,9 @@ function Dashboard() {
   const [paidBills, setPaidBills] = useState("");
   const [doctors, setDoctors] = useState([]);
   const [pendingBillsList, setPendingBillsList] = useState([]);
-  const [doctorWisePendingBillsData, setDoctorWisePendingBillsData] = useState([]);
+  const [doctorWisePendingBillsData, setDoctorWisePendingBillsData] = useState(
+    []
+  );
 
   const [patientData, setPatientData] = useState([
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -310,11 +312,12 @@ function Dashboard() {
         if (doctor) {
           if (!doctorWisePendingBills[doctorId]) {
             doctorWisePendingBills[doctorId] = {
-              doctorName: "Dr"+" "+doctor.first_name, // Use the doctor's first name for now
+              doctorName: "Dr" + " " + doctor.first_name, // Use the doctor's first name for now
               totalPendingAmount: 0,
             };
           }
-          doctorWisePendingBills[doctorId].totalPendingAmount += bill.totalCharges;
+          doctorWisePendingBills[doctorId].totalPendingAmount +=
+            bill.totalCharges;
         }
       });
 
@@ -328,11 +331,15 @@ function Dashboard() {
 
   // Data for PENDING BILL chart doctor wise
   const dataD = {
-    labels: doctorWisePendingBillsData.map((doctorData) => doctorData.doctorName),
+    labels: doctorWisePendingBillsData.map(
+      (doctorData) => doctorData.doctorName
+    ),
     datasets: [
       {
         label: "Amount",
-        data: doctorWisePendingBillsData.map((doctorData) => doctorData.totalPendingAmount),
+        data: doctorWisePendingBillsData.map(
+          (doctorData) => doctorData.totalPendingAmount
+        ),
         backgroundColor: [
           "#8dbfb3",
           "#33FF57",
@@ -370,7 +377,6 @@ function Dashboard() {
       },
     },
   };
-
 
   useEffect(() => {
     // Fetch the list of patients from the backend
@@ -463,7 +469,7 @@ function Dashboard() {
           <b>Patient Gender:</b> {patientDetails.gender}
         </p>
         <p>
-          <b>Patient Doctor:</b> {patientDetails.selectedDoctor}
+          <b>Patient Doctor:</b> {getDoctorName(patientDetails.doctor)}
         </p>
         <p>
           <b>Patient Phone Number:</b> {patientDetails.phoneNumber}
@@ -503,6 +509,15 @@ function Dashboard() {
     }
   };
 
+  // patient's table doctor name
+  const getDoctorName = (doctorId) => {
+    const doctor = doctors.find((doc) => doc._id === doctorId);
+    if (doctor) {
+      return doctor.first_name + " " + doctor.last_name;
+    }
+    return "";
+  };
+
   return (
     <div className="container-xxl">
       <div className="row g-3 mb-3 row-deck">
@@ -531,7 +546,7 @@ function Dashboard() {
         <div className="col-md-6">
           <div className="card">
             <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
-              <h6 className="mb-0 fw-bold ">Billing Status</h6>
+              <h6 className="mb-0 fw-bold ">Payment Status</h6>
             </div>
             <div className="card-body ">
               <Doughnut data={dataS} options={optionsS} />
@@ -672,7 +687,7 @@ function Dashboard() {
         </div>
       </div>
       <div className="row g-3 mb-3">
-        <div className="col-xl-8 col-lg-12 flex-column">
+        <div className="col-xl-12 col-lg-12 flex-column">
           {/* <div className="card mb-3">
             <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
               <h6 className="mb-0 fw-bold ">Addmission by Division</h6>
@@ -711,141 +726,18 @@ function Dashboard() {
                       </td>
                       <td>{patient.phoneNumber}</td>
                       <td>{patient.emailAddress}</td>
-                      <td>{patient.selectedDoctor}</td>
-                      <td>{patient.ward}</td>
+                      <td>{getDoctorName(patient.doctor)}</td>
+                      {patient.ward === "" ? (
+                        <td>Not Assigned</td>
+                      ) : (
+                        <td>{patient.ward}</td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
-        </div>
-        <div className="col-xl-4 col-lg-12 flex-column">
-          <div className="card mb-3">
-            <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
-              <h6 className="mb-0 fw-bold ">Make appointment</h6>
-            </div>
-            <div className="card-body">
-              <div className="wrapper">
-                <div id="calendar">
-                  <div className="monthChange" />
-                  <div className="timepicker">
-                    <div className="owl">
-                      <div>06:00</div>
-                      <div>07:00</div>
-                      <div>08:00</div>
-                      <div>09:00</div>
-                      <div>10:00</div>
-                      <div>11:00</div>
-                      <div>12:00</div>
-                      <div>13:00</div>
-                      <div>14:00</div>
-                      <div>15:00</div>
-                      <div>16:00</div>
-                      <div>17:00</div>
-                      <div>18:00</div>
-                      <div>19:00</div>
-                      <div>20:00</div>
-                    </div>
-                    <div className="fade-l" />
-                    <div className="fade-r" />
-                  </div>
-                </div>
-                <div className="inner-wrap">
-                  <form>
-                    <div className="mb-3">
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="ps-name"
-                        placeholder="Enter Name"
-                      />
-                    </div>
-                    <div className="mb-3">
-                      <input
-                        type="email"
-                        className="form-control"
-                        id="ps-email"
-                        placeholder="Enter Email"
-                      />
-                    </div>
-                    <select
-                      className="form-select mb-3"
-                      aria-label="Default select example"
-                    >
-                      <option selected>Select Doctor</option>
-                      <option value={1}>One</option>
-                      <option value={2}>Two</option>
-                      <option value={3}>Three</option>
-                    </select>
-                    <button
-                      type="submit"
-                      className="btn btn-primary disabled request"
-                    >
-                      {" "}
-                      Request appointment <span>On</span>
-                      <span className="day fw-bold text-dark" />
-                      <span>At</span>
-                      <span className="time fw-bold text-dark" />
-                      <i className="icofont-dotted-right fs-3" />
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* <div className="card bg-secondary position-relative">
-            <div className="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
-              <h6 className="mb-0 fw-bold text-white ">Doctor Of the Month</h6>
-            </div>
-            <div className="card-body text-center p-4 text-white">
-              <img
-                src="assets/images/profile_av.png"
-                alt=""
-                className="rounded-circle mb-3 img-thumbnail avatar xl shadow-sm"
-              />
-              <div className="d-flex align-items-center justify-content-center">
-                <span className="mb-2 me-3">
-                  <a href="#" className="rating-link active">
-                    <i className="bi bi-star-fill text-primary" />
-                  </a>
-                  <a href="#" className="rating-link active">
-                    <i className="bi bi-star-fill text-primary" />
-                  </a>
-                  <a href="#" className="rating-link active">
-                    <i className="bi bi-star-fill text-primary" />
-                  </a>
-                  <a href="#" className="rating-link active">
-                    <i className="bi bi-star-fill text-primary" />
-                  </a>
-                  <a href="#" className="rating-link active">
-                    <i className="bi bi-star-half text-primary" />
-                  </a>
-                </span>
-              </div>
-              <h5 className="mb-0">Manuella Nevoresky</h5>
-              <span className="small">Cardiologists</span>
-              <div className="d-flex justify-content-center pt-3">
-                <div className="opration d-flex justify-content-start align-content-center p-3">
-                  <i className="icofont-operation-theater fs-1" />
-                  <div className="opt_ineer text-start ps-3">
-                    <span className="d-block">12</span>
-                    <span className="d-block">Oprations</span>
-                  </div>
-                </div>
-                <div className="pations-visit d-flex justify-content-start align-content-center p-3 border-start">
-                  <i className="icofont-crutch fs-1" />
-                  <div className="opt_ineer text-start ps-3">
-                    <span className="d-block">35</span>
-                    <span className="d-block">Patient</span>
-                  </div>
-                </div>
-              </div>
-              <div className="cup">
-                <i className="icofont-award" />
-              </div>
-            </div>
-          </div> */}
         </div>
       </div>
       {/* .row end */}

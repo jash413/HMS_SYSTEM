@@ -60,7 +60,7 @@ function DoctorList() {
                   <th>Name</th>
                   <th>Phone Number</th>
                   <th>Email-Address</th>
-                  <th>Date</th>
+                  <th>DOJ</th>
                 </tr>
               </thead>
               <tbody>
@@ -72,7 +72,7 @@ function DoctorList() {
                     </td>
                     <td>{doctor.phone}</td>
                     <td>{doctor.email}</td>
-                    <td>{doctor.admitDate}</td>
+                    <td>{doctor.join_date}</td>
                   </tr>
                 ))}
               </tbody>

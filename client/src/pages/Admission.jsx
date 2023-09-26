@@ -16,46 +16,89 @@ const AdmissionForm = () => {
     admissionTime: "",
     ward_id: "",
   });
- 
+
   const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
   const [vacantWards, setVacantWards] = useState([]);
+  const [doctors, setDoctors] = useState([]); // List of doctors
+
+  // useEffect to get all doctors
+  useEffect(() => {
+    axios
+      .get("http://localhost:3100/doctors", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        const doctors = res.data.filter((doctor) => {
+          return doctor.hospital_id === userData.hospital_id;
+        });
+        setDoctors(doctors);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  // patient's table doctor name
+  const getDoctorName = (doctorId) => {
+    const doctor = doctors.find((doc) => doc._id === doctorId);
+    if (doctor) {
+      return doctor.first_name + " " + doctor.last_name;
+    }
+    return "";
+  };
 
   useEffect(() => {
     // Fetch the list of vacant wards from the API
-    axios.get("http://localhost:3100/api/ward",{
-      headers: {
-        authorization : `Bearer ${token}`
-      }
-    }).then((response) => {
-      const allWards = response.data;
-      const vacantWards = allWards.filter((wards) => wards.status === "Vacant" && wards.hospital_id === userData.hospital_id);
-      setVacantWards(vacantWards);
-    });
+    axios
+      .get("http://localhost:3100/api/ward", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const allWards = response.data;
+        const vacantWards = allWards.filter(
+          (wards) =>
+            wards.status === "Vacant" &&
+            wards.hospital_id === userData.hospital_id
+        );
+        setVacantWards(vacantWards);
+      });
   }, []);
 
   const wards = () => {
-    axios.get("http://localhost:3100/api/ward",{
-      headers: {
-        authorization : `Bearer ${token}`
-      }
-    }).then((response) => {
-      const allWards = response.data;
-      const vacantWards = allWards.filter((wards) => wards.status === "Vacant" && wards.hospital_id === userData.hospital_id);
-      setVacantWards(vacantWards);
-    });
+    axios
+      .get("http://localhost:3100/api/ward", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const allWards = response.data;
+        const vacantWards = allWards.filter(
+          (wards) =>
+            wards.status === "Vacant" &&
+            wards.hospital_id === userData.hospital_id
+        );
+        setVacantWards(vacantWards);
+      });
   };
 
   const loadOptions = (inputValue) => {
     return axios
-      .get(`http://localhost:3100/api/patients/search?name=${inputValue}`,{
+      .get(`http://localhost:3100/api/patients/search?name=${inputValue}`, {
         headers: {
-          authorization : `Bearer ${token}`
-        }
+          authorization: `Bearer ${token}`,
+        },
       })
       .then((response) => {
         const allPatients = response.data;
         const admittedPatients = allPatients.filter(
-          (patient) => patient.admitted === false && patient.hospital_id === userData.hospital_id
+          (patient) =>
+            patient.admitted === false &&
+            patient.hospital_id === userData.hospital_id
         );
         console.log(admittedPatients);
         return admittedPatients.map((patient) => ({
@@ -68,20 +111,21 @@ const AdmissionForm = () => {
   // selected ward details
   useEffect(() => {
     if (formData.wardNumber) {
-      axios.get(`http://localhost:3100/api/ward/${formData.wardNumber}`,{
-        headers: {
-          authorization : `Bearer ${token}`
-        }
-      }).then((response) => {
-        const wardDetails = response.data;
-        setFormData((prevData) => ({
-          ...prevData,
-          ward_id: wardDetails._id,
-        }));
-      });
+      axios
+        .get(`http://localhost:3100/api/ward/${formData.wardNumber}`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          const wardDetails = response.data;
+          setFormData((prevData) => ({
+            ...prevData,
+            ward_id: wardDetails._id,
+          }));
+        });
     }
   }, [formData.wardNumber]);
-
 
   const handleSelectChange = (selectedOption) => {
     setFormData((prevData) => ({
@@ -91,10 +135,10 @@ const AdmissionForm = () => {
 
     // Get the selected patient's details
     axios
-      .get(`http://localhost:3100/api/patients/${selectedOption.value}`,{
+      .get(`http://localhost:3100/api/patients/${selectedOption.value}`, {
         headers: {
-          authorization : `Bearer ${token}`
-        }
+          authorization: `Bearer ${token}`,
+        },
       })
       .then((response) => {
         setSelectedPatientDetails(response.data);
@@ -120,29 +164,33 @@ const AdmissionForm = () => {
         formData,
         {
           headers: {
-            authorization : `Bearer ${token}`
-        }
+            authorization: `Bearer ${token}`,
+          },
         }
       );
-        // Update the billing details
-        await axios.patch(`http://localhost:3100/billing/patient/${formData.patient}`, {
+      // Update the billing details
+      await axios.patch(
+        `http://localhost:3100/billing/patient/${formData.patient}`,
+        {
           admissionDate: formData.admissionDate,
           ward: formData.ward_id,
           isOutpatient: false,
-        },{
+        },
+        {
           headers: {
-            authorization : `Bearer ${token}`
+            authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
       // Update the patient's admission status & ward number
       await axios.patch(
         `http://localhost:3100/api/patients/${formData.patient}`,
         { admitted: true, ward: `${formData.wardNumber}` },
         {
           headers: {
-            authorization : `Bearer ${token}`
+            authorization: `Bearer ${token}`,
+          },
         }
-      }
       );
       // Update the selected ward's status to "Occupied" and associate the patient
       await axios.patch(
@@ -150,9 +198,9 @@ const AdmissionForm = () => {
         { status: "Occupied", patient: formData.patient },
         {
           headers: {
-            authorization : `Bearer ${token}`
+            authorization: `Bearer ${token}`,
+          },
         }
-      }
       );
       console.log(response.data);
       if (response.status === 201) {
@@ -214,7 +262,7 @@ const AdmissionForm = () => {
                 <div className="col-md-4">
                   {selectedPatientDetails && (
                     <h6 className="mb-0">
-                      <b>Doctor:</b> {selectedPatientDetails.selectedDoctor}
+                      <b>Doctor:</b> {getDoctorName(selectedPatientDetails.doctor)}
                     </h6>
                   )}
                 </div>

@@ -128,6 +128,7 @@ const patientSchema = new mongoose.Schema({
   },
   ward: {
     type: String,
+    default: null,
   }
 });
 

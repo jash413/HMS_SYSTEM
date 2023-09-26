@@ -11,6 +11,10 @@ function UserRegistration() {
   const [allowedUsers, setAllowedUsers] = useState("");
   const [users, setUsers] = useState([]);
   const [doctors, setDoctors] = useState([]);
+  const [nurses, setNurses] = useState([]);
+  const [receptionist, setReceptionist] = useState([]);
+  const [selectedReceptionist, setSelectedReceptionist] = useState({});
+  const [selectedNurse, setSelectedNurse] = useState({});
   const [selectedDoctor, setSelectedDoctor] = useState({});
   const [formData, setFormData] = useState({
     name: "",
@@ -21,7 +25,57 @@ function UserRegistration() {
     hospital_id: userData ? userData.hospital_id : "", // Handle userData being undefined
     permissions: [],
     doctor_id: "",
+    nurse_id: "",
+    receptionist_id: "",
   });
+
+  // Get nurses
+  useEffect(() => {
+    // Check if formData.hospital_id is defined before making requests
+    if (formData.hospital_id && token) {
+      axios
+        .get(`http://localhost:3100/api/staff`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          const hospitalNurses = response.data.filter(
+            (staff) =>
+              staff.hospital_id === formData.hospital_id &&
+              staff.role === "Nurse"
+          );
+          setNurses(hospitalNurses);
+        })
+        .catch((error) => {
+          console.error("Error fetching nurses:", error);
+        });
+    }
+  }, [formData.hospital_id, token]);
+
+  // Get receptionist
+  useEffect(() => {
+    // Check if formData.hospital_id is defined before making requests
+    if (formData.hospital_id && token) {
+      axios
+        .get(`http://localhost:3100/api/staff`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          const hospitalReceptionist = response.data.filter(
+            (staff) =>
+              staff.hospital_id === formData.hospital_id &&
+              staff.role === "Receptionist"
+          );
+          setReceptionist(hospitalReceptionist);
+        })
+        .catch((error) => {
+          console.error("Error fetching receptionist:", error);
+        });
+    }
+  }, [formData.hospital_id, token]);
 
   useEffect(() => {
     // Check if formData.hospital_id is defined before making requests
@@ -85,6 +139,7 @@ function UserRegistration() {
 
   const handleDoctorSelect = (e) => {
     const { value } = e.target;
+    if (!value) return setFormData({ ...formData, doctor_id: "", name: "" });
     const selectedDoctor = doctors.find((doctor) => doctor._id === value);
     setSelectedDoctor(selectedDoctor);
     setFormData({
@@ -113,7 +168,7 @@ function UserRegistration() {
 
         if (response.status === 201) {
           toast.success("User registered successfully");
-          console.log(allowedUsers, users.length)
+          console.log(allowedUsers, users.length);
           setFormData({
             name: "",
             username: "",
@@ -124,18 +179,43 @@ function UserRegistration() {
             doctor_id: "",
             hospital_id: userData ? userData.hospital_id : "",
           });
-
-          await axios.patch(
-            `http://localhost:3100/doctors/${selectedDoctor._id}`,
-            {
-              user_created: true,
-            },
-            {
-              headers: {
-                authorization: `Bearer ${token}`,
+          if (formData.role === "Doctor") {
+            await axios.patch(
+              `http://localhost:3100/doctors/${selectedDoctor._id}`,
+              {
+                user_created: true,
               },
-            }
-          );
+              {
+                headers: {
+                  authorization: `Bearer ${token}`,
+                },
+              }
+            );
+          } else if (formData.role === "Nurse") {
+            await axios.patch(
+              `http://localhost:3100/staff/${selectedNurse._id}`,
+              {
+                user_created: true,
+              },
+              {
+                headers: {
+                  authorization: `Bearer ${token}`,
+                },
+              }
+            );
+          } else if (formData.role === "Receptionist") {
+            await axios.patch(
+              `http://localhost:3100/staff/${selectedReceptionist._id}`,
+              {
+                user_created: true,
+              },
+              {
+                headers: {
+                  authorization: `Bearer ${token}`,
+                },
+              }
+            );
+          }
         }
       } catch (error) {
         console.error("Error registering user:", error);
@@ -160,6 +240,34 @@ function UserRegistration() {
       });
     }
   };
+
+  const handleNurseSelect = (e) => {
+    const { value } = e.target;
+    if (!value) return setFormData({ ...formData, nurse_id: "", name: "" });
+    const selectedNurse = nurses.find((nurse) => nurse._id === value);
+    setSelectedNurse(selectedNurse);
+    setFormData({
+      ...formData,
+      nurse_id: selectedNurse._id,
+      name: `${selectedNurse.first_name} ${selectedNurse.last_name}`,
+    });
+  };
+
+  const handleReceptionistSelect = (e) => {
+    const { value } = e.target;
+    if (!value)
+      return setFormData({ ...formData, receptionist_id: "", name: "" });
+    const selectedReceptionist = receptionist.find(
+      (receptionist) => receptionist._id === value
+    );
+    setSelectedReceptionist(selectedReceptionist);
+    setFormData({
+      ...formData,
+      receptionist_id: selectedReceptionist._id,
+      name: `${selectedReceptionist.first_name} ${selectedReceptionist.last_name}`,
+    });
+  };
+
   return (
     <div className="container-xxl">
       <div className="row align-items-center">
@@ -195,6 +303,7 @@ function UserRegistration() {
                       <option value="">Select Role</option>
                       <option value="Doctor">Doctor</option>
                       <option value="Nurse">Nurse</option>
+                      <option value="Receptionist">Receptionist</option>
                     </select>
                   </div>
                   {formData.role === "Doctor" && (
@@ -213,6 +322,51 @@ function UserRegistration() {
                         {doctors.map((doctor) => (
                           <option key={doctor._id} value={doctor._id}>
                             {doctor.first_name} {doctor.last_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  {formData.role === "Nurse" && (
+                    <div className="col-md-6">
+                      <label htmlFor="admittime" className="form-label">
+                        Nurse
+                      </label>
+                      <select
+                        name="nurse_id"
+                        value={formData.nurse_id}
+                        onChange={handleNurseSelect}
+                        required
+                        className="form-select"
+                      >
+                        <option value="">Select Nurse</option>
+                        {nurses.map((nurse) => (
+                          <option key={nurse._id} value={nurse._id}>
+                            {nurse.first_name} {nurse.last_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  {formData.role === "Receptionist" && (
+                    <div className="col-md-6">
+                      <label htmlFor="admittime" className="form-label">
+                        Receptionist
+                      </label>
+                      <select
+                        name="receptionist_id"
+                        value={formData.receptionist_id}
+                        onChange={handleReceptionistSelect}
+                        required
+                        className="form-select"
+                      >
+                        <option value="">Select Receptionist</option>
+                        {receptionist.map((receptionist) => (
+                          <option
+                            key={receptionist._id}
+                            value={receptionist._id}
+                          >
+                            {receptionist.first_name} {receptionist.last_name}
                           </option>
                         ))}
                       </select>
@@ -389,21 +543,6 @@ function UserRegistration() {
                           <input
                             type="checkbox"
                             name="permissions"
-                            value="transfer"
-                            checked={formData.permissions.includes("transfer")}
-                            onChange={handleCheckboxChange}
-                            className="form-check-input"
-                          />
-                          {" Transfer"}
-                        </label>
-                      </div>
-                    </div>
-                    <div className="row g-3 align-items-center">
-                      <div className="col-md-4">
-                        <label>
-                          <input
-                            type="checkbox"
-                            name="permissions"
                             value="view-ward"
                             checked={formData.permissions.includes("view-ward")}
                             onChange={handleCheckboxChange}
@@ -412,6 +551,8 @@ function UserRegistration() {
                           {" View Ward"}
                         </label>
                       </div>
+                    </div>
+                    <div className="row g-3 align-items-center">
                       <div className="col-md-4">
                         <label>
                           <input
@@ -442,8 +583,6 @@ function UserRegistration() {
                           {" Schedule Surgery"}
                         </label>
                       </div>
-                    </div>
-                    <div className="row g-3 align-items-center">
                       <div className="col-md-4">
                         <label>
                           <input
@@ -459,6 +598,8 @@ function UserRegistration() {
                           {" Create Report"}
                         </label>
                       </div>
+                    </div>
+                    <div className="row g-3 align-items-center">
                       <div className="col-md-4">
                         <label>
                           <input
@@ -479,14 +620,29 @@ function UserRegistration() {
                           <input
                             type="checkbox"
                             name="permissions"
-                            value="create-ehr"
+                            value="emr-create"
                             checked={formData.permissions.includes(
-                              "create-ehr"
+                              "emr-create"
                             )}
                             onChange={handleCheckboxChange}
                             className="form-check-input"
                           />
                           {" Create EHR"}
+                        </label>
+                      </div>
+                      <div className="col-md-4">
+                        <label>
+                          <input
+                            type="checkbox"
+                            name="permissions"
+                            value="create-invoice"
+                            checked={formData.permissions.includes(
+                              "create-invoice"
+                            )}
+                            onChange={handleCheckboxChange}
+                            className="form-check-input"
+                          />
+                          {" Create Invoice"}
                         </label>
                       </div>
                     </div>
@@ -496,14 +652,76 @@ function UserRegistration() {
                           <input
                             type="checkbox"
                             name="permissions"
-                            value="update-ehr"
+                            value="view-invoice"
                             checked={formData.permissions.includes(
-                              "update-ehr"
+                              "view-invoice"
                             )}
                             onChange={handleCheckboxChange}
                             className="form-check-input"
                           />
-                          {" Update EHR"}
+                          {" View Invoice"}
+                        </label>
+                      </div>
+                      <div className="col-md-4">
+                        <label>
+                          <input
+                            type="checkbox"
+                            name="permissions"
+                            value="update-invoice"
+                            checked={formData.permissions.includes(
+                              "update-invoice"
+                            )}
+                            onChange={handleCheckboxChange}
+                            className="form-check-input"
+                          />
+                          {" Update Invoice"}
+                        </label>
+                      </div>
+                      <div className="col-md-4">
+                        <label>
+                          <input
+                            type="checkbox"
+                            name="permissions"
+                            value="patient-invoices"
+                            checked={formData.permissions.includes(
+                              "patient-invoices"
+                            )}
+                            onChange={handleCheckboxChange}
+                            className="form-check-input"
+                          />
+                          {" Patient Invoices"}
+                        </label>
+                      </div>
+                    </div>
+                    <div className="row g-3 align-items-center">
+                      <div className="col-md-4">
+                        <label>
+                          <input
+                            type="checkbox"
+                            name="permissions"
+                            value="add-staff"
+                            checked={formData.permissions.includes(
+                              "add-staff"
+                            )}
+                            onChange={handleCheckboxChange}
+                            className="form-check-input"
+                          />
+                          {" Add Staff"}
+                        </label>
+                      </div>
+                      <div className="col-md-4">
+                        <label>
+                          <input
+                            type="checkbox"
+                            name="permissions"
+                            value="staff-list"
+                            checked={formData.permissions.includes(
+                              "staff-list"
+                            )}
+                            onChange={handleCheckboxChange}
+                            className="form-check-input"
+                          />
+                          {" Staff List"}
                         </label>
                       </div>
                     </div>

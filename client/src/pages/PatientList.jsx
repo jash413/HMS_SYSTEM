@@ -10,14 +10,39 @@ function Patientlist() {
   const token = useContext(tokenContext);
   const tableRef = useRef(null);
   const [patients, setPatients] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+
+  // useEffect to get all doctors
+  useEffect(() => {
+    axios
+      .get("http://localhost:3100/doctors", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        const doctors = res.data.filter((doctor) => {
+          return doctor.hospital_id === userData.hospital_id;
+        });
+        setDoctors(doctors);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   useEffect(() => {
     // Fetch the list of patients from the backend
     fetchPatients();
+  }, []);
+
+  useEffect(() => {
+    // Initialize the datatable plugin on the table ref when dom is loaded
     setTimeout(() => {
       $(tableRef.current).DataTable();
-    }, 500);
-  }, []);
+    }
+    , 1000);
+  }, [patients]);
 
   const fetchPatients = async () => {
     try {
@@ -34,6 +59,15 @@ function Patientlist() {
     } catch (error) {
       console.error(error);
     }
+  };
+
+   // patient's table doctor name
+   const getDoctorName = (doctorId) => {
+    const doctor = doctors.find((doc) => doc._id === doctorId);
+    if (doctor) {
+      return doctor.first_name + " " + doctor.last_name;
+    }
+    return "";
   };
 
   return (
@@ -74,8 +108,12 @@ function Patientlist() {
                     </td>
                     <td>{patient.phoneNumber}</td>
                     <td>{patient.emailAddress}</td>
-                    <td>{patient.selectedDoctor}</td>
-                    <td>{patient.ward}</td>
+                    <td>{getDoctorName(patient.doctor)}</td>
+                    {patient.ward === "" ? (
+                        <td>Not Assigned</td>
+                      ) : (
+                        <td>{patient.ward}</td>
+                      )}
                   </tr>
                 ))}
               </tbody>

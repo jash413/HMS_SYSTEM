@@ -25,7 +25,11 @@ function StaffList() {
               authorization: `Bearer ${token}`,
             },
           });
-          setStaffMembers(response.data);
+          const data = response.data.filter((staff) => {
+            return staff.hospital_id === userData.hospital_id;
+          }
+          );
+          setStaffMembers(data);
         } catch (error) {
           console.error(error);
         }

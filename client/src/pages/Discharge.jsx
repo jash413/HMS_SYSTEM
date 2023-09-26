@@ -3,7 +3,7 @@ import axios from "axios";
 import AsyncSelect from "react-select/async";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS
-import { myContext, tokenContext } from "./Main";
+import { myContext, tokenContext } from "./Main"; 
 
 const DischargeForm = () => {
   const userData = useContext(myContext);
@@ -21,6 +21,35 @@ const DischargeForm = () => {
   });
 
   const [selectedPatientDetails, setSelectedPatientDetails] = useState(null);
+  const [doctors, setDoctors] = useState([]); // List of doctors
+
+  // useEffect to get all doctors
+  useEffect(() => {
+    axios
+      .get("http://localhost:3100/doctors", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        const doctors = res.data.filter((doctor) => {
+          return doctor.hospital_id === userData.hospital_id;
+        });
+        setDoctors(doctors);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  // patient's table doctor name
+  const getDoctorName = (doctorId) => {
+    const doctor = doctors.find((doc) => doc._id === doctorId);
+    if (doctor) {
+      return doctor.first_name + " " + doctor.last_name;
+    }
+    return "";
+  };
 
   const loadOptions = (inputValue) => {
     return axios
@@ -214,7 +243,7 @@ const DischargeForm = () => {
                 <div className="col-md-4">
                   {selectedPatientDetails && (
                     <h6 className="mb-0">
-                      <b>Doctor:</b> {selectedPatientDetails.selectedDoctor}
+                      <b>Doctor:</b> {getDoctorName(selectedPatientDetails.doctor)}
                     </h6>
                   )}
                 </div>

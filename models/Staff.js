@@ -4,11 +4,11 @@ const db = require("./db");
 // Define the Staff schema
 const staffSchema = new mongoose.Schema(
   {
-    // hospital_id: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'Hospital',
-    //   required: true,
-    // },
+    hospital_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Hospital',
+      required: true,
+    },
     staff_id: {
       type: String,
       unique: true,

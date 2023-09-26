@@ -17,6 +17,7 @@ function StaffForm() {
     phone: "",
     hire_date: "",
     workingHours: "",
+    hospital_id: userData.hospital_id,
   });
 
   const handleInputChange = (e) => {
@@ -65,6 +66,7 @@ function StaffForm() {
         phone: "",
         hire_date: "",
         workingHours: "",
+        hospital_id: userData.hospital_id,
       });
     } catch (error) {
       toast.error(error.response.data.message);
@@ -228,8 +230,6 @@ function StaffForm() {
                       <option value="">Select role/position</option>
                       <option value="Nurse">Nurse</option>
                       <option value="Receptionist">Receptionist</option>
-                      <option value="Technician">Technician</option>
-                      <option value="Other">Other</option>
                     </select>
                   </div>
                   <div className="col-md-4"></div>

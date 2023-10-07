@@ -1,50 +1,43 @@
-const mongoose = require('mongoose');
-const db = require('./db');
+const mongoose = require("mongoose");
+const db = require("./db");
 
-// Define the Appointment schema
 const appointmentSchema = new mongoose.Schema({
-  hospital_id: {
+  title: {
+    type: String,
+    required: true,
+  },
+  patient: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Hospital',
+    ref: "patients",
     required: true,
   },
-  appointment_id: {
-    type: Number,
-    unique: true,
-    required: true,
-  },
-  patient_id: {
+  doctor: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Patient',
+    ref: "doctors",
     required: true,
   },
-  doctor_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Doctor',
-    required: true,
-  },
-  appointment_date: {
+  appointmentDate: {
     type: Date,
-    required: true,
-  },
-  appointment_time: {
-    type: String,
-    required: true,
-  },
-  reason: {
-    type: String,
-    required: true,
   },
   status: {
     type: String,
-    enum: ['pending', 'confirmed', 'completed', 'canceled'],
-    default: 'pending',
+    enum: ["Scheduled", "Completed", "Cancelled"],
   },
-}, {
-  timestamps: true, // Adds createdAt and updatedAt fields
+  endingTime: {
+    type: String,
+    required :true
+  },
+  startingTime: {
+    type: String,
+    required:true
+  },
+  selectedDate:{
+    type:Date,
+  
+  }
+
 });
 
-// Create the Appointment model based on the schema
-const Appointment = mongoose.model('Appointment', appointmentSchema);
+const Appointment = mongoose.model("Appointment", appointmentSchema);
 
 module.exports = Appointment;

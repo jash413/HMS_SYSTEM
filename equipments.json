@@ -1,0 +1,165 @@
+{
+  "availableAnaesthetists": [
+      {
+          "workingHours": {
+              "startTime": "10:00 ",
+              "endTime": "18:00 "
+          },
+          "_id": "64eb48cac6ed6e5dbc8c6dd3",
+          "name": "Dr. Sarah Johnson",
+          "specialization": "Pediatric Anaesthetist",
+          "bookedSlots": [],
+          "__v": 0
+      }
+  ],
+  "availableSurgeons": [],
+  "availableOperationTheatres": [
+      {
+          "operatingHours": {
+              "startTime": "08:00",
+              "endTime": "17:00"
+          },
+          "_id": "64eb4b3a7020f55d9d4038cf",
+          "name": "OT 1",
+          "description": "Main Operation Theatre",
+          "bookedSlots": [],
+          "__v": 0
+      },
+      {
+          "operatingHours": {
+              "startTime": "09:00",
+              "endTime": "18:00"
+          },
+          "_id": "64eb51b7dbe93f9b65fc4958",
+          "name": "OT 4",
+          "description": "Specialized Operation Theatre",
+          "bookedSlots": [
+              {
+                  "startTime": "17:05",
+                  "endTime": "22:30",
+                  "_id": "64eb51b7dbe93f9b65fc4959"
+              }
+          ],
+          "__v": 0
+      }
+  ],
+  "availableKits": [
+      {
+          "_id": "64ec23d614b96e5883d5bbc2",
+          "name": "Surgical Kit",
+          "description": "Surgical Kit",
+          "equipment": [
+              "64ec17d8b6bb31535ce724ee",
+              "64ec17d8b6bb31535ce724ef",
+              "64ec17d8b6bb31535ce724f0",
+              "64ec17d8b6bb31535ce724f1",
+              "64ec17d8b6bb31535ce724f2",
+              "64ec17d8b6bb31535ce724f3",
+              "64ec17d8b6bb31535ce724f4",
+              "64ec17d8b6bb31535ce724f5",
+              "64ec19dab6bb31535ce72515"
+          ],
+          "schedules": [],
+          "__v": 0
+      },
+      {
+          "_id": "64ec242114b96e5883d5bbc4",
+          "name": "Anesthesia Kit",
+          "description": "Anesthesia",
+          "equipment": [
+              "64ec1796b6bb31535ce724e1",
+              "64ec1796b6bb31535ce724e2",
+              "64ec1796b6bb31535ce724e3",
+              "64ec1796b6bb31535ce724e4",
+              "64ec1796b6bb31535ce724e5",
+              "64ec1796b6bb31535ce724e6",
+              "64ec1796b6bb31535ce724e7",
+              "64ec1796b6bb31535ce724e8",
+              "64ec1796b6bb31535ce724e9",
+              "64ec1796b6bb31535ce724ea",
+              "64ec1796b6bb31535ce724eb",
+              "64ec1796b6bb31535ce724ec",
+              "64ec1796b6bb31535ce724ed"
+          ],
+          "schedules": [],
+          "__v": 0
+      },
+      {
+          "_id": "64ec245214b96e5883d5bbc6",
+          "name": "Orthopedic Kit",
+          "description": "Orthopedic Kit",
+          "equipment": [
+              "64ec18c4b6bb31535ce724f6",
+              "64ec18c4b6bb31535ce724f7",
+              "64ec18c4b6bb31535ce724f8",
+              "64ec18c4b6bb31535ce724f9",
+              "64ec18c4b6bb31535ce724fa",
+              "64ec18c4b6bb31535ce724fb",
+              "64ec18c4b6bb31535ce724fc",
+              "64ec18c4b6bb31535ce724fd"
+          ],
+          "schedules": [],
+          "__v": 0
+      },
+      {
+          "_id": "64ec247914b96e5883d5bbc8",
+          "name": "Neurosurgery Kit",
+          "description": "Neurosurgery\n",
+          "equipment": [
+              "64ec192eb6bb31535ce724fe",
+              "64ec192eb6bb31535ce724ff",
+              "64ec192eb6bb31535ce72500",
+              "64ec192eb6bb31535ce72501",
+              "64ec192eb6bb31535ce72502",
+              "64ec192eb6bb31535ce72503"
+          ],
+          "schedules": [],
+          "__v": 0
+      },
+      {
+          "_id": "64ec249614b96e5883d5bbca",
+          "name": "Cardiovascular Kit",
+          "description": "Cardiovascular",
+          "equipment": [
+              "64ec1970b6bb31535ce72504",
+              "64ec1970b6bb31535ce72505",
+              "64ec1970b6bb31535ce72506",
+              "64ec1970b6bb31535ce72507",
+              "64ec1970b6bb31535ce72508",
+              "64ec1970b6bb31535ce72509"
+          ],
+          "schedules": [],
+          "__v": 0
+      },
+      {
+          "_id": "64ec24b414b96e5883d5bbcc",
+          "name": "Gynecological Kit",
+          "description": "Gynecological",
+          "equipment": [
+              "64ec19a4b6bb31535ce7250a",
+              "64ec19a4b6bb31535ce7250b",
+              "64ec19a4b6bb31535ce7250c",
+              "64ec19a4b6bb31535ce7250d",
+              "64ec19a4b6bb31535ce7250e",
+              "64ec19a4b6bb31535ce7250f",
+              "64ec19a4b6bb31535ce72510"
+          ],
+          "schedules": [],
+          "__v": 0
+      },
+      {
+          "_id": "64ec24c614b96e5883d5bbce",
+          "name": "ENT Kit",
+          "description": "ENT",
+          "equipment": [
+              "64ec19dab6bb31535ce72511",
+              "64ec19dab6bb31535ce72512",
+              "64ec19dab6bb31535ce72513",
+              "64ec19dab6bb31535ce72514",
+              "64ec19dab6bb31535ce72515"
+          ],
+          "schedules": [],
+          "__v": 0
+      }
+  ]
+}

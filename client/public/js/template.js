@@ -132,60 +132,60 @@ $(function() {
 });
 
 // light and dark theme setting js
-$(function() {
-    "use strict";
-    var toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
-    var toggleHcSwitch = document.querySelector('.theme-high-contrast input[type="checkbox"]');
-    var currentTheme = localStorage.getItem('theme');
-    if (currentTheme) {
-        document.documentElement.setAttribute('data-theme', currentTheme);
+// $(function() {
+//     "use strict";
+//     var toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+//     var toggleHcSwitch = document.querySelector('.theme-high-contrast input[type="checkbox"]');
+//     var currentTheme = localStorage.getItem('theme');
+//     if (currentTheme) {
+//         document.documentElement.setAttribute('data-theme', currentTheme);
     
-        if (currentTheme === 'dark') {
-            toggleSwitch.checked = true;
-        }
-        if (currentTheme === 'high-contrast') {
-            toggleHcSwitch.checked = true;
-            toggleSwitch.checked = false;
-        }
-    }
-    function switchTheme(e) {
-        if (e.target.checked) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-            $('.theme-high-contrast input[type="checkbox"]').prop("checked", false);
-        }
-        else {        
-            document.documentElement.setAttribute('data-theme', 'light');
-            localStorage.setItem('theme', 'light');
-        }    
-    }
-    function switchHc(e) {
-        if (e.target.checked) {
-            document.documentElement.setAttribute('data-theme', 'high-contrast');
-            localStorage.setItem('theme', 'high-contrast');
-            $('.theme-switch input[type="checkbox"]').prop("checked", false);
-        }
-        else {        
-            document.documentElement.setAttribute('data-theme', 'light');
-            localStorage.setItem('theme', 'light');
-        }  
-    }
-    toggleSwitch.addEventListener('change', switchTheme, false);
-    toggleHcSwitch.addEventListener('change', switchHc, false);
-});
+//         if (currentTheme === 'dark') {
+//             toggleSwitch.checked = true;
+//         }
+//         if (currentTheme === 'high-contrast') {
+//             toggleHcSwitch.checked = true;
+//             toggleSwitch.checked = false;
+//         }
+//     }
+//     function switchTheme(e) {
+//         if (e.target.checked) {
+//             document.documentElement.setAttribute('data-theme', 'dark');
+//             localStorage.setItem('theme', 'dark');
+//             $('.theme-high-contrast input[type="checkbox"]').prop("checked", false);
+//         }
+//         else {        
+//             document.documentElement.setAttribute('data-theme', 'light');
+//             localStorage.setItem('theme', 'light');
+//         }    
+//     }
+//     function switchHc(e) {
+//         if (e.target.checked) {
+//             document.documentElement.setAttribute('data-theme', 'high-contrast');
+//             localStorage.setItem('theme', 'high-contrast');
+//             $('.theme-switch input[type="checkbox"]').prop("checked", false);
+//         }
+//         else {        
+//             document.documentElement.setAttribute('data-theme', 'light');
+//             localStorage.setItem('theme', 'light');
+//         }  
+//     }
+//     toggleSwitch.addEventListener('change', switchTheme, false);
+//     toggleHcSwitch.addEventListener('change', switchHc, false);
+// });
 
-$(function() {
-    "use strict";
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/6051a040f7ce18270930e55a/1f765qq8q';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    })(); 
-});
+// $(function() {
+//     "use strict";
+//     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+//     (function(){
+//     var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+//     s1.async=true;
+//     s1.src='https://embed.tawk.to/6051a040f7ce18270930e55a/1f765qq8q';
+//     s1.charset='UTF-8';
+//     s1.setAttribute('crossorigin','*');
+//     s0.parentNode.insertBefore(s1,s0);
+//     })(); 
+// });
 
 
 

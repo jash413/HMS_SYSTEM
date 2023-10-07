@@ -1,11 +1,21 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const db = require('./db');
+const bcrypt = require('bcrypt');
 
-// Define the User schema
-const userSchema = new mongoose.Schema({
+
+const userSchema = new Schema({
   hospital_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Hospital',
+    required: true,
+  },
+  doctor_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Doctor',
+  },
+  name: {
+    type: String,
     required: true,
   },
   username: {
@@ -17,51 +27,25 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  role: {
-    type: String,
-    enum: ['admin', 'doctor', 'nurse', 'staff'],
-    default: 'staff',
-  },
-  full_name: {
-    type: String,
-    required: true,
-  },
-  date_of_birth: {
-    type: Date,
-  },
-  gender: {
-    type: String,
-    enum: ['Male', 'Female', 'Other'],
-  },
-  address: {
-    type: String,
-  },
-  phone: {
-    type: String,
-  },
   email: {
     type: String,
     required: true,
     unique: true,
   },
-}, {
-  timestamps: true, // Adds createdAt and updatedAt fields
+  role: {
+    type: String,
+    enum: ['Doctor', 'Nurse', 'Admin'],
+    required: true,
+  },
+  permissions: {
+    type: [String],
+    default: [],
+  },
 });
 
-// Hash the password before saving to the database
-userSchema.pre('save', async function (next) {
-  try {
-    if (!this.isModified('password')) return next();
+// Define a method to validate a user's password
+userSchema.methods.validatePassword = function (password) {
+  return bcrypt.compare(password, this.password);
+};
 
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    return next(error);
-  }
-});
-
-// Create the User model based on the schema
-const User = mongoose.model('User', userSchema);
-
-module.exports = User;
+module.exports = mongoose.model('User', userSchema);

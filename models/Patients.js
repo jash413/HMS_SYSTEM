@@ -1,60 +1,137 @@
 const mongoose = require('mongoose');
 const db = require('./db');
 
+
 // Define the Patient schema
+// const patientSchema = new mongoose.Schema({
+//   hospital_id: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: 'Hospital',
+//     required: true,
+//   },
+//   patient_id: {
+//     type: Number,
+//     unique: true,
+//     required: true,
+//   },
+//   user_id: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: 'User',
+//     required: true,
+//   },
+//   patient_name: {
+//     type: String,
+//     required: true,
+//   },
+//   date_of_birth: {
+//     type: Date,
+//     required: true,
+//   },
+//   gender: {
+//     type: String,
+//     enum: ['Male', 'Female', 'Other'],
+//     required: true,
+//   },
+//   address: {
+//     type: String,
+//     required: true,
+//   },
+//   phone: {
+//     type: String,
+//     required: true,
+//   },
+//   email: {
+//     type: String,
+//     required: true,
+//   },
+//   emergency_contact: {
+//     type: String,
+//     required: true,
+//   },
+//   medical_history: {
+//     type: String,
+//   },
+// }, {
+//   timestamps: true, // Adds createdAt and updatedAt fields
+// });
+
+
+// // Create the Patient model based on the schema
+// const Patient = mongoose.model('Patient', patientSchema);
+
+// module.exports = Patient;
+
 const patientSchema = new mongoose.Schema({
-  hospital_id: {
+    hospital_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Hospital',
     required: true,
   },
   patient_id: {
-    type: Number,
+    type: String,
     unique: true,
     required: true,
   },
-  user_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  patient_name: {
+  firstName: {
     type: String,
     required: true,
   },
-  date_of_birth: {
-    type: Date,
+  lastName: {
+    type: String,
     required: true,
+  },
+  phoneNumber: {
+    type: String,
+  },
+  emailAddress: {
+    type: String,
+  },
+  admitDate: {
+    type: Date,
+  },
+  admitTime: {
+    type: String,
+  },
+  dischargeDate: {
+    type: Date,
+  },
+  dischargeTime: {
+    type: String,
   },
   gender: {
     type: String,
-    enum: ['Male', 'Female', 'Other'],
-    required: true,
+    enum: ['MALE', 'FEMALE', 'OTHER'],
   },
-  address: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  emergency_contact: {
-    type: String,
-    required: true,
-  },
-  medical_history: {
+  addNote: {
     type: String,
   },
-}, {
-  timestamps: true, // Adds createdAt and updatedAt fields
+  paymentOption: {
+    type: String,
+  },
+  insuranceInformation: {
+    type: String,
+  },
+  insuranceNumber: {
+    type: String,
+  },
+  doctor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Doctor',
+    required: true,
+  },
+  advanceAmount: {
+    type: Number,
+  },
+  admitted: {
+    type: Boolean,
+    default: false,
+  },
+  ward: {
+    type: String,
+    default: null,
+  }
 });
 
-// Create the Patient model based on the schema
 const Patient = mongoose.model('Patient', patientSchema);
 
 module.exports = Patient;

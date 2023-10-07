@@ -1,20 +1,26 @@
 const express = require('express');
 const router = express.Router();
-const patientController = require('../controllers/patient');
+const patientController = require('../controllers/patientController');
+const authenticateToken = require('../middleware/authMiddleware');
 
 // Route to get all patients
-router.get('/patients', patientController.getAllPatients);
+router.get('/api/patients', authenticateToken,patientController.getAllPatients);
+
+// GET /api/patients/search endpoint for searching patients
+router.get('/api/patients/search', authenticateToken,patientController.searchPatients);
+
 
 // Route to create a new patient
-router.post('/patients', patientController.createPatient);
+router.post('/api/patients', authenticateToken,patientController.createPatient);
 
 // Route to get a specific patient by id
-router.get('/patients/:id', patientController.getPatientById);
+router.get('/api/patients/:id', authenticateToken,patientController.getPatientById);
 
 // Route to update a patient by id
-router.patch('/patients/:id', patientController.updatePatientById);
+router.patch('/api/patients/:id', authenticateToken,patientController.updatePatient);
 
 // Route to delete a patient by id
-router.delete('/patients/:id', patientController.deletePatientById);
+router.delete('/api/patients/:id', authenticateToken,patientController.deletePatient);
+
 
 module.exports = router;

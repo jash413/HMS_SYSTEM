@@ -248,34 +248,34 @@ $('#calendar').datepicker({
       });
       
       // insert timepiker placeholder after selected row
-      $("<tr class='timepicker-cf'></tr>")
-          .insertAfter($(".ui-datepicker-calendar tr")
-          .eq(index));
+      // $("<tr class='timepicker-cf'></tr>")
+      //     .insertAfter($(".ui-datepicker-calendar tr")
+      //     .eq(index));
           
-      if($(".timepicker-cf")){
-        var top =$(".timepicker-cf")[0].offsetTop;
-        if($(".timepicker").css('height') == '60px'){
-          //console.log('in');
-          $(".timepicker-cf").animate({
-            'height': '0px',
-            'position' :'relative'
-          }, { duration: 200, queue: false });
-          $(".timepicker").animate({
-            'top':top
-          }, 200);
-          $(".timepicker-cf").animate({
-            'height': '60px',
-            'position' :'relative'
-          }, 200);
-        }
-        else{
-        // console.log('out');
-          $(".timepicker").css('top',(top));
-          $(".timepicker, .timepicker-cf").animate({
-            'height': '60px'
-          }, 200);
-        }
-      }
+      // if($(".timepicker-cf")){
+      //   var top =$(".timepicker-cf")[0].offsetTop;
+      //   if($(".timepicker").css('height') == '60px'){
+      //     //console.log('in');
+      //     $(".timepicker-cf").animate({
+      //       'height': '0px',
+      //       'position' :'relative'
+      //     }, { duration: 200, queue: false });
+      //     $(".timepicker").animate({
+      //       'top':top
+      //     }, 200);
+      //     $(".timepicker-cf").animate({
+      //       'height': '60px',
+      //       'position' :'relative'
+      //     }, 200);
+      //   }
+      //   else{
+      //   // console.log('out');
+      //     $(".timepicker").css('top',(top));
+      //     $(".timepicker, .timepicker-cf").animate({
+      //       'height': '60px'
+      //     }, 200);
+      //   }
+      // }
     }, 0);
     
     // display time on submit button
@@ -369,10 +369,10 @@ $(document).on('click', '.ui-datepicker-prev', function(){
   }, 200);
 });
 
-$(window).on('resize', function(){
-  top =$(".timepicker-cf")[0].offsetTop;
-  //console.log($(".timepicker-cf")[0].offsetTop);
-  $(".timepicker").css('top', ($(".timepicker-cf")[0].offsetTop));
-});
+// $(window).on('resize', function(){
+//   top =$(".timepicker-cf")[0].offsetTop;
+//   //console.log($(".timepicker-cf")[0].offsetTop);
+//   $(".timepicker").css('top', ($(".timepicker-cf")[0].offsetTop));
+// });
 
 });

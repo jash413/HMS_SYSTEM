@@ -28,7 +28,7 @@ const PostSurgeryForm = () => {
     if (Object.keys(selectedSurgeryDetails).length !== 0) {
       axios
         .get(
-          `https://backendmedisys.webwisesolution.me:3100/api/patients/${selectedSurgeryDetails.patient_id}`
+          `https://backendmedisys.webwisesolution.me/api/patients/${selectedSurgeryDetails.patient_id}`
         ,{
           headers: {
             authorization: `Bearer ${token}`,
@@ -45,7 +45,7 @@ const PostSurgeryForm = () => {
     if (Object.keys(selectedSurgeryDetails).length !== 0) {
       axios
         .get(
-          `https://backendmedisys.webwisesolution.me:3100/doctors/${selectedSurgeryDetails.doctor_id}`
+          `https://backendmedisys.webwisesolution.me/doctors/${selectedSurgeryDetails.doctor_id}`
         ,{
           headers: {
             authorization: `Bearer ${token}`,
@@ -62,7 +62,7 @@ const PostSurgeryForm = () => {
     if (Object.keys(selectedSurgeryDetails).length !== 0) {
       axios
         .get(
-          `https://backendmedisys.webwisesolution.me:3100/anaesthetists/${selectedSurgeryDetails.anaesthetist_id}`
+          `https://backendmedisys.webwisesolution.me/anaesthetists/${selectedSurgeryDetails.anaesthetist_id}`
         ,{
           headers: {
             authorization: `Bearer ${token}`,
@@ -79,7 +79,7 @@ const PostSurgeryForm = () => {
     if (Object.keys(selectedSurgeryDetails).length !== 0) {
       axios
         .get(
-          `https://backendmedisys.webwisesolution.me:3100/operation-theatres/${selectedSurgeryDetails.theatre_id}`
+          `https://backendmedisys.webwisesolution.me/operation-theatres/${selectedSurgeryDetails.theatre_id}`
         ,{
           headers: {
             authorization: `Bearer ${token}`,
@@ -93,7 +93,7 @@ const PostSurgeryForm = () => {
 
   const loadOptions = (inputValue) => {
     return axios
-      .get(`https://backendmedisys.webwisesolution.me:3100/surgeries/search?surgeryID=${inputValue}`,{
+      .get(`https://backendmedisys.webwisesolution.me/surgeries/search?surgeryID=${inputValue}`,{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -115,7 +115,7 @@ const PostSurgeryForm = () => {
 
     // Get the selected patient's details
     axios
-      .get(`https://backendmedisys.webwisesolution.me:3100/surgeries/${selectedOption.value}`,{
+      .get(`https://backendmedisys.webwisesolution.me/surgeries/${selectedOption.value}`,{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -152,7 +152,7 @@ const PostSurgeryForm = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://backendmedisys.webwisesolution.me:3100/surgery-records",
+        "https://backendmedisys.webwisesolution.me/surgery-records",
         formData
       ,{
         headers: {
@@ -166,7 +166,7 @@ const PostSurgeryForm = () => {
 
       // Update the surgery record_generated field to true
       const updateResponse = await axios.patch(
-        `https://backendmedisys.webwisesolution.me:3100/surgeries/${formData.surgery_id}`,
+        `https://backendmedisys.webwisesolution.me/surgeries/${formData.surgery_id}`,
         { record_generated: true }
       ,{
         headers: {

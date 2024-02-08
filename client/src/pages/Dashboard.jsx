@@ -65,7 +65,7 @@ function Dashboard() {
   // useEffect to get all doctors
   useEffect(() => {
     axios
-      .get("https://backendmedisys.webwisesolution.me:3100/doctors", {
+      .get("https://backendmedisys.webwisesolution.me/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -100,7 +100,7 @@ function Dashboard() {
   // get all bills
   useEffect(() => {
     axios
-      .get("https://backendmedisys.webwisesolution.me:3100/billing", {
+      .get("https://backendmedisys.webwisesolution.me/billing", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -388,7 +388,7 @@ function Dashboard() {
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get("https://backendmedisys.webwisesolution.me:3100/api/patients", {
+      const response = await axios.get("https://backendmedisys.webwisesolution.me/api/patients", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -405,7 +405,7 @@ function Dashboard() {
   // Get hospitality status data
   useEffect(() => {
     axios
-      .post("https://backendmedisys.webwisesolution.me:3100/dashboard/hospitalityStatus", {
+      .post("https://backendmedisys.webwisesolution.me/dashboard/hospitalityStatus", {
         hospital_id: userData.hospital_id,
       })
       .then((res) => {
@@ -436,7 +436,7 @@ function Dashboard() {
       try {
         setLoading(true);
         const response = await axios.get(
-          `https://backendmedisys.webwisesolution.me:3100/api/patients/${patientId}`,
+          `https://backendmedisys.webwisesolution.me/api/patients/${patientId}`,
           {
             headers: {
               authorization: `Bearer ${token}`,
@@ -483,7 +483,7 @@ function Dashboard() {
   useEffect(() => {
     // Fetch ward data from the backend
     axios
-      .get("https://backendmedisys.webwisesolution.me:3100/api/ward", {
+      .get("https://backendmedisys.webwisesolution.me/api/ward", {
         headers: {
           authorization: `Bearer ${token}`,
         },

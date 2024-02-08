@@ -22,7 +22,7 @@ const PostSurgeryUpdate = () => {
 
     const loadOptions = (inputValue) => {
       return axios
-        .get(`https://backendmedisys.webwisesolution.me:3100/surgeries/search?surgeryID=${inputValue}`,{
+        .get(`https://backendmedisys.webwisesolution.me/surgeries/search?surgeryID=${inputValue}`,{
           headers: {
             authorization: `Bearer ${token}`,
           }, 
@@ -44,7 +44,7 @@ const PostSurgeryUpdate = () => {
 
     // Get the selected patient's details
     axios
-      .get(`https://backendmedisys.webwisesolution.me:3100/surgery-records/search?surgeryId=${selectedOption.value}`,{
+      .get(`https://backendmedisys.webwisesolution.me/surgery-records/search?surgeryId=${selectedOption.value}`,{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -69,7 +69,7 @@ const PostSurgeryUpdate = () => {
     e.preventDefault();
     try {
       const response = await axios.patch(
-        `https://backendmedisys.webwisesolution.me:3100/surgery-records/update?surgeryId=${selectedSurgeryDetails.surgeryID}`,{
+        `https://backendmedisys.webwisesolution.me/surgery-records/update?surgeryId=${selectedSurgeryDetails.surgeryID}`,{
             surgeon_notes: formData.surgeon_notes,
             anaesthetist_notes: formData.anaesthetist_notes,
             patient_condition: formData.patient_condition,

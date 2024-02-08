@@ -28,7 +28,7 @@ function ViewInvoice() {
   useEffect(() => {
     if (formData.doctor) {
       axios
-        .get(`https://backendmedisys.webwisesolution.me:3100/api/patients`, {
+        .get(`https://backendmedisys.webwisesolution.me/api/patients`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -54,7 +54,7 @@ function ViewInvoice() {
     }));
 
     axios
-      .get(`https://backendmedisys.webwisesolution.me:3100/api/patients/${selectedOption}`, {
+      .get(`https://backendmedisys.webwisesolution.me/api/patients/${selectedOption}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -71,7 +71,7 @@ function ViewInvoice() {
   useEffect(() => {
     if (userData.role === "Admin") {
       axios
-        .get("https://backendmedisys.webwisesolution.me:3100/doctors", {
+        .get("https://backendmedisys.webwisesolution.me/doctors", {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -93,7 +93,7 @@ function ViewInvoice() {
         doctor: userData.doctor_id,
       }));
       axios
-        .get(`https://backendmedisys.webwisesolution.me:3100/doctors/${userData.doctor_id}`, {
+        .get(`https://backendmedisys.webwisesolution.me/doctors/${userData.doctor_id}`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -115,7 +115,7 @@ function ViewInvoice() {
     }));
     setSelectedPatientDetails(null); // Clear patient details
     axios
-      .get(`https://backendmedisys.webwisesolution.me:3100/doctors/${selectedDoctor}`, {
+      .get(`https://backendmedisys.webwisesolution.me/doctors/${selectedDoctor}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -131,7 +131,7 @@ function ViewInvoice() {
   // Hospital details
   useEffect(() => {
     axios
-      .get(`https://backendmedisys.webwisesolution.me:3100/api/hospital/${userData.hospital_id}`, {
+      .get(`https://backendmedisys.webwisesolution.me/api/hospital/${userData.hospital_id}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -147,7 +147,7 @@ function ViewInvoice() {
   useEffect(() => {
     if (formData.patient) {
       axios
-        .get(`https://backendmedisys.webwisesolution.me:3100/billing/patient/${formData.patient}`)
+        .get(`https://backendmedisys.webwisesolution.me/billing/patient/${formData.patient}`)
         .then((response) => {
           const date = moment(response.data.visitDate).format("DD-MM-YYYY");
           const invoiceData = {
@@ -170,7 +170,7 @@ function ViewInvoice() {
     try {
       setLoading(true);
       const response = await axios.post(
-        `https://backendmedisys.webwisesolution.me:3100/billing/printInvoice`,
+        `https://backendmedisys.webwisesolution.me/billing/printInvoice`,
         {
           invoiceDetails,
           selectedPatientDetails,
@@ -195,7 +195,7 @@ function ViewInvoice() {
   const handleDownload = async () => {
     try {
       const response = await axios.post(
-        `https://backendmedisys.webwisesolution.me:3100/billing/generateInvoice`,
+        `https://backendmedisys.webwisesolution.me/billing/generateInvoice`,
         {
           invoiceDetails,
           selectedPatientDetails,

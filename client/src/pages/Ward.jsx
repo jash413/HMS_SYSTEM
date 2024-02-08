@@ -25,7 +25,7 @@ const Ward = () => {
   // useEffect to get all doctors
   useEffect(() => {
     axios
-      .get("https://backendmedisys.webwisesolution.me:3100/doctors", {
+      .get("https://backendmedisys.webwisesolution.me/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -52,7 +52,7 @@ const Ward = () => {
 
   useEffect(() => {
     // Fetch ward data from the backend
-    axios.get("https://backendmedisys.webwisesolution.me:3100/api/ward",{
+    axios.get("https://backendmedisys.webwisesolution.me/api/ward",{
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -78,7 +78,7 @@ const Ward = () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `https://backendmedisys.webwisesolution.me:3100/api/patients/${patientId}`,{
+          `https://backendmedisys.webwisesolution.me/api/patients/${patientId}`,{
             headers: {
               authorization: `Bearer ${token}`,
             },
@@ -125,7 +125,7 @@ const Ward = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://backendmedisys.webwisesolution.me:3100/api/ward",
+        "https://backendmedisys.webwisesolution.me/api/ward",
         formData.newWard
       ,{
         headers: {
@@ -155,7 +155,7 @@ const Ward = () => {
 
   const fetchWards = async () => {
     try {
-      const response = await axios.get("https://backendmedisys.webwisesolution.me:3100/api/ward",{
+      const response = await axios.get("https://backendmedisys.webwisesolution.me/api/ward",{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -192,7 +192,7 @@ const Ward = () => {
     e.preventDefault();
     try {
       await axios.delete(
-        `https://backendmedisys.webwisesolution.me:3100/api/ward?wardNumber=${wardData.wardNumber}`,{
+        `https://backendmedisys.webwisesolution.me/api/ward?wardNumber=${wardData.wardNumber}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },

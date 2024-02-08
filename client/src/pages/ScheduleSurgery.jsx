@@ -128,7 +128,7 @@ function SurgerySchedulingForm() {
   const fetchAvailableSurgeons = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
-        `https://backendmedisys.webwisesolution.me:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,{
+        `https://backendmedisys.webwisesolution.me/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -144,7 +144,7 @@ function SurgerySchedulingForm() {
   const fetchAvailableAnaesthetists = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
-        `https://backendmedisys.webwisesolution.me:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,{
+        `https://backendmedisys.webwisesolution.me/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -160,7 +160,7 @@ function SurgerySchedulingForm() {
   const fetchAvailableOperationTheatres = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
-        `https://backendmedisys.webwisesolution.me:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,{
+        `https://backendmedisys.webwisesolution.me/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -176,7 +176,7 @@ function SurgerySchedulingForm() {
   const fetchAvailableKits = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
-        `https://backendmedisys.webwisesolution.me:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,{
+        `https://backendmedisys.webwisesolution.me/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -191,7 +191,7 @@ function SurgerySchedulingForm() {
   // fetch all patients
   const fetchPatients = async () => {
     try {
-      const response = await axios.get("https://backendmedisys.webwisesolution.me:3100/api/patients",{
+      const response = await axios.get("https://backendmedisys.webwisesolution.me/api/patients",{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -208,7 +208,7 @@ function SurgerySchedulingForm() {
   // fetch all surgeons
   const fetchSurgeons = async () => {
     try {
-      const response = await axios.get("https://backendmedisys.webwisesolution.me:3100/doctors",{
+      const response = await axios.get("https://backendmedisys.webwisesolution.me/doctors",{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -225,7 +225,7 @@ function SurgerySchedulingForm() {
   // fetch all anaesthetists
   const fetchAnaesthetists = async () => {
     try {
-      const response = await axios.get("https://backendmedisys.webwisesolution.me:3100/anaesthetists",{
+      const response = await axios.get("https://backendmedisys.webwisesolution.me/anaesthetists",{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -243,7 +243,7 @@ function SurgerySchedulingForm() {
   const fetchOperationTheatres = async () => {
     try {
       const response = await axios.get(
-        "https://backendmedisys.webwisesolution.me:3100/operation-theatres"
+        "https://backendmedisys.webwisesolution.me/operation-theatres"
       ,{
         headers: {
           authorization: `Bearer ${token}`,
@@ -262,7 +262,7 @@ function SurgerySchedulingForm() {
   const fetchAvailableSlots = async () => {
     try {
       const response = await axios.get(
-        `https://backendmedisys.webwisesolution.me:3100/common-available-slots?doctorId=${formData1.selectedSurgeon}&anaesthetistId=${formData1.selectedAnaesthetist}&theatreId=${formData1.selectedTheatre}&date=${formData1.selectedDate}&duration=${formData1.selectedDuration}`,{
+        `https://backendmedisys.webwisesolution.me/common-available-slots?doctorId=${formData1.selectedSurgeon}&anaesthetistId=${formData1.selectedAnaesthetist}&theatreId=${formData1.selectedTheatre}&date=${formData1.selectedDate}&duration=${formData1.selectedDuration}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -278,7 +278,7 @@ function SurgerySchedulingForm() {
   const fetchSelectedSurgeon = async () => {
     try {
       const response = await axios.get(
-        `https://backendmedisys.webwisesolution.me:3100/doctors/${formData.selectedSurgeon}`
+        `https://backendmedisys.webwisesolution.me/doctors/${formData.selectedSurgeon}`
       ,{
         headers: {
           authorization: `Bearer ${token}`,
@@ -294,7 +294,7 @@ function SurgerySchedulingForm() {
   const fetchSelectedAnaesthetist = async () => {
     try {
       const response = await axios.get(
-        `https://backendmedisys.webwisesolution.me:3100/anaesthetists/${formData.selectedAnaesthetist}`
+        `https://backendmedisys.webwisesolution.me/anaesthetists/${formData.selectedAnaesthetist}`
       ,{
         headers: {
           authorization: `Bearer ${token}`,
@@ -310,7 +310,7 @@ function SurgerySchedulingForm() {
   const fetchSelectedTheatre = async () => {
     try {
       const response = await axios.get(
-        `https://backendmedisys.webwisesolution.me:3100/operation-theatres/${formData.selectedTheatre}`
+        `https://backendmedisys.webwisesolution.me/operation-theatres/${formData.selectedTheatre}`
       ,{
         headers: {
           authorization: `Bearer ${token}`,
@@ -326,7 +326,7 @@ function SurgerySchedulingForm() {
   const fetchSelectedKit = async () => {
     try {
       const response = await axios.get(
-        `https://backendmedisys.webwisesolution.me:3100/ot-kits/${formData.selectedKit}`
+        `https://backendmedisys.webwisesolution.me/ot-kits/${formData.selectedKit}`
       ,{
         headers: {
           authorization: `Bearer ${token}`,
@@ -362,7 +362,7 @@ function SurgerySchedulingForm() {
     try {
       // Perform submission logic here
       const response = await axios.post(
-        "https://backendmedisys.webwisesolution.me:3100/generate-consent-form",
+        "https://backendmedisys.webwisesolution.me/generate-consent-form",
         {
           surgeryType: selectedSurgeryType,
           start_time: formData.selectedStartTime,
@@ -396,7 +396,7 @@ function SurgerySchedulingForm() {
     event.preventDefault();
     try {
       // Perform submission logic here
-      const response = await axios.post("https://backendmedisys.webwisesolution.me:3100/surgeries", {
+      const response = await axios.post("https://backendmedisys.webwisesolution.me/surgeries", {
         surgeryType: selectedSurgeryType,
         start_time: formData.selectedStartTime,
         end_time: formData.selectedEndTime,
@@ -419,7 +419,7 @@ function SurgerySchedulingForm() {
 
         // Update Surgeon's bookedSlots
         await axios.patch(
-          `https://backendmedisys.webwisesolution.me:3100/doctors/${formData.selectedSurgeon}`,
+          `https://backendmedisys.webwisesolution.me/doctors/${formData.selectedSurgeon}`,
           {
             bookedSlots: [
               ...selectedSurgeon.bookedSlots,
@@ -439,7 +439,7 @@ function SurgerySchedulingForm() {
 
         // Update Anaesthetist's bookedSlots
         await axios.patch(
-          `https://backendmedisys.webwisesolution.me:3100/anaesthetists/${formData.selectedAnaesthetist}`,
+          `https://backendmedisys.webwisesolution.me/anaesthetists/${formData.selectedAnaesthetist}`,
           {
             bookedSlots: [
               ...selectedAnaesthetist.bookedSlots,
@@ -458,7 +458,7 @@ function SurgerySchedulingForm() {
 
         // Update Operation Theatre's bookedSlots
         await axios.patch(
-          `https://backendmedisys.webwisesolution.me:3100/operation-theatres/${formData.selectedTheatre}`,
+          `https://backendmedisys.webwisesolution.me/operation-theatres/${formData.selectedTheatre}`,
           {
             bookedSlots: [
               ...selectedTheatre.bookedSlots,
@@ -477,7 +477,7 @@ function SurgerySchedulingForm() {
 
         // Update OT-kit schedules
         await axios.patch(
-          `https://backendmedisys.webwisesolution.me:3100/ot-kits/${formData.selectedKit}`,
+          `https://backendmedisys.webwisesolution.me/ot-kits/${formData.selectedKit}`,
           {
             schedules: [
               ...selectedKit.schedules,

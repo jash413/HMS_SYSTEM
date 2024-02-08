@@ -23,7 +23,7 @@ function Appointmentlist() {
 
   const fetchAppointments = async () => {
     try {
-      const response = await axios.get("https://backendmedisys.webwisesolution.me:3100/api/appointment");
+      const response = await axios.get("https://backendmedisys.webwisesolution.me/api/appointment");
       setAppointments(response.data);
     } catch (error) {
       console.error(error);
@@ -36,7 +36,7 @@ function Appointmentlist() {
         const patientData = [];
     
         for (const patientId of patientIds) {
-          const response = await axios.get(`https://backendmedisys.webwisesolution.me:3100/api/patients/${patientId}`);
+          const response = await axios.get(`https://backendmedisys.webwisesolution.me/api/patients/${patientId}`);
           patientData.push(response.data);
         }
     
@@ -52,7 +52,7 @@ function Appointmentlist() {
       const doctorData = [];
   
       for (const doctorId of doctorIds) {
-        const response = await axios.get(`https://backendmedisys.webwisesolution.me:3100/doctors/${doctorId}`);
+        const response = await axios.get(`https://backendmedisys.webwisesolution.me/doctors/${doctorId}`);
         doctorData.push(response.data);
       }
   

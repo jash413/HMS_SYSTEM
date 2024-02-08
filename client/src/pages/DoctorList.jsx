@@ -20,7 +20,7 @@ function DoctorList() {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get("https://backendmedisys.webwisesolution.me:3100/doctors", {
+      const response = await axios.get("https://backendmedisys.webwisesolution.me/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },

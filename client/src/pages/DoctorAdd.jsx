@@ -35,7 +35,7 @@ function DoctorAdd() {
 
     try {
       const response = await axios.post(
-        "https://backendmedisys.webwisesolution.me:3100/doctors",
+        "https://backendmedisys.webwisesolution.me/doctors",
         doctorData,
         {
           headers: {

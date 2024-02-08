@@ -29,7 +29,7 @@ function PatientInvoices() {
   // Fetch Invoices
   const fetchInvoices = async () => {
     try {
-      const response = await axios.get("http://15.207.55.158:3100/billing", {
+      const response = await axios.get("https://backendmedisys.webwisesolution.me:3100/billing", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -52,12 +52,12 @@ function PatientInvoices() {
       try {
         const [patientResponse, doctorResponse, wardResponse] =
           await Promise.all([
-            axios.get(`http://15.207.55.158:3100/api/patients/${invoice.patient}`, {
+            axios.get(`https://backendmedisys.webwisesolution.me:3100/api/patients/${invoice.patient}`, {
               headers: {
                 authorization: `Bearer ${token}`,
               },
             }),
-            axios.get(`http://15.207.55.158:3100/doctors/${invoice.doctor}`, {
+            axios.get(`https://backendmedisys.webwisesolution.me:3100/doctors/${invoice.doctor}`, {
               headers: {
                 authorization: `Bearer ${token}`,
               },
@@ -94,7 +94,7 @@ function PatientInvoices() {
       if (selectedInvoice) {
         setLoading(true);
         const response = await axios.post(
-          `http://15.207.55.158:3100/billing/printInvoice`,
+          `https://backendmedisys.webwisesolution.me:3100/billing/printInvoice`,
           {
             invoiceDetails,
             selectedPatientDetails,
@@ -121,7 +121,7 @@ function PatientInvoices() {
     try {
       if (selectedInvoice) {
         const response = await axios.post(
-          `http://15.207.55.158:3100/billing/generateInvoice`,
+          `https://backendmedisys.webwisesolution.me:3100/billing/generateInvoice`,
           {
             invoiceDetails,
             selectedPatientDetails,
@@ -157,7 +157,7 @@ function PatientInvoices() {
   const handleInvoiceDetails = async (invoice) => {
     try {
       const response = await axios.get(
-        `http://15.207.55.158:3100/billing/${invoice._id}`,
+        `https://backendmedisys.webwisesolution.me:3100/billing/${invoice._id}`,
         {
           headers: {
             authorization: `Bearer ${token}`,
@@ -174,7 +174,7 @@ function PatientInvoices() {
   const handlePatientDetails = async (invoice) => {
     try {
       const response = await axios.get(
-        `http://15.207.55.158:3100/api/patients/${invoice.patient}`,
+        `https://backendmedisys.webwisesolution.me:3100/api/patients/${invoice.patient}`,
         {
           headers: {
             authorization: `Bearer ${token}`,
@@ -191,7 +191,7 @@ function PatientInvoices() {
   const handleHospitalDetails = async (invoice) => {
     try {
       const response = await axios.get(
-        `http://15.207.55.158:3100/api/hospital/${invoice.hospital_id}`,
+        `https://backendmedisys.webwisesolution.me:3100/api/hospital/${invoice.hospital_id}`,
         {
           headers: {
             authorization: `Bearer ${token}`,

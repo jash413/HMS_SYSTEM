@@ -18,7 +18,7 @@ const AdmissionForm = () => {
 
   useEffect(() => {
     // Fetch the list of vacant wards from the API
-    axios.get("http://15.207.55.158:3100/api/ward").then((response) => {
+    axios.get("https://backendmedisys.webwisesolution.me:3100/api/ward").then((response) => {
       const allWards = response.data;
       const vacantWards = allWards.filter((wards) => wards.status === "Vacant");
       setVacantWards(vacantWards);
@@ -26,7 +26,7 @@ const AdmissionForm = () => {
   }, []);
 
   const wards = () => {
-    axios.get("http://15.207.55.158:3100/api/ward").then((response) => {
+    axios.get("https://backendmedisys.webwisesolution.me:3100/api/ward").then((response) => {
       const allWards = response.data;
       const vacantWards = allWards.filter((wards) => wards.status === "Vacant");
       setVacantWards(vacantWards);
@@ -35,7 +35,7 @@ const AdmissionForm = () => {
 
   const loadOptions = (inputValue) => {
     return axios
-      .get(`http://15.207.55.158:3100/api/patients/search?name=${inputValue}`)
+      .get(`https://backendmedisys.webwisesolution.me:3100/api/patients/search?name=${inputValue}`)
       .then((response) => {
         const allPatients = response.data;
         const admittedPatients = allPatients.filter(
@@ -57,7 +57,7 @@ const AdmissionForm = () => {
 
     // Get the selected patient's details
     axios
-      .get(`http://15.207.55.158:3100/api/${selectedOption.value}`)
+      .get(`https://backendmedisys.webwisesolution.me:3100/api/${selectedOption.value}`)
       .then((response) => {
         setSelectedPatientDetails(response.data);
       })
@@ -78,17 +78,17 @@ const AdmissionForm = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://15.207.55.158:3100/api/admission",
+        "https://backendmedisys.webwisesolution.me:3100/api/admission",
         formData
       );
       // Update the patient's admission status & ward number
       await axios.patch(
-        `http://15.207.55.158:3100/api/patients/${formData.patient}`,
+        `https://backendmedisys.webwisesolution.me:3100/api/patients/${formData.patient}`,
         { admitted: true, ward: `${formData.wardNumber}` }
       );
       // Update the selected ward's status to "Occupied" and associate the patient
       await axios.patch(
-        `http://15.207.55.158:3100/api/ward/${formData.wardNumber}`,
+        `https://backendmedisys.webwisesolution.me:3100/api/ward/${formData.wardNumber}`,
         { status: "Occupied", patient: formData.patient }
       );
       console.log(response.data);

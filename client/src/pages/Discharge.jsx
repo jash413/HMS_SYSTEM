@@ -26,7 +26,7 @@ const DischargeForm = () => {
   // useEffect to get all doctors
   useEffect(() => {
     axios
-      .get("http://15.207.55.158:3100/doctors", {
+      .get("https://backendmedisys.webwisesolution.me:3100/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -53,7 +53,7 @@ const DischargeForm = () => {
 
   const loadOptions = (inputValue) => {
     return axios
-      .get(`http://15.207.55.158:3100/api/patients/search?name=${inputValue}`, {
+      .get(`https://backendmedisys.webwisesolution.me:3100/api/patients/search?name=${inputValue}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -81,7 +81,7 @@ const DischargeForm = () => {
 
     // Get the selected patient's details
     axios
-      .get(`http://15.207.55.158:3100/api/patients/${selectedOption.value}`, {
+      .get(`https://backendmedisys.webwisesolution.me:3100/api/patients/${selectedOption.value}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -110,12 +110,12 @@ const DischargeForm = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://15.207.55.158:3100/discharge",
+        "https://backendmedisys.webwisesolution.me:3100/discharge",
         formData
       );
       // Update the billing details
       await axios.patch(
-        `http://15.207.55.158:3100/billing/patient/${formData.patient}`,
+        `https://backendmedisys.webwisesolution.me:3100/billing/patient/${formData.patient}`,
         {
           dischargeDate: formData.dischargeDate,
         },
@@ -127,7 +127,7 @@ const DischargeForm = () => {
       );
       // Update the patient's admission status & ward number
       await axios.patch(
-        `http://15.207.55.158:3100/api/patients/${formData.patient}`,
+        `https://backendmedisys.webwisesolution.me:3100/api/patients/${formData.patient}`,
         { admitted: false, ward: "" },
         {
           headers: {
@@ -137,7 +137,7 @@ const DischargeForm = () => {
       );
       // Update the selected ward's status to "Occupied" and associate the patient
       await axios.patch(
-        `http://15.207.55.158:3100/api/ward/${selectedPatientDetails.ward}`,
+        `https://backendmedisys.webwisesolution.me:3100/api/ward/${selectedPatientDetails.ward}`,
         { status: "Vacant", patient: null },
         {
           headers: {
@@ -173,7 +173,7 @@ const DischargeForm = () => {
     try {
       // Perform submission logic here
       const response = await axios.post(
-        "http://15.207.55.158:3100/discharge/summary",
+        "https://backendmedisys.webwisesolution.me:3100/discharge/summary",
         {
           patient_id: formData.patient,
           dischargeDate: formData.dischargeDate,

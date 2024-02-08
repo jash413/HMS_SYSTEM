@@ -83,7 +83,7 @@ function Calendar() {
 
       // Make an API request to update the doctor's bookedSlots
       const response = await axios.patch(
-        `http://15.207.55.158:3100/doctors/${selectedDoctor}`,
+        `https://backendmedisys.webwisesolution.me:3100/doctors/${selectedDoctor}`,
         {
           bookedSlots: updatedBookedSlots,
         }
@@ -101,7 +101,7 @@ function Calendar() {
   };
 
   useEffect(() => {
-    axios.get("http://15.207.55.158:3100/doctors",{
+    axios.get("https://backendmedisys.webwisesolution.me:3100/doctors",{
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -117,7 +117,7 @@ function Calendar() {
   useEffect(() => {
     if (selectedDoctor) {
       axios
-        .get(`http://15.207.55.158:3100/doctors/${selectedDoctor}`,{
+        .get(`https://backendmedisys.webwisesolution.me:3100/doctors/${selectedDoctor}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -131,7 +131,7 @@ function Calendar() {
   useEffect(() => {
     if (userData.role==="Doctor") {
       axios
-        .get(`http://15.207.55.158:3100/doctors/${userData.doctor_id}`,{
+        .get(`https://backendmedisys.webwisesolution.me:3100/doctors/${userData.doctor_id}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },

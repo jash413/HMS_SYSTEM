@@ -25,7 +25,7 @@ function EquipmentForm() {
 
     try {
       const response = await axios.post(
-        "http://15.207.55.158:3100/ot-equipments",
+        "https://backendmedisys.webwisesolution.me:3100/ot-equipments",
         equipmentData,
         {
           headers: {

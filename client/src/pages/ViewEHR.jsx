@@ -60,7 +60,7 @@ function ViewEHR() {
     }));
 
     axios
-      .get(`http://15.207.55.158:3100/api/patients/${selectedOption}`, {
+      .get(`https://backendmedisys.webwisesolution.me:3100/api/patients/${selectedOption}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -76,7 +76,7 @@ function ViewEHR() {
   // fetch doctors
   useEffect(() => {
     axios
-      .get("http://15.207.55.158:3100/doctors", {
+      .get("https://backendmedisys.webwisesolution.me:3100/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -88,7 +88,7 @@ function ViewEHR() {
   useEffect(() => {
     if (formData.doctor) {
       axios
-        .get(`http://15.207.55.158:3100/api/patients`, {
+        .get(`https://backendmedisys.webwisesolution.me:3100/api/patients`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -115,7 +115,7 @@ function ViewEHR() {
     }));
     setSelectedPatientDetails(null); // Clear patient details
     axios
-      .get(`http://15.207.55.158:3100/doctors/${selectedDoctor}`, {
+      .get(`https://backendmedisys.webwisesolution.me:3100/doctors/${selectedDoctor}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -130,10 +130,10 @@ function ViewEHR() {
 
   // fetch records
   useEffect(() => {
-    const vitals = `http://15.207.55.158:3100/ehr/vitalsigns/${formData.patient}`;
-    const examinations = `http://15.207.55.158:3100/ehr/ClinicalExaminations/${formData.patient}`;
-    const precriptions = `http://15.207.55.158:3100/ehr/prescriptions/${formData.patient}`;
-    const history = `http://15.207.55.158:3100/ehr/medicalhistory/${formData.patient}`;
+    const vitals = `https://backendmedisys.webwisesolution.me:3100/ehr/vitalsigns/${formData.patient}`;
+    const examinations = `https://backendmedisys.webwisesolution.me:3100/ehr/ClinicalExaminations/${formData.patient}`;
+    const precriptions = `https://backendmedisys.webwisesolution.me:3100/ehr/prescriptions/${formData.patient}`;
+    const history = `https://backendmedisys.webwisesolution.me:3100/ehr/medicalhistory/${formData.patient}`;
 
     // Helper function to handle API requests and set state
     const fetchData = async (url, setStateFunction) => {

@@ -17,7 +17,7 @@ const UpdateInvoice = () => {
 
   const loadOptions = (inputValue) => {
     return axios
-      .get(`http://localhost:3100/api/patients/search?name=${inputValue}`, {
+      .get(`http://15.207.55.158:3100/api/patients/search?name=${inputValue}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -43,7 +43,7 @@ const UpdateInvoice = () => {
 
     // Get the selected patient's details
     axios
-      .get(`http://localhost:3100/api/patients/${selectedOption.value}`, {
+      .get(`http://15.207.55.158:3100/api/patients/${selectedOption.value}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -61,7 +61,7 @@ const UpdateInvoice = () => {
 
     // Send a PATCH request to create the invoice
     axios
-      .patch(`http://localhost:3100/billing/patient/${formData.patient}`, {
+      .patch(`http://15.207.55.158:3100/billing/patient/${formData.patient}`, {
         paymentStatus: formData.paymentStatus,
       })
       .then((response) => {

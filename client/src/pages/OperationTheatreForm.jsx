@@ -23,7 +23,7 @@ const OperationTheatreForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3100/operation-theatres",
+        "http://15.207.55.158:3100/operation-theatres",
         formValues
       );
 

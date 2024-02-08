@@ -15,7 +15,7 @@ function Patientlist() {
   // useEffect to get all doctors
   useEffect(() => {
     axios
-      .get("http://localhost:3100/doctors", {
+      .get("http://15.207.55.158:3100/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -46,7 +46,7 @@ function Patientlist() {
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get("http://localhost:3100/api/patients",{
+      const response = await axios.get("http://15.207.55.158:3100/api/patients",{
         headers: {
           authorization: `Bearer ${token}`,
         },

@@ -22,7 +22,7 @@ const PostSurgeryUpdate = () => {
 
     const loadOptions = (inputValue) => {
       return axios
-        .get(`http://localhost:3100/surgeries/search?surgeryID=${inputValue}`,{
+        .get(`http://15.207.55.158:3100/surgeries/search?surgeryID=${inputValue}`,{
           headers: {
             authorization: `Bearer ${token}`,
           }, 
@@ -44,7 +44,7 @@ const PostSurgeryUpdate = () => {
 
     // Get the selected patient's details
     axios
-      .get(`http://localhost:3100/surgery-records/search?surgeryId=${selectedOption.value}`,{
+      .get(`http://15.207.55.158:3100/surgery-records/search?surgeryId=${selectedOption.value}`,{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -69,7 +69,7 @@ const PostSurgeryUpdate = () => {
     e.preventDefault();
     try {
       const response = await axios.patch(
-        `http://localhost:3100/surgery-records/update?surgeryId=${selectedSurgeryDetails.surgeryID}`,{
+        `http://15.207.55.158:3100/surgery-records/update?surgeryId=${selectedSurgeryDetails.surgeryID}`,{
             surgeon_notes: formData.surgeon_notes,
             anaesthetist_notes: formData.anaesthetist_notes,
             patient_condition: formData.patient_condition,

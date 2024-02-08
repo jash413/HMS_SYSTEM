@@ -20,7 +20,7 @@ function DoctorList() {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get("http://localhost:3100/doctors", {
+      const response = await axios.get("http://15.207.55.158:3100/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },

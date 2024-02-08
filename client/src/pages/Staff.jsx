@@ -42,7 +42,7 @@ function StaffForm() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3100/api/staff", // Update the API endpoint
+        "http://15.207.55.158:3100/api/staff", // Update the API endpoint
         staffData,
         {
           headers: {

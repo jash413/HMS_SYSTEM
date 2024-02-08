@@ -25,7 +25,7 @@ const Ward = () => {
   // useEffect to get all doctors
   useEffect(() => {
     axios
-      .get("http://localhost:3100/doctors", {
+      .get("http://15.207.55.158:3100/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -52,7 +52,7 @@ const Ward = () => {
 
   useEffect(() => {
     // Fetch ward data from the backend
-    axios.get("http://localhost:3100/api/ward",{
+    axios.get("http://15.207.55.158:3100/api/ward",{
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -78,7 +78,7 @@ const Ward = () => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `http://localhost:3100/api/patients/${patientId}`,{
+          `http://15.207.55.158:3100/api/patients/${patientId}`,{
             headers: {
               authorization: `Bearer ${token}`,
             },
@@ -125,7 +125,7 @@ const Ward = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3100/api/ward",
+        "http://15.207.55.158:3100/api/ward",
         formData.newWard
       ,{
         headers: {
@@ -155,7 +155,7 @@ const Ward = () => {
 
   const fetchWards = async () => {
     try {
-      const response = await axios.get("http://localhost:3100/api/ward",{
+      const response = await axios.get("http://15.207.55.158:3100/api/ward",{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -192,7 +192,7 @@ const Ward = () => {
     e.preventDefault();
     try {
       await axios.delete(
-        `http://localhost:3100/api/ward?wardNumber=${wardData.wardNumber}`,{
+        `http://15.207.55.158:3100/api/ward?wardNumber=${wardData.wardNumber}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },

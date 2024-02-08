@@ -18,7 +18,7 @@ function KitForm() {
 
   const fetchEquipmentOptions = async () => {
     try {
-      const response = await axios.get("http://localhost:3100/ot-equipments");
+      const response = await axios.get("http://15.207.55.158:3100/ot-equipments");
       setEquipmentOptions(response.data);
     } catch (error) {
       console.error("Error fetching equipment options:", error);
@@ -49,7 +49,7 @@ function KitForm() {
     try {
       // Make POST request to create kit with kitData
       // Replace the URL and other parts with actual API endpoint and logic
-     const response= await axios.post("http://localhost:3100/ot-kits", kitData);
+     const response= await axios.post("http://15.207.55.158:3100/ot-kits", kitData);
 
       // Reset form data after successful submission
       setKitData({

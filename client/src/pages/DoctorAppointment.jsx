@@ -26,7 +26,7 @@ const AppointmentForm = () => {
   const [availableSlots, setAvailableSlots] = useState([]); // State to store available slots
 
   useEffect(() => {
-    axios.get("http://localhost:3100/doctors",{
+    axios.get("http://15.207.55.158:3100/doctors",{
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -41,7 +41,7 @@ const AppointmentForm = () => {
 
   useEffect(() => {
     if (formData.doctor) {
-      axios.get(`http://localhost:3100/api/patients`,{
+      axios.get(`http://15.207.55.158:3100/api/patients`,{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -70,7 +70,7 @@ const AppointmentForm = () => {
   const fetchAvailableSlots = async (doctorId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/api/doctor?selectedDate=${formData.selectedDate}&id=${formData.doctor}`,{
+        `http://15.207.55.158:3100/api/doctor?selectedDate=${formData.selectedDate}&id=${formData.doctor}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -98,7 +98,7 @@ const AppointmentForm = () => {
     }));
     setSelectedPatientDetails(null); // Clear patient details
     axios
-      .get(`http://localhost:3100/doctors/${selectedDoctor}`,{
+      .get(`http://15.207.55.158:3100/doctors/${selectedDoctor}`,{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -119,7 +119,7 @@ const AppointmentForm = () => {
       }));
       setSelectedPatientDetails(null); // Clear patient details
       axios
-        .get(`http://localhost:3100/doctors/${userData.doctor_id}`,{
+        .get(`http://15.207.55.158:3100/doctors/${userData.doctor_id}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -141,7 +141,7 @@ const AppointmentForm = () => {
     }));
 
     axios
-      .get(`http://localhost:3100/api/patients/${selectedOption}`,{
+      .get(`http://15.207.55.158:3100/api/patients/${selectedOption}`,{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -167,7 +167,7 @@ const AppointmentForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3100/api/appointment",
+        "http://15.207.55.158:3100/api/appointment",
         formData,
         {
           headers: {
@@ -180,7 +180,7 @@ const AppointmentForm = () => {
 
       if (response.status === 201) {
         toast.success("Appointment Scheduled successfully");
-        await axios.patch(`http://localhost:3100/doctors/${formData.doctor}`, {
+        await axios.patch(`http://15.207.55.158:3100/doctors/${formData.doctor}`, {
           bookedSlots: [
             ...doctorData.bookedSlots,
             {

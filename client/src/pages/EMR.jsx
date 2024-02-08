@@ -66,7 +66,7 @@ const EMR = () => {
   useEffect(() => {
     if (formData.doctor) {
       axios
-        .get(`http://localhost:3100/api/patients`, {
+        .get(`http://15.207.55.158:3100/api/patients`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -92,7 +92,7 @@ const EMR = () => {
     }));
 
     axios
-      .get(`http://localhost:3100/api/patients/${selectedOption}`, {
+      .get(`http://15.207.55.158:3100/api/patients/${selectedOption}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -108,7 +108,7 @@ const EMR = () => {
   // fetch doctors
   useEffect(() => {
     axios
-      .get("http://localhost:3100/doctors", {
+      .get("http://15.207.55.158:3100/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -236,7 +236,7 @@ const handleRemoveMedicine = (index) => {
     }));
     setSelectedPatientDetails(null); // Clear patient details
     axios
-      .get(`http://localhost:3100/doctors/${selectedDoctor}`, {
+      .get(`http://15.207.55.158:3100/doctors/${selectedDoctor}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -270,7 +270,7 @@ const handleRemoveMedicine = (index) => {
       try {
         // Create an object with the vital signs data
         axios
-          .post(`http://localhost:3100/api/ehr/${value}`, data[value], {
+          .post(`http://15.207.55.158:3100/api/ehr/${value}`, data[value], {
             headers: {
               authorization: `Bearer ${token}`, // Replace with your authentication token
             },

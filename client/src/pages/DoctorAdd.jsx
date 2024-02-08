@@ -35,7 +35,7 @@ function DoctorAdd() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3100/doctors",
+        "http://15.207.55.158:3100/doctors",
         doctorData,
         {
           headers: {

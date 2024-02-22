@@ -75,7 +75,7 @@ const EMR = () => {
           const allPatients = response.data;
           // Filter patients based on the selected doctor
           const doctorPatients = allPatients.filter(
-            (patient) => patient.doctor === formData.doctor
+            (patient) => patient.doctor === formData.doctor && patient.ehr_created===false
           );
           setPatients(doctorPatients);
         });
@@ -136,15 +136,6 @@ const EMR = () => {
     });
   };
 
-  // const handlePrescriptionsChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setPrescriptions({
-  //     ...prescriptions,
-  //     [name]: value,
-  //     patient: formData.patient,
-  //     doctor:formData.doctor
-  //   });
-  // };
 
   const handleclinicalexaminationsChange = (e) => {
     const { name, value } = e.target;
@@ -276,8 +267,19 @@ const handleRemoveMedicine = (index) => {
             },
           })
           .then((response) => {
-            // toast.success("EHR created Successfully");
-            setToastVal(true);
+            toast.success("EHR created Successfully");
+            axios.patch(
+              `http://localhost:3100/patients/${selectedPatientDetails._id}`,
+              {
+                ehr_created: true,
+              },
+              {
+                headers: {
+                  authorization: `Bearer ${token}`,
+                },
+              }
+            );
+           
             // Reset the form fields
             setvitalsigns({
               patient: "",
@@ -319,10 +321,7 @@ const handleRemoveMedicine = (index) => {
         console.error("Error saving vital signs data:", error);
       }
     });
-    if (toastVal === true) {
-      toast.success("EHR created Successfully");
-      setToastVal(false);
-    }
+    
   };
 
   return (

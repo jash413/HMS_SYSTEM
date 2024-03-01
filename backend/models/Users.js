@@ -14,6 +14,10 @@ const userSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Doctor',
   },
+  staff_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Staff',
+  },
   name: {
     type: String,
     required: true,

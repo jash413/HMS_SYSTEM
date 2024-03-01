@@ -32,7 +32,7 @@ const PatientForm = () => {
 
   useEffect(() => {
     axios
-      .get("https://backendmedisys.webwisesolution.me/doctors", {
+      .get("http://localhost:3100/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -71,7 +71,7 @@ const PatientForm = () => {
       }
 
       const response = await axios.post(
-        "https://backendmedisys.webwisesolution.me/api/patients",
+        "http://localhost:3100/api/patients",
         formData,
         {
           headers: {
@@ -105,7 +105,7 @@ const PatientForm = () => {
         // Create bill for the patient
         try {
           const billResponse = await axios.post(
-            "https://backendmedisys.webwisesolution.me/billing",
+            "http://localhost:3100/billing",
             {
               patient: response.data._id,
               doctor: patientData.doctor,

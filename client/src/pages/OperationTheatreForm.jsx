@@ -23,7 +23,7 @@ const OperationTheatreForm = () => {
 
     try {
       const response = await axios.post(
-        "https://backendmedisys.webwisesolution.me/operation-theatres",
+        "http://localhost:3100/operation-theatres",
         formValues
       );
 

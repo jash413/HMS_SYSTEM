@@ -42,7 +42,7 @@ function StaffForm() {
 
     try {
       const response = await axios.post(
-        "https://backendmedisys.webwisesolution.me/api/staff", // Update the API endpoint
+        "http://localhost:3100/api/staff", // Update the API endpoint
         staffData,
         {
           headers: {

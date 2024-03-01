@@ -24,7 +24,7 @@ const AdmissionForm = () => {
   // useEffect to get all doctors
   useEffect(() => {
     axios
-      .get("https://backendmedisys.webwisesolution.me/doctors", {
+      .get("http://localhost:3100/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -52,7 +52,7 @@ const AdmissionForm = () => {
   useEffect(() => {
     // Fetch the list of vacant wards from the API
     axios
-      .get("https://backendmedisys.webwisesolution.me/api/ward", {
+      .get("http://localhost:3100/api/ward", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -70,7 +70,7 @@ const AdmissionForm = () => {
 
   const wards = () => {
     axios
-      .get("https://backendmedisys.webwisesolution.me/api/ward", {
+      .get("http://localhost:3100/api/ward", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -88,7 +88,7 @@ const AdmissionForm = () => {
 
   const loadOptions = (inputValue) => {
     return axios
-      .get(`https://backendmedisys.webwisesolution.me/api/patients/search?name=${inputValue}`, {
+      .get(`http://localhost:3100/api/patients/search?name=${inputValue}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -112,7 +112,7 @@ const AdmissionForm = () => {
   useEffect(() => {
     if (formData.wardNumber) {
       axios
-        .get(`https://backendmedisys.webwisesolution.me/api/ward/${formData.wardNumber}`, {
+        .get(`http://localhost:3100/api/ward/${formData.wardNumber}`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -135,7 +135,7 @@ const AdmissionForm = () => {
 
     // Get the selected patient's details
     axios
-      .get(`https://backendmedisys.webwisesolution.me/api/patients/${selectedOption.value}`, {
+      .get(`http://localhost:3100/api/patients/${selectedOption.value}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -160,7 +160,7 @@ const AdmissionForm = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://backendmedisys.webwisesolution.me/api/admission",
+        "http://localhost:3100/api/admission",
         formData,
         {
           headers: {
@@ -170,7 +170,7 @@ const AdmissionForm = () => {
       );
       // Update the billing details
       await axios.patch(
-        `https://backendmedisys.webwisesolution.me/billing/patient/${formData.patient}`,
+        `http://localhost:3100/billing/patient/${formData.patient}`,
         {
           admissionDate: formData.admissionDate,
           ward: formData.ward_id,
@@ -184,7 +184,7 @@ const AdmissionForm = () => {
       );
       // Update the patient's admission status & ward number
       await axios.patch(
-        `https://backendmedisys.webwisesolution.me/api/patients/${formData.patient}`,
+        `http://localhost:3100/api/patients/${formData.patient}`,
         { admitted: true, ward: `${formData.wardNumber}` },
         {
           headers: {
@@ -194,7 +194,7 @@ const AdmissionForm = () => {
       );
       // Update the selected ward's status to "Occupied" and associate the patient
       await axios.patch(
-        `https://backendmedisys.webwisesolution.me/api/ward/${formData.wardNumber}`,
+        `http://localhost:3100/api/ward/${formData.wardNumber}`,
         { status: "Occupied", patient: formData.patient },
         {
           headers: {

@@ -65,7 +65,7 @@ function Dashboard() {
   // useEffect to get all doctors
   useEffect(() => {
     axios
-      .get("https://backendmedisys.webwisesolution.me/doctors", {
+      .get("http://localhost:3100/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -100,7 +100,7 @@ function Dashboard() {
   // get all bills
   useEffect(() => {
     axios
-      .get("https://backendmedisys.webwisesolution.me/billing", {
+      .get("http://localhost:3100/billing", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -388,7 +388,7 @@ function Dashboard() {
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get("https://backendmedisys.webwisesolution.me/api/patients", {
+      const response = await axios.get("http://localhost:3100/api/patients", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -405,7 +405,7 @@ function Dashboard() {
   // Get hospitality status data
   useEffect(() => {
     axios
-      .post("https://backendmedisys.webwisesolution.me/dashboard/hospitalityStatus", {
+      .post("http://localhost:3100/dashboard/hospitalityStatus", {
         hospital_id: userData.hospital_id,
       })
       .then((res) => {
@@ -436,7 +436,7 @@ function Dashboard() {
       try {
         setLoading(true);
         const response = await axios.get(
-          `https://backendmedisys.webwisesolution.me/api/patients/${patientId}`,
+          `http://localhost:3100/api/patients/${patientId}`,
           {
             headers: {
               authorization: `Bearer ${token}`,
@@ -483,7 +483,7 @@ function Dashboard() {
   useEffect(() => {
     // Fetch ward data from the backend
     axios
-      .get("https://backendmedisys.webwisesolution.me/api/ward", {
+      .get("http://localhost:3100/api/ward", {
         headers: {
           authorization: `Bearer ${token}`,
         },

@@ -66,7 +66,7 @@ const EMR = () => {
   useEffect(() => {
     if (formData.doctor) {
       axios
-        .get(`https://backendmedisys.webwisesolution.me/api/patients`, {
+        .get(`http://localhost:3100/api/patients`, {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -92,7 +92,7 @@ const EMR = () => {
     }));
 
     axios
-      .get(`https://backendmedisys.webwisesolution.me/api/patients/${selectedOption}`, {
+      .get(`http://localhost:3100/api/patients/${selectedOption}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -108,7 +108,7 @@ const EMR = () => {
   // fetch doctors
   useEffect(() => {
     axios
-      .get("https://backendmedisys.webwisesolution.me/doctors", {
+      .get("http://localhost:3100/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -236,7 +236,7 @@ const handleRemoveMedicine = (index) => {
     }));
     setSelectedPatientDetails(null); // Clear patient details
     axios
-      .get(`https://backendmedisys.webwisesolution.me/doctors/${selectedDoctor}`, {
+      .get(`http://localhost:3100/doctors/${selectedDoctor}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -270,7 +270,7 @@ const handleRemoveMedicine = (index) => {
       try {
         // Create an object with the vital signs data
         axios
-          .post(`https://backendmedisys.webwisesolution.me/api/ehr/${value}`, data[value], {
+          .post(`http://localhost:3100/api/ehr/${value}`, data[value], {
             headers: {
               authorization: `Bearer ${token}`, // Replace with your authentication token
             },

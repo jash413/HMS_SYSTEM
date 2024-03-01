@@ -3,14 +3,14 @@ const cors = require('cors');
 const app = express();
 const port = 3100; // Replace with your desired port number
 const fs = require('fs');
-const https = require('https'); 
+// const https = require('https'); 
 
-const options = {
-  key: fs.readFileSync('/etc/letsencrypt/live/backendmedisys.webwisesolution.me/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/backendmedisys.webwisesolution.me/fullchain.pem')
-};
+// const options = {
+//   key: fs.readFileSync('/etc/letsencrypt/live/backendmedisys.webwisesolution.me/privkey.pem'),
+//   cert: fs.readFileSync('/etc/letsencrypt/live/backendmedisys.webwisesolution.me/fullchain.pem')
+// };
 
-https.createServer(options, app).listen(443);
+// https.createServer(options, app).listen(443);
 
 
 // Middleware to enable CORS

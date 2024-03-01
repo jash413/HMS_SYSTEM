@@ -12,7 +12,7 @@ function UploadDocument() {
 
   const fetchPatients = async () => {
     try {
-      const response = await axios.get("https://backendmedisys.webwisesolution.me/api/patients");
+      const response = await axios.get("http://localhost:3100/api/patients");
       setPatients(response.data);
     } catch (error) {
       console.error(error);
@@ -44,7 +44,7 @@ function UploadDocument() {
 
     try {
       const response = await axios.post(
-        "https://backendmedisys.webwisesolution.me/api/upload",
+        "http://localhost:3100/api/upload",
         formData,
         {
           headers: {

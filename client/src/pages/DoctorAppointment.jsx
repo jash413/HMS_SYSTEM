@@ -26,7 +26,7 @@ const AppointmentForm = () => {
   const [availableSlots, setAvailableSlots] = useState([]); // State to store available slots
 
   useEffect(() => {
-    axios.get("https://backendmedisys.webwisesolution.me/doctors",{
+    axios.get("http://localhost:3100/doctors",{
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -41,7 +41,7 @@ const AppointmentForm = () => {
 
   useEffect(() => {
     if (formData.doctor) {
-      axios.get(`https://backendmedisys.webwisesolution.me/api/patients`,{
+      axios.get(`http://localhost:3100/api/patients`,{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -70,7 +70,7 @@ const AppointmentForm = () => {
   const fetchAvailableSlots = async (doctorId) => {
     try {
       const response = await axios.get(
-        `https://backendmedisys.webwisesolution.me/api/doctor?selectedDate=${formData.selectedDate}&id=${formData.doctor}`,{
+        `http://localhost:3100/api/doctor?selectedDate=${formData.selectedDate}&id=${formData.doctor}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -98,7 +98,7 @@ const AppointmentForm = () => {
     }));
     setSelectedPatientDetails(null); // Clear patient details
     axios
-      .get(`https://backendmedisys.webwisesolution.me/doctors/${selectedDoctor}`,{
+      .get(`http://localhost:3100/doctors/${selectedDoctor}`,{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -119,7 +119,7 @@ const AppointmentForm = () => {
       }));
       setSelectedPatientDetails(null); // Clear patient details
       axios
-        .get(`https://backendmedisys.webwisesolution.me/doctors/${userData.doctor_id}`,{
+        .get(`http://localhost:3100/doctors/${userData.doctor_id}`,{
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -141,7 +141,7 @@ const AppointmentForm = () => {
     }));
 
     axios
-      .get(`https://backendmedisys.webwisesolution.me/api/patients/${selectedOption}`,{
+      .get(`http://localhost:3100/api/patients/${selectedOption}`,{
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -167,7 +167,7 @@ const AppointmentForm = () => {
 
     try {
       const response = await axios.post(
-        "https://backendmedisys.webwisesolution.me/api/appointment",
+        "http://localhost:3100/api/appointment",
         formData,
         {
           headers: {
@@ -180,7 +180,7 @@ const AppointmentForm = () => {
 
       if (response.status === 201) {
         toast.success("Appointment Scheduled successfully");
-        await axios.patch(`https://backendmedisys.webwisesolution.me/doctors/${formData.doctor}`, {
+        await axios.patch(`http://localhost:3100/doctors/${formData.doctor}`, {
           bookedSlots: [
             ...doctorData.bookedSlots,
             {

@@ -17,7 +17,7 @@ const UpdateInvoice = () => {
 
   const loadOptions = (inputValue) => {
     return axios
-      .get(`https://backendmedisys.webwisesolution.me/api/patients/search?name=${inputValue}`, {
+      .get(`http://localhost:3100/api/patients/search?name=${inputValue}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -43,7 +43,7 @@ const UpdateInvoice = () => {
 
     // Get the selected patient's details
     axios
-      .get(`https://backendmedisys.webwisesolution.me/api/patients/${selectedOption.value}`, {
+      .get(`http://localhost:3100/api/patients/${selectedOption.value}`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
@@ -61,7 +61,7 @@ const UpdateInvoice = () => {
 
     // Send a PATCH request to create the invoice
     axios
-      .patch(`https://backendmedisys.webwisesolution.me/billing/patient/${formData.patient}`, {
+      .patch(`http://localhost:3100/billing/patient/${formData.patient}`, {
         paymentStatus: formData.paymentStatus,
       })
       .then((response) => {

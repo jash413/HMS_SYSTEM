@@ -1,7 +1,7 @@
 // network configuration
 const network = {
     // server address
-    server: 'https://backendmedisys.webwisesolution.me',
+    server: 'http://localhost:3100',
 };  
 
 export default network;

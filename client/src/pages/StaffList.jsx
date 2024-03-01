@@ -20,7 +20,7 @@ function StaffList() {
     
       const fetchStaffMembers = async () => {
         try {
-          const response = await axios.get("https://backendmedisys.webwisesolution.me/api/staff",{
+          const response = await axios.get("http://localhost:3100/api/staff",{
             headers: {
               authorization: `Bearer ${token}`,
             },

@@ -16,7 +16,6 @@ function SurgerySchedulingForm() {
     selectedKit: "",
     selectedPatient: "",
     selectedDate: "",
-
   });
 
   const [formData1, setFormData1] = useState({
@@ -128,7 +127,8 @@ function SurgerySchedulingForm() {
   const fetchAvailableSurgeons = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,{
+        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,
+        {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -144,7 +144,8 @@ function SurgerySchedulingForm() {
   const fetchAvailableAnaesthetists = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,{
+        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,
+        {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -160,7 +161,8 @@ function SurgerySchedulingForm() {
   const fetchAvailableOperationTheatres = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,{
+        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,
+        {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -176,7 +178,8 @@ function SurgerySchedulingForm() {
   const fetchAvailableKits = async (startTime, endTime, date) => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,{
+        `http://localhost:3100/available-resources?startTime=${startTime}&endTime=${endTime}&selectedDate=${date}`,
+        {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -191,14 +194,14 @@ function SurgerySchedulingForm() {
   // fetch all patients
   const fetchPatients = async () => {
     try {
-      const response = await axios.get("http://localhost:3100/api/patients",{
+      const response = await axios.get("http://localhost:3100/api/patients", {
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
-      const patients = response.data.filter((patient)=> {
-        return patient.hospital_id === userData.hospital_id
-      })
+      const patients = response.data.filter((patient) => {
+        return patient.hospital_id === userData.hospital_id;
+      });
       setPatients(patients);
     } catch (error) {
       console.error("Error fetching patients:", error);
@@ -208,14 +211,14 @@ function SurgerySchedulingForm() {
   // fetch all surgeons
   const fetchSurgeons = async () => {
     try {
-      const response = await axios.get("http://localhost:3100/doctors",{
+      const response = await axios.get("http://localhost:3100/doctors", {
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
-      const surgeons = response.data.filter((surgeon)=> {
-        return surgeon.hospital_id === userData.hospital_id
-      })
+      const surgeons = response.data.filter((surgeon) => {
+        return surgeon.hospital_id === userData.hospital_id;
+      });
       setSurgeons(surgeons);
     } catch (error) {
       console.error("Error fetching patients:", error);
@@ -225,14 +228,14 @@ function SurgerySchedulingForm() {
   // fetch all anaesthetists
   const fetchAnaesthetists = async () => {
     try {
-      const response = await axios.get("http://localhost:3100/anaesthetists",{
+      const response = await axios.get("http://localhost:3100/anaesthetists", {
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
-      const anaesthetists = response.data.filter((anaesthetist)=> {
-        return anaesthetist.hospital_id === userData.hospital_id
-      })
+      const anaesthetists = response.data.filter((anaesthetist) => {
+        return anaesthetist.hospital_id === userData.hospital_id;
+      });
       setAnaesthetists(anaesthetists);
     } catch (error) {
       console.error("Error fetching patients:", error);
@@ -243,15 +246,16 @@ function SurgerySchedulingForm() {
   const fetchOperationTheatres = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3100/operation-theatres"
-      ,{
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
+        "http://localhost:3100/operation-theatres",
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const operationTheatres = response.data.filter((theatre) => {
+        return theatre.hospital_id === userData.hospital_id;
       });
-      const operationTheatres = response.data.filter((theatre)=> {
-        return theatre.hospital_id === userData.hospital_id
-      })
       setOperationTheatres(operationTheatres);
     } catch (error) {
       console.error("Error fetching patients:", error);
@@ -262,7 +266,8 @@ function SurgerySchedulingForm() {
   const fetchAvailableSlots = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/common-available-slots?doctorId=${formData1.selectedSurgeon}&anaesthetistId=${formData1.selectedAnaesthetist}&theatreId=${formData1.selectedTheatre}&date=${formData1.selectedDate}&duration=${formData1.selectedDuration}`,{
+        `http://localhost:3100/common-available-slots?doctorId=${formData1.selectedSurgeon}&anaesthetistId=${formData1.selectedAnaesthetist}&theatreId=${formData1.selectedTheatre}&date=${formData1.selectedDate}&duration=${formData1.selectedDuration}`,
+        {
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -278,12 +283,13 @@ function SurgerySchedulingForm() {
   const fetchSelectedSurgeon = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/doctors/${formData.selectedSurgeon}`
-      ,{
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
+        `http://localhost:3100/doctors/${formData.selectedSurgeon}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setSelectedSurgeon(response.data);
     } catch (error) {
       console.error("Error fetching patients:", error);
@@ -294,12 +300,13 @@ function SurgerySchedulingForm() {
   const fetchSelectedAnaesthetist = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/anaesthetists/${formData.selectedAnaesthetist}`
-      ,{
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
+        `http://localhost:3100/anaesthetists/${formData.selectedAnaesthetist}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setSelectedAnaesthetist(response.data);
     } catch (error) {
       console.error("Error fetching anaesthetist:", error);
@@ -310,12 +317,13 @@ function SurgerySchedulingForm() {
   const fetchSelectedTheatre = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/operation-theatres/${formData.selectedTheatre}`
-      ,{
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
+        `http://localhost:3100/operation-theatres/${formData.selectedTheatre}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setSelectedTheatre(response.data);
     } catch (error) {
       console.error("Error fetching theatre:", error);
@@ -326,12 +334,13 @@ function SurgerySchedulingForm() {
   const fetchSelectedKit = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3100/ot-kits/${formData.selectedKit}`
-      ,{
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
+        `http://localhost:3100/ot-kits/${formData.selectedKit}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setSelectedKit(response.data);
     } catch (error) {
       console.error("Error fetching kit:", error);
@@ -371,12 +380,13 @@ function SurgerySchedulingForm() {
           anaesthetist_id: formData.selectedAnaesthetist,
           patient_id: formData.selectedPatient,
         },
-        { responseType: "blob" }
-      ,{
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
+        { responseType: "blob" },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
       // Create a Blob object from the response data
       const pdfBlob = new Blob([response.data], { type: "application/pdf" });
 
@@ -396,21 +406,25 @@ function SurgerySchedulingForm() {
     event.preventDefault();
     try {
       // Perform submission logic here
-      const response = await axios.post("http://localhost:3100/surgeries", {
-        surgeryType: selectedSurgeryType,
-        start_time: formData.selectedStartTime,
-        end_time: formData.selectedEndTime,
-        doctor_id: formData.selectedSurgeon,
-        anaesthetist_id: formData.selectedAnaesthetist,
-        theatre_id: formData.selectedTheatre,
-        kit_id: formData.selectedKit,
-        patient_id: formData.selectedPatient,
-        date: formData.selectedDate,
-      },{
-        headers: {
-          authorization: `Bearer ${token}`,
+      const response = await axios.post(
+        "http://localhost:3100/surgeries",
+        {
+          surgeryType: selectedSurgeryType,
+          start_time: formData.selectedStartTime,
+          end_time: formData.selectedEndTime,
+          doctor_id: formData.selectedSurgeon,
+          anaesthetist_id: formData.selectedAnaesthetist,
+          theatre_id: formData.selectedTheatre,
+          kit_id: formData.selectedKit,
+          patient_id: formData.selectedPatient,
+          date: formData.selectedDate,
         },
-      });
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.status === 201) {
         toast.success("Surgery scheduled successfully!");
@@ -424,13 +438,14 @@ function SurgerySchedulingForm() {
             bookedSlots: [
               ...selectedSurgeon.bookedSlots,
               {
-                title:"surgery",
+                title: "surgery",
                 date: formData.selectedDate,
                 startTime: formData.selectedStartTime,
                 endTime: formData.selectedEndTime,
               },
             ],
-          },{
+          },
+          {
             headers: {
               authorization: `Bearer ${token}`,
             },
@@ -449,7 +464,8 @@ function SurgerySchedulingForm() {
                 endTime: formData.selectedEndTime,
               },
             ],
-          },{
+          },
+          {
             headers: {
               authorization: `Bearer ${token}`,
             },
@@ -468,7 +484,8 @@ function SurgerySchedulingForm() {
                 endTime: formData.selectedEndTime,
               },
             ],
-          },{
+          },
+          {
             headers: {
               authorization: `Bearer ${token}`,
             },
@@ -487,7 +504,8 @@ function SurgerySchedulingForm() {
                 endTime: formData.selectedEndTime,
               },
             ],
-          },{
+          },
+          {
             headers: {
               authorization: `Bearer ${token}`,
             },
@@ -571,55 +589,6 @@ function SurgerySchedulingForm() {
                   </div>
                   <div className="col-md-4">
                     <label htmlFor="admittime" className="form-label">
-                      Select Anaesthetist
-                    </label>
-                    <select
-                      name="selectedAnaesthetist"
-                      value={formData1.selectedAnaesthetist}
-                      onChange={(e) => {
-                        setFormData1((prevFormData) => ({
-                          ...prevFormData,
-                          selectedAnaesthetist: e.target.value,
-                        }));
-                      }}
-                      className="form-control"
-                    >
-                      <option value="">Select Anaesthetist</option>
-                      {anaesthetists.map((anaesthetist) => (
-                        <option key={anaesthetist._id} value={anaesthetist._id}>
-                          {anaesthetist.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <br />
-                <div className="row g-3 align-items-center">
-                  <div className="col-md-4">
-                    <label htmlFor="admittime" className="form-label">
-                      Select Operation Theatre
-                    </label>
-                    <select
-                      name="selectedTheatre"
-                      value={formData1.selectedTheatre}
-                      onChange={(e) => {
-                        setFormData1((prevFormData) => ({
-                          ...prevFormData,
-                          selectedTheatre: e.target.value,
-                        }));
-                      }}
-                      className="form-control"
-                    >
-                      <option value="">Select Operation Theatre</option>
-                      {operationTheatres.map((theatre) => (
-                        <option key={theatre._id} value={theatre._id}>
-                          {theatre.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-md-4">
-                    <label htmlFor="admittime" className="form-label">
                       Select Duration
                     </label>
                     <select
@@ -642,6 +611,7 @@ function SurgerySchedulingForm() {
                     </select>
                   </div>
                 </div>
+                <br />
               </form>
               <br />
               <div className="row g-3 align-items-center">

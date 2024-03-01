@@ -45,7 +45,8 @@ function UserRegistration() {
           const hospitalNurses = response.data.filter(
             (staff) =>
               staff.hospital_id === formData.hospital_id &&
-              staff.role === "Nurse"
+              staff.role === "Nurse" &&
+              staff.user_created === false
           );
           setNurses(hospitalNurses);
         })

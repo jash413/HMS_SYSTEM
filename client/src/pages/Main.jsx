@@ -146,7 +146,7 @@ function Index() {
   const handleSignIn = () => {
     setUserPermissions(JSON.parse(localStorage.getItem("permissions")));
     setToken(localStorage.getItem("token"));
-    setIsAuthenticated(true);
+    setIsAuthenticated(true); 
     setUser(JSON.parse(localStorage.getItem("user")));
   };
 
@@ -818,7 +818,8 @@ function Index() {
                             path="/patient-invoices"
                             element={<PatientInvoices />}
                           />
-                        </Routes>
+                        <Route path="/update-invoice" element={<UpdateInvoice />} />
+                    </Routes>
                       </div>
                     </div>
                   </>

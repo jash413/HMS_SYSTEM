@@ -23,7 +23,6 @@ const PatientForm = () => {
     insuranceNumber: "",
     wardNumber: "",
     doctor: "",
-    advanceAmount: "",
     hospital_id: userData.hospital_id,
   });
 
@@ -99,7 +98,6 @@ const PatientForm = () => {
           insuranceNumber: "",
           wardNumber: "",
           doctor: "",
-          advanceAmount: "",
           hospital_id: userData.hospital_id,
         });
         // Create bill for the patient
@@ -117,6 +115,8 @@ const PatientForm = () => {
         } catch (error) {
           console.error(error);
         }
+        
+     
       }
 
       console.log("Patient created:", response.data);
@@ -247,52 +247,50 @@ const PatientForm = () => {
                           />
                         </div> */}
                   <div className="col-md-6">
-                    <label className="form-label">Gender</label>
-                    <div className="row">
-                      <div className="col-md-6">
-                        <div className="form-check">
-                          <input
-                            required
-                            className="form-check-input"
-                            type="radio"
-                            name="gender"
-                            value="Male"
-                            checked={patientData.gender === "Male"}
-                            onChange={handleInputChange}
-                            id="exampleRadios11"
-                            defaultChecked
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="exampleRadios11"
-                          >
-                            Male
-                          </label>
-                        </div>
+                  <label className="form-label">Gender</label>
+                  <div className="row">
+                    <div className="col-md-6">
+                      <div className="form-check">
+                        <input
+                          required
+                          className="form-check-input"
+                          type="radio"
+                          name="gender"
+                          value="Male"
+                          checked={patientData.gender === "Male"}
+                          onChange={handleInputChange}
+                          id="exampleRadios1"
+                          defaultChecked
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="exampleRadios11"
+                        >
+                          Male
+                        </label>
                       </div>
-                      <div className="col-md-6">
-                        <div className="form-check">
-                          <input
-                            required
-                            className="form-check-input"
-                            type="radio"
-                            name="gender"
-                            value="female"
-                            checked={patientData.gender === "Female"}
-                            onChange={handleInputChange}
-                            id="exampleRadios22"
-                            defaultValue="option2"
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="exampleRadios22"
-                          >
-                            Female
-                          </label>
-                        </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="form-check">
+                        <input
+                          name="gender"
+                          value="Female"
+                          className="form-check-input"
+                          type="radio"
+                          id="exampleRad"
+                          checked={patientData.gender === "Female"}
+                          onChange={handleInputChange}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor="exampleRadios22"
+                        >
+                          Female
+                        </label>
                       </div>
                     </div>
                   </div>
+                </div>
                 </div>
                 <br />
                 <div className="row g-3 align-items-center">
@@ -418,20 +416,6 @@ const PatientForm = () => {
                         </option>
                       ))}
                     </select>
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="advancepayment" className="form-label">
-                      Advance Amount
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      name="advanceAmount"
-                      value={patientData.advanceAmount}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      id="advancepayment"
-                    />
                   </div>
                 </div>
                 <br />
